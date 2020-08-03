@@ -1,0 +1,1 @@
+from apps.process.views.basicinfor_view import *

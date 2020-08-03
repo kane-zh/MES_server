@@ -1,0 +1,1 @@
+from  apps.equipment.views.basicinfor_view import  *

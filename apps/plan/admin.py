@@ -1,0 +1,30 @@
+from django.contrib import admin
+
+# Register your models1 here.
+from apps.plan.models.basicinfor_model import *
+
+admin.site.register(PlanAuditRecordModel)
+admin.site.register(PlanAlterRecordModel)
+admin.site.register(PlanImageModel)
+admin.site.register(PlanFileModel)
+admin.site.register(VendorTypeDefinitionModel)
+admin.site.register(VendorInforDefinitionModel)
+admin.site.register(ClientTypeDefinitionModel)
+admin.site.register(ClientInforDefinitionModel)
+admin.site.register(SalesOrderCreateModel)
+admin.site.register(SalesOrderItemCreateModel)
+admin.site.register(ProductTaskCreateModel)
+admin.site.register(ProductTaskItemCreateModel)
+admin.site.register(SemifinishedTaskCreateModel)
+admin.site.register(SemifinishedTaskItemCreateModel)
+admin.site.register(PurchaseRequireCreateModel)
+admin.site.register(PurchaseRequireItemCreateModel)
+admin.site.register(MaterialManagePlanItemModel)
+admin.site.register(MaterialManagePlanModel)
+admin.site.register(SemifinishedManagePlanItemModel)
+admin.site.register(SemifinishedManagePlanModel)
+admin.site.register(ProductManagePlanModel)
+admin.site.register(ProductManagePlanItemModel)
+admin.site.register(EquipmentMaintainPlanItemModel)
+admin.site.register(EquipmentMaintainPlanModel)
+admin.site.register(PlanBoardModel)

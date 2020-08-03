@@ -1,0 +1,1 @@
+from apps.lean.serializes.basicinfor_serialize import *

@@ -1,0 +1,39 @@
+#!/bin/bash
+
+
+#将项目nginx配置复制到nginx配置
+cp  doc/default /etc/nginx/sites-enabled/
+#启动nginx
+/usr/sbin/nginx
+#赋予wait-for-it.sh可执行权限
+#chmod u+x wait-for-it.sh
+#判断数据库端口是否可用，因为数据库未准备好的话接下来的数据库刷新操作将失败。其实，假如我们事先启动好了一个数据库容器的话，此操作也可以省略。
+#这样做是因为最后我们会使用docker-compose来一起管理两个或者多个容器，docker-compose里面三个关键字：link、depends_on、volume_from是可以确定容器的启动顺序的，
+#但是，容器里面的mysql是否启动那就不一定了，所以我们检测下端口比较稳妥。没有好我们等几秒也无妨
+#另外，这里的两个环境变量DB_PORT_3306_TCP_ADDR和DB_PORT_3306_TCP_PORT是mysql容器中的，不用猜也知道，一个是host，一个是port
+#如果我们通过link将一个容器连接到mysql容器，mysql容器中的一些环境变量会共享出来的。
+#./wait-for-it.sh $DB_PORT_3306_TCP_ADDR:$DB_PORT_3306_TCP_PORT & wait
+
+#将适用于docker容器的settings.py  urls.py拷贝到Mes目录下
+cp  doc/settings.py   Mes
+cp  doc/urls.py   Mes
+cp  doc/base.py   /usr/local/lib/python3.6/dist-packages/django/db/backends/mysql
+#刷新数据库
+python3 manage.py   makemigrations
+python3 manage.py   migrate
+python3 manage.py   migrate   --database = process
+python3 manage.py   migrate   --database = quality
+python3 manage.py   migrate   --database = plan
+python3 manage.py   migrate   --database = warehouse
+python3 manage.py   migrate   --database = production
+python3 manage.py   migrate   --database = equipment
+
+#加载管理员用户到数据库，以便容器启动之后不必再进入容器执行python manage.py createsuperuser操作
+python3 manage.py loaddata   doc/superuser.json
+#收集静态文件
+python3 manage.py collectstatic --noinput
+
+#启动uwsgi
+uwsgi --ini  Mes/uwsgi.ini
+#保留一个终端，防止容器自动退出
+/bin/bash
