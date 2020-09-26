@@ -1150,7 +1150,7 @@ class ProductTaskItemCreateSerialize_Partial(serializers.ModelSerializer):
 
     class Meta:
         model = ProductTaskItemCreateModel
-        fields = ("id", "state","completed")
+        fields = ("id", "state","completed","attribute1","attribute2","attribute3","attribute4","attribute5")
 
     # 状态字段验证
     def validate_state(self, value):
@@ -1456,7 +1456,7 @@ class SemifinishedTaskItemCreateSerialize_Partial(serializers.ModelSerializer):
 
     class Meta:
         model = SemifinishedTaskItemCreateModel
-        fields = ("id", "state","completed")
+        fields = ("id", "state","completed","attribute1","attribute2","attribute3","attribute4","attribute5")
 
     # 状态字段验证
     def validate_state(self, value):

@@ -22,7 +22,7 @@ class VendorInforDefinitionFilters(FilterSet):
     """
     class Meta:
         model = VendorInforDefinitionModel
-        fields = ["state", "auditor", "create_user"]
+        fields=["state","auditor","create_user","type"]
 
 class ClientTypeDefinitionFilters(FilterSet):
     """
@@ -39,7 +39,7 @@ class ClientInforDefinitionFilters(FilterSet):
     """
     class Meta:
         model = ClientInforDefinitionModel
-        fields = [ "state", "auditor", "create_user"]
+        fields=["state","auditor","create_user","type"]
 class SalesOrderCreateFilters(FilterSet):
     """
     销售订单创建

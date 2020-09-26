@@ -31,7 +31,7 @@ class DefectInforDefinitionFilters(FilterSet):
     """
     class Meta:
         model = DefectInforDefinitionModel
-        fields=["state","auditor","create_user"]
+        fields=["state","auditor","create_user","type"]
 
 class InspectionStandardTypeDefinitionFilters(FilterSet):
     """
@@ -47,7 +47,7 @@ class InspectionStandardsDefinitionFilters(FilterSet):
     """
     class Meta:
         model = InspectionStandardDefinitionModel
-        fields=["state","auditor","create_user"]
+        fields=["state","auditor","create_user","type"]
 
 class InspectionRecordTypeDefinitionFilters(FilterSet):
     """

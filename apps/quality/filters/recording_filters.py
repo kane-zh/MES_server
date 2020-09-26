@@ -7,6 +7,6 @@ class RecordInforDefinitionFilters(FilterSet):
     """
     class Meta:
         model = InspectionRecordModel
-        fields = ["state", "auditor", "create_user"]
+        fields = ["state", "auditor", "create_user", "type"]
 
 

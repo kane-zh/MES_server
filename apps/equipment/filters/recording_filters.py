@@ -16,7 +16,7 @@ class  MaintainRecordFilters(FilterSet):
     """
     class Meta:
             model = MaintainRecordModel
-            fields = ["state", "auditor", "create_user"]
+            fields = ["state", "auditor", "create_user", "type"]
 
 class EquipmentStateFilters(FilterSet):
     """

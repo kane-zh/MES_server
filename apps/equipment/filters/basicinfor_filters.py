@@ -30,7 +30,7 @@ class PartsInforDefinitionFilters(FilterSet):
     """
     class Meta:
             model = PartsInforDefinitionModel
-            fields = ["state", "auditor", "create_user"]
+            fields = ["state", "auditor", "create_user", "type"]
 
 class EquipmentTypeDefinitionFilters(FilterSet):
     """
@@ -45,7 +45,7 @@ class EquipmentAccountFilters(FilterSet):
     """
     class Meta:
             model = EquipmentAccountModel
-            fields = ["state", "auditor", "create_user"]
+            fields = ["state", "auditor", "create_user", "type"]
 
 class MaintainRecordTypeDefinitionFilters(FilterSet):
     """

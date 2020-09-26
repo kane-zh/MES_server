@@ -23,7 +23,7 @@ class TeamInforDefinitionFilters(FilterSet):
     """
     class Meta:
         model = TeamInforDefinitionModel
-        fields=["state","auditor","create_user"]
+        fields = ["state", "auditor", "create_user", "type"]
 
 class SkillTypeDefinitionFilters(FilterSet):
     """
@@ -39,7 +39,7 @@ class SkillInforDefinitionFilters(FilterSet):
     """
     class Meta:
         model = SkillInforDefinitionModel
-        fields=["state","auditor","create_user"]
+        fields = ["state", "auditor", "create_user", "type"]
 
 class PersonnelInforDefinitionFilters(FilterSet):
     """

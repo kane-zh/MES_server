@@ -23,7 +23,7 @@ class UnitInforDefinitionFilters(FilterSet):
     """
     class Meta:
         model = UnitInforDefinitionModel
-        fields=["state","auditor","create_user"]
+        fields=["state","auditor","create_user","type"]
 
 
 class MaterialTypeDefinitionFilters(FilterSet):
@@ -40,7 +40,7 @@ class MaterialInforDefinitionFilters(FilterSet):
     """
     class Meta:
         model = MaterialInforDefinitionModel
-        fields=["state","auditor","create_user"]
+        fields = ["state", "auditor", "create_user", "type"]
 
 class SemifinishedTypeDefinitionFilters(FilterSet):
     """
@@ -56,7 +56,7 @@ class SemifinishedInforDefinitionFilters(FilterSet):
     """
     class Meta:
         model = SemifinishedInforDefinitionModel
-        fields = ["state", "auditor", "create_user"]
+        fields = ["state", "auditor", "create_user", "type"]
 
 class ProductTypeDefinitionFilters(FilterSet):
     """
@@ -72,7 +72,7 @@ class ProductInforDefinitionFilters(FilterSet):
     """
     class Meta:
         model = ProductInforDefinitionModel
-        fields = ["state", "auditor", "create_user"]
+        fields = ["state", "auditor", "create_user", "type"]
 
 class StationTypeDefinitionFilters(FilterSet):
     """
@@ -90,7 +90,7 @@ class StationInforDefinitionFilters(FilterSet):
 
     class Meta:
         model = StationInforDefinitionModel
-        fields = ["state", "auditor", "create_user"]
+        fields = ["state", "auditor", "create_user", "type"]
 
 class ProductRouteTypeDefinitionFilters(FilterSet):
     """
@@ -106,7 +106,7 @@ class ProductRouteDefinitionFilters(FilterSet):
     """
     class Meta:
         model = ProductRouteDefinitionModel
-        fields = ["state", "auditor", "create_user"]
+        fields=["state","auditor","create_user","type"]
 
 
 class ProcessBoardFilters(FilterSet):

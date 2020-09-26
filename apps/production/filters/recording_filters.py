@@ -8,7 +8,7 @@ class AssessmentRecordFilters(FilterSet):
     """
     class Meta:
         model = AssessmentRecordModel
-        fields = ["state", "auditor", "create_user"]
+        fields = ["state", "auditor", "create_user", "type"]
 
 class ProductDailyReportFilters(FilterSet):
     """
