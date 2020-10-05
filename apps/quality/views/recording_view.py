@@ -17,22 +17,22 @@ from apps.quality.filters.recording_filters import *
 from apps.commonFunction import StandardResultsSetPagination
 
 
-class RecordInforItemDefinitionView(CreateModelMixin, ListModelMixin,
+class ReportInforItemDefinitionView(CreateModelMixin, ListModelMixin,
                              RetrieveModelMixin, UpdateModelMixin,
                             viewsets.GenericViewSet):
     """
-    检验记录子项信息定义
+    检验汇报子项信息定义
     """
-    queryset = InspectionRecordItemModel.objects.all().order_by("-id")
-    serializer_class = RecordInforItemDefinitionSerialize_Create
+    queryset = InspectionReportItemModel.objects.all().order_by("-id")
+    serializer_class = ReportInforItemDefinitionSerialize_Create
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, IsOwnerOrReadOnly]
     permission_classes = [IsAuthenticated, ]
 
-class RecordInforDefinitionView(CreateModelMixin, ListModelMixin,
+class RepordInforDefinitionView(CreateModelMixin, ListModelMixin,
                              RetrieveModelMixin, UpdateModelMixin,
                             viewsets.GenericViewSet):
     """
-    检验记录信息定义
+    检验汇报信息定义
     """
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
@@ -45,16 +45,16 @@ class RecordInforDefinitionView(CreateModelMixin, ListModelMixin,
     # 重载获取序列化类的方法，根据不同的操作返回不同的序列化类
     def get_serializer_class(self):
         if self.action == "create":
-            return RecordInforDefinitionSerialize_Create
+            return ReportInforDefinitionSerialize_Create
         elif self.action == "list":
-            return RecordInforDefinitionSerialize_List
+            return ReportInforDefinitionSerialize_List
         elif self.action == "retrieve":
-            return RecordInforDefinitionSerialize_Retrieve
+            return ReportInforDefinitionSerialize_Retrieve
         elif self.action == "update":
-            return RecordInforDefinitionSerialize_Update
+            return ReportInforDefinitionSerialize_Update
         elif self.action == "partial_update":
-            return RecordInforDefinitionSerialize_Partial
-        return RecordInforDefinitionSerialize_List
+            return ReportInforDefinitionSerialize_Partial
+        return ReportInforDefinitionSerialize_List
 
     # 重载数据查询的方法，根据不同的操作查询不同的数据范围
     def get_queryset(self):
@@ -62,9 +62,9 @@ class RecordInforDefinitionView(CreateModelMixin, ListModelMixin,
         stop = self.request.query_params.get('stop_time', None)
         if self.request.user.is_superuser:
             if start and stop:
-                return InspectionRecordModel.objects.filter(dataTime__gte=start).filter(dataTime__lte=stop).order_by("-id")
+                return InspectionReportModel.objects.filter(dataTime__gte=start).filter(dataTime__lte=stop).order_by("-id")
             else:
-                return InspectionRecordModel.objects.all().order_by("-id")  # 超级用户可以查看所有信息
+                return InspectionReportModel.objects.all().order_by("-id")  # 超级用户可以查看所有信息
         user = self.request.user.username
         condtions1 = {'create_user__iexact': user,
                       'state__in': ("新建", "审核中", "完成")  # 信息创建者可以看到 (新建,审核,使用中)的数据,,
@@ -86,7 +86,7 @@ class RecordInforDefinitionView(CreateModelMixin, ListModelMixin,
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
         if start and stop:
-            return InspectionRecordModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).filter(dataTime__gte=start).filter(dataTime__lte=stop).order_by("-id")
+            return InspectionReportModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).filter(dataTime__gte=start).filter(dataTime__lte=stop).order_by("-id")
         else:
-            return InspectionRecordModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
+            return InspectionReportModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 

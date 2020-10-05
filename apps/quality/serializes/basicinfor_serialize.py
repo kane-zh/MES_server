@@ -932,22 +932,22 @@ class InspectionStandardsDefinitionSerialize_Partial(serializers.ModelSerializer
 
 # endregion
 
-# region 检验记录类型定义 序列化器
-class InspectionRecordTypeDefinitionSerialize_Create(serializers.ModelSerializer):
+# region 检验汇报类型定义 序列化器
+class InspectionReportTypeDefinitionSerialize_Create(serializers.ModelSerializer):
     """
-    检验记录类型定义--create
+    检验汇报类型定义--create
     """
     state = serializers.HiddenField(default="新建")
     create_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
-        model = InspectionRecordTypeDefinitionModel
+        model = InspectionReportTypeDefinitionModel
         fields = ("id", "name", "code", "state", "classes", "parent", "attach_attribute",
                   "file", "desc", "auditor", "create_user")
 
     # 所有字段验证
     def validate(self, attrs):
-        if not attrs["create_user"].has_perm('quality.add_inspectionrecordtypedefinitionmodel'):  # 如果当前用户没有创建权限
+        if not attrs["create_user"].has_perm('quality.add_inspectionreporttypedefinitionmodel'):  # 如果当前用户没有创建权限
             raise serializers.ValidationError("当前用户不具备创建权限'")
         if settings.SAME_USER!=True:
             if attrs["create_user"].username == attrs["auditor"]:   # 审核帐号不能与创建帐号相同
@@ -960,7 +960,7 @@ class InspectionRecordTypeDefinitionSerialize_Create(serializers.ModelSerializer
             auditor = User.objects.get(username=value)
         except Exception as e:
             raise serializers.ValidationError("指定的审核账号不存在")
-        if not auditor.has_perm('quality.admin_inspectionrecordtypedefinitionmodel'):
+        if not auditor.has_perm('quality.admin_inspectionreporttypedefinitionmodel'):
             raise serializers.ValidationError("指定的审核账号不具备审核权限")
         return value
 
@@ -973,7 +973,7 @@ class InspectionRecordTypeDefinitionSerialize_Create(serializers.ModelSerializer
             if value is None:  # 非一级类别必须指定父类别
                 raise serializers.ValidationError("处于" + self.initial_data["classes"] + "类别的信息必须指定父类别")
             else:  # 判断指定的父类别是否符合条件
-                list = InspectionRecordTypeDefinitionModel.objects.get(id=value.id)
+                list = InspectionReportTypeDefinitionModel.objects.get(id=value.id)
                 if list is None:  # 判断 父类别是否存在
                     raise serializers.ValidationError("指定的父类别不存在")
                 elif (list.state != "使用中"):  # 判断 父类别状态是否合适
@@ -988,45 +988,45 @@ class InspectionRecordTypeDefinitionSerialize_Create(serializers.ModelSerializer
         return value
 
 
-class InspectionRecordTypeDefinitionSerialize_List(serializers.ModelSerializer):
+class InspectionReportTypeDefinitionSerialize_List(serializers.ModelSerializer):
     """
-    检验记录类型定义--list
+    检验汇报类型定义--list
     """
     class Meta:
-        model = InspectionRecordTypeDefinitionModel
+        model = InspectionReportTypeDefinitionModel
         fields = ("id", "name", "code", "state", "classes", "auditor", "create_user","create_time","update_time")
 
 
-class InspectionRecordInforDefinitionSerialize_Type(serializers.ModelSerializer):
+class InspectionReportInforDefinitionSerialize_Type(serializers.ModelSerializer):
     """
-    检验记录定义--检验记录类型定义
+    检验汇报定义--检验汇报类型定义
     """
 
     class Meta:
-        model = InspectionRecordModel
+        model = InspectionReportModel
         fields = ("id", "name", "code", "state", "auditor", "create_user")
 
-class InspectionRecordTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
+class InspectionReportTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     """
-    检验记录类型定义--retrieve
+    检验汇报类型定义--retrieve
     """
     file = QualityFileSerialize_List(many=True)                 # 类型文件信息
     alter = QualityAlterRecordSerialize_List(many=True)         # 审核记录信息
-    parent = InspectionRecordTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    inspectionRecordType_child = InspectionRecordTypeDefinitionSerialize_List(many=True)# 子类别信息
-    inspectionRecordType_item = InspectionRecordInforDefinitionSerialize_Type(many=True)# 附属项信息
+    parent = InspectionReportTypeDefinitionSerialize_List(required=False)   # 父类别信息
+    InspectionReportType_child = InspectionReportTypeDefinitionSerialize_List(many=True)# 子类别信息
+    inspectionReportType_item = InspectionReportInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
-        model = InspectionRecordTypeDefinitionModel
+        model = InspectionReportTypeDefinitionModel
         fields = "__all__"
 
 
-class InspectionRecordTypeDefinitionSerialize_Update(serializers.ModelSerializer):
+class InspectionReportTypeDefinitionSerialize_Update(serializers.ModelSerializer):
     """
-    检验记录类型定义--update
+    检验汇报类型定义--update
     """
     class Meta:
-        model = InspectionRecordTypeDefinitionModel
+        model = InspectionReportTypeDefinitionModel
         fields = ("id", "name", "code", "classes", "parent", "attach_attribute",
                   "file", "desc", "auditor",)
 
@@ -1047,7 +1047,7 @@ class InspectionRecordTypeDefinitionSerialize_Update(serializers.ModelSerializer
             auditor = User.objects.get(username=value)
         except Exception as e:
             raise serializers.ValidationError("指定的审核账号不存在")
-        if not auditor.has_perm('quality.admin_inspectionrecordtypedefinitionmodel'):
+        if not auditor.has_perm('quality.admin_inspectionreporttypedefinitionmodel'):
             raise serializers.ValidationError("指定的审核账号不具备审核权限")
         return value
 
@@ -1062,7 +1062,7 @@ class InspectionRecordTypeDefinitionSerialize_Update(serializers.ModelSerializer
             if value is None:  # 非一级类别必须指定父类别
                 raise serializers.ValidationError("处于" + self.initial_data["classes"] + "类别的信息必须指定父类别")
             else:  # 判断指定的父类别是否符合条件
-                list = InspectionRecordTypeDefinitionModel.objects.get(id=value.id)
+                list = InspectionReportTypeDefinitionModel.objects.get(id=value.id)
                 if list is None:  # 判断 父类别是否存在
                     raise serializers.ValidationError("指定的父类别不存在")
                 elif (list.state != "使用中"):  # 判断 父类别状态是否合适
@@ -1077,12 +1077,12 @@ class InspectionRecordTypeDefinitionSerialize_Update(serializers.ModelSerializer
         return value
 
 
-class InspectionRecordTypeDefinitionSerialize_Partial(serializers.ModelSerializer):
+class InspectionReportTypeDefinitionSerialize_Partial(serializers.ModelSerializer):
     """
-    检验记录类型定义--partial
+    检验汇报类型定义--partial
     """
     class Meta:
-        model = InspectionRecordTypeDefinitionModel
+        model = InspectionReportTypeDefinitionModel
         fields = ("id", "state", "alter")
 
     # 所有字段验证
@@ -1104,47 +1104,47 @@ class InspectionRecordTypeDefinitionSerialize_Partial(serializers.ModelSerialize
 
     # 审核记录字段验证
     def validate_alter(self, value):
-        obj = InspectionRecordTypeDefinitionModel.objects.get(id=self.instance.id).alter
+        obj = InspectionReportTypeDefinitionModel.objects.get(id=self.instance.id).alter
         for data in value:
             obj.add(data.id)
         return value
 # endregion
 
-# region 检验记录类型层级结构 序列化器
-class InspectionRecordTypeDefinitionSerialize_Fourth(serializers.ModelSerializer):
+# region 检验汇报类型层级结构 序列化器
+class InspectionReportTypeDefinitionSerialize_Fourth(serializers.ModelSerializer):
     """
-    检验记录类型层级结构--fourth
+    检验汇报类型层级结构--fourth
     """
     class Meta:
-        model = InspectionRecordTypeDefinitionModel
+        model = InspectionReportTypeDefinitionModel
         fields = ("id", "name", "code", "state")
 
-class InspectionRecordTypeDefinitionSerialize_Third(serializers.ModelSerializer):
+class InspectionReportTypeDefinitionSerialize_Third(serializers.ModelSerializer):
     """
-    检验记录类型层级结构--third
+    检验汇报类型层级结构--third
     """
-    inspectionRecordType_child = InspectionRecordTypeDefinitionSerialize_Fourth(many=True)  # 子类别信息
+    inspectionReportType_child = InspectionReportTypeDefinitionSerialize_Fourth(many=True)  # 子类别信息
     class Meta:
-        model = InspectionRecordTypeDefinitionModel
-        fields = ("id", "name", "code", "state", "inspectionRecordType_child")
+        model = InspectionReportTypeDefinitionModel
+        fields = ("id", "name", "code", "state", "inspectionReportType_child")
 
-class InspectionRecordTypeDefinitionSerialize_Second(serializers.ModelSerializer):
+class InspectionReportTypeDefinitionSerialize_Second(serializers.ModelSerializer):
     """
-    检验记录类型层级结构--second
+    检验汇报类型层级结构--second
     """
-    inspectionRecordType_child = InspectionRecordTypeDefinitionSerialize_Third(many=True)  # 子类别信息
+    inspectionReportType_child = InspectionReportTypeDefinitionSerialize_Third(many=True)  # 子类别信息
     class Meta:
-        model = InspectionRecordTypeDefinitionModel
-        fields = ("id", "name", "code", "state", "inspectionRecordType_child")
+        model = InspectionReportTypeDefinitionModel
+        fields = ("id", "name", "code", "state", "inspectionReportType_child")
 
-class InspectionRecordTypeDefinitionSerialize_First(serializers.ModelSerializer):
+class InspectionReportTypeDefinitionSerialize_First(serializers.ModelSerializer):
     """
-    检验记录类型层级结构--fitst
+    检验汇报类型层级结构--fitst
     """
-    inspectionRecordType_child = InspectionRecordTypeDefinitionSerialize_Second(many=True) # 子类别信息
+    inspectionReportType_child = InspectionReportTypeDefinitionSerialize_Second(many=True) # 子类别信息
     class Meta:
-        model = InspectionRecordTypeDefinitionModel
-        fields = ("id", "name", "code", "state","inspectionRecordType_child")
+        model = InspectionReportTypeDefinitionModel
+        fields = ("id", "name", "code", "state","inspectionReportype_child")
 
 # endregion
 

@@ -49,12 +49,12 @@ class InspectionStandardsDefinitionFilters(FilterSet):
         model = InspectionStandardDefinitionModel
         fields=["state","auditor","create_user","type"]
 
-class InspectionRecordTypeDefinitionFilters(FilterSet):
+class InspectionReportTypeDefinitionFilters(FilterSet):
     """
-    检验记录类型定义
+    检验汇报类型定义
     """
     class Meta:
-        model = InspectionRecordTypeDefinitionModel
+        model = InspectionReportTypeDefinitionModel
         fields = ["state", "classes", "auditor", "create_user"]
 
 class QualityBoardFilters(FilterSet):

@@ -1,12 +1,12 @@
 from django_filters.rest_framework import  FilterSet
 from apps.quality.models.recording_model import *
 
-class RecordInforDefinitionFilters(FilterSet):
+class ReportInforDefinitionFilters(FilterSet):
     """
-    检验记录定义
+    检验汇报定义
     """
     class Meta:
-        model = InspectionRecordModel
+        model = InspectionReportModel
         fields = ["state", "auditor", "create_user", "type"]
 
 

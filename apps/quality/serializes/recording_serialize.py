@@ -6,49 +6,49 @@ from django.contrib.auth import get_user_model
 from Mes import settings
 User= get_user_model()
 
-# region 检验记录子项定义 序列化器
-class RecordInforItemDefinitionSerialize_Create(serializers.ModelSerializer):
+# region 检验汇报子项定义 序列化器
+class ReportInforItemDefinitionSerialize_Create(serializers.ModelSerializer):
     """
-    检验记录子项定义--create
+    检验汇报子项定义--create
     """
     create_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
-        model = InspectionRecordItemModel
+        model = InspectionReportItemModel
         fields = ("id", "defect", "ok_sum", "ng_sum", "concession_sum", "image", "file","attribute1", "attribute2",
                   "attribute3", "attribute4","attribute5", "desc", "create_user")
 
 
-class RecordInforItemDefinitionSerialize_List(serializers.ModelSerializer):
+class ReportInforItemDefinitionSerialize_List(serializers.ModelSerializer):
     """
-    检验记录子项定义--list
+    检验汇报子项定义--list
     """
     image = QualityImageSerialize_List(many=True)
     file = QualityFileSerialize_List(many=True)
     defect =DefectInforDefinitionSerialize_List()
 
     class Meta:
-        model = InspectionRecordItemModel
+        model = InspectionReportItemModel
         fields = "__all__"
 
 
 # endregion
-# region 检验记录定义 序列化器
-class RecordInforDefinitionSerialize_Create(serializers.ModelSerializer):
+# region 检验汇报定义 序列化器
+class ReportInforDefinitionSerialize_Create(serializers.ModelSerializer):
     """
-    检验记录定义--create
+    检验汇报定义--create
     """
     state = serializers.HiddenField(default="新建")
     create_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
-        model = InspectionRecordModel
+        model = InspectionReportModel
         fields = ("id", "name", "code", "state", "type", "child","submit_sum","samples_sum","ok_sum","ng_sum","concession_sum","result","handler","dataTime",
                   "attribute1", "attribute2","attribute3", "attribute4", "attribute5", "image", "file","desc", "auditor", "create_user")
 
     # 所有字段验证
     def validate(self, attrs):
-        if not attrs["create_user"].has_perm('quality.add_inspectionrecordmodel'):  # 如果当前用户没有创建权限
+        if not attrs["create_user"].has_perm('quality.add_inspectionreportmodel'):  # 如果当前用户没有创建权限
             raise serializers.ValidationError("当前用户不具备创建权限'")
         if settings.SAME_USER!=True:
             if attrs["create_user"].username == attrs["auditor"]:   # 审核帐号不能与创建帐号相同
@@ -61,13 +61,13 @@ class RecordInforDefinitionSerialize_Create(serializers.ModelSerializer):
             auditor = User.objects.get(username=value)
         except Exception as e:
             raise serializers.ValidationError("指定的审核账号不存在")
-        if not auditor.has_perm('quality.admin_inspectionrecordmodel'):
+        if not auditor.has_perm('quality.admin_inspectionreportmodel'):
             raise serializers.ValidationError("指定的审核账号不具备审核权限")
         return value
 
     # 类型字段验证
     def validate_type(self, value):
-        list = InspectionRecordTypeDefinitionModel.objects.get(id=value.id)
+        list = InspectionReportTypeDefinitionModel.objects.get(id=value.id)
         if list is None:  # 判断 父类别是否存在
             raise serializers.ValidationError("指定的类型不存在")
         elif (list.state != "使用中"):  # 判断 父类别状态是否合适
@@ -75,38 +75,38 @@ class RecordInforDefinitionSerialize_Create(serializers.ModelSerializer):
         return value
 
 
-class RecordInforDefinitionSerialize_List(serializers.ModelSerializer):
+class ReportInforDefinitionSerialize_List(serializers.ModelSerializer):
     """
-    检验记录定义--list
+    检验汇报定义--list
     """
-    type = InspectionRecordTypeDefinitionSerialize_List(required=False)
+    type = InspectionReportTypeDefinitionSerialize_List(required=False)
     class Meta:
-        model = InspectionRecordModel
+        model = InspectionReportModel
         fields = ("id", "name", "code", "state", "type", "dataTime", "handler",
                   "result","auditor", "create_user","create_time","update_time")
 
-class RecordInforDefinitionSerialize_Retrieve(serializers.ModelSerializer):
+class ReportInforDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     """
-    检验记录定义--retrieve
+    检验汇报定义--retrieve
     """
     image = QualityImageSerialize_List(many=True)
     file = QualityFileSerialize_List(many=True)
     alter = QualityAlterRecordSerialize_List(many=True)
-    type = InspectionRecordTypeDefinitionSerialize_List(required=False)
-    child = RecordInforItemDefinitionSerialize_List(many=True)
+    type = InspectionReportTypeDefinitionSerialize_List(required=False)
+    child = ReportInforItemDefinitionSerialize_List(many=True)
 
     class Meta:
-        model = InspectionRecordModel
+        model = InspectionReportModel
         fields = "__all__"
 
 
-class RecordInforDefinitionSerialize_Update(serializers.ModelSerializer):
+class ReportInforDefinitionSerialize_Update(serializers.ModelSerializer):
     """
-    检验记录定义--update
+    检验汇报定义--update
     """
 
     class Meta:
-        model = InspectionRecordModel
+        model = InspectionReportModel
         fields = ("id", "name", "code", "type", "child","submit_sum","samples_sum","ok_sum","ng_sum","concession_sum","result","handler","dataTime",
                   "attribute1", "attribute2", "attribute3", "attribute4", "attribute5", "image", "file", "desc", "auditor")
 
@@ -127,7 +127,7 @@ class RecordInforDefinitionSerialize_Update(serializers.ModelSerializer):
             auditor = User.objects.get(username=value)
         except Exception as e:
             raise serializers.ValidationError("指定的审核账号不存在")
-        if not auditor.has_perm('quality.admin_inspectionrecordmodel'):
+        if not auditor.has_perm('quality.admin_inspectionreportmodel'):
             raise serializers.ValidationError("指定的审核账号不具备审核权限")
         return value
 
@@ -135,20 +135,20 @@ class RecordInforDefinitionSerialize_Update(serializers.ModelSerializer):
     def validate_type(self, value):
         if self.instance.state != '新建':  # 如果不是新建状态 该字段不能更改
             raise serializers.ValidationError("当前信息已提交,禁止更改")
-        list = InspectionRecordTypeDefinitionModel.objects.get(id=value.id)
+        list = InspectionReportTypeDefinitionModel.objects.get(id=value.id)
         if list is None:  # 判断 父类别是否存在
             raise serializers.ValidationError("指定的类型不存在")
         elif (list.state != "使用中"):  # 判断 父类别状态是否合适
             raise serializers.ValidationError("指定的类型不在--'使用状态'")
         return value
 
-class RecordInforDefinitionSerialize_Partial(serializers.ModelSerializer):
+class ReportInforDefinitionSerialize_Partial(serializers.ModelSerializer):
     """
-    检验记录定义--partial
+    检验汇报定义--partial
     """
 
     class Meta:
-        model = InspectionRecordModel
+        model = InspectionReportModel
         fields = ("id", "state", "alter")
 
     # 所有字段验证
@@ -170,7 +170,7 @@ class RecordInforDefinitionSerialize_Partial(serializers.ModelSerializer):
 
     # 审核记录字段验证
     def validate_alter(self, value):
-        obj = InspectionRecordModel.objects.get(id=self.instance.id).alter
+        obj = InspectionReportModel.objects.get(id=self.instance.id).alter
         for data in value:
             obj.add(data.id)
         return value

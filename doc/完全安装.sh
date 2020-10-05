@@ -15,15 +15,15 @@
     update user set authentication_string=password('admin123') where User='root' and Host='localhost';
     如果出错,使用下边两条:
 	    update user set authentication_string='' where User='root' and Host='localhost';
-	    ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'admin123';
+	    alter user 'root'@'localhost' identified with mysql_native_password by 'admin123';
     update user set plugin="mysql_native_password";
     flush privileges;
 5.创建mes专用账号
-    CREATE USER 'mesServer'@'localhost' IDENTIFIED BY 'mes@123456';
+    create user 'mesServer'@'localhost' identified by 'mes@123456';
 6.给新用户授权
     grant all privileges on *.* to 'mesServer'@'localhost';
     如果出错,使用下边一条:
-         grant all PRIVILEGES on *.* to 'mesServer'@'localhost' identified by 'mes@123456';
+         grant all privileges on *.* to 'mesServer'@'localhost' identified by 'mes@123456';
 7.关掉数据库 (---非必须)
    sudo /etc/init.d/mysql stop
 8.设置数据库数据新路径 (---非必须)
@@ -39,8 +39,6 @@
   /var/lib/mysql r
   /var/lib/mysql/** rwk
   #修改成
-  /var/lib/mysql r,
-  /var/lib/mysql/** rwk,
   /数据盘目录/mysql/data r,
   /数据盘目录/mysql/data/** rwk,
 11.重启AppArmor服务使生效 (---非必须)

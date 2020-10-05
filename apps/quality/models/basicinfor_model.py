@@ -315,9 +315,9 @@ class InspectionStandardDefinitionModel(models.Model):
                        ("admin_inspectionstandarddefinitionmodel", u"Can admin 品质管理－检验标准定义")}
 
 
-class InspectionRecordTypeDefinitionModel(models.Model):
+class InspectionReportTypeDefinitionModel(models.Model):
     """
-    检验记录类型定义
+    检验汇报类型定义
     """
     STATUS = (
         ("新建", "新建"),
@@ -332,14 +332,14 @@ class InspectionRecordTypeDefinitionModel(models.Model):
         ("四级类别", "四级类别"),
     )
     id = models.AutoField(primary_key=True, unique=True)
-    name = models.CharField(max_length=32, name="name", null=True, blank=True, verbose_name="名称", help_text="检验记录类型名称(建议唯一)")
-    code = models.CharField(max_length=32, name="code", unique=True, verbose_name="编码", help_text="检验记录类型编码(必须唯一)")
+    name = models.CharField(max_length=32, name="name", null=True, blank=True, verbose_name="名称", help_text="检验汇报类型名称(建议唯一)")
+    code = models.CharField(max_length=32, name="code", unique=True, verbose_name="编码", help_text="检验汇报类型编码(必须唯一)")
     state = models.CharField(max_length=16,  choices=STATUS, default="新建", name="state", verbose_name="状态", help_text="当前信息的状态")
-    classes = models.CharField(max_length=16, choices=CLASS, name="classes", verbose_name="类别", help_text="检验记录类型处于的层级类别")
-    parent = models.ForeignKey("self", null=True, blank=True, name="parent",verbose_name="父类别", related_name="inspectionRecordType_child",
-                               on_delete=models.CASCADE,help_text="当前检验记录类型属于的上一级别")
-    attach_attribute = models.TextField(null=True, blank=True, name="attach_attribute", verbose_name="检验记录附加属性",help_text="当前检验记录类型下检验记录的附加属性")
-    file = models.ManyToManyField(QualityFileModel, blank=True, name="file", verbose_name="检验记录类型文件",help_text="当前检验记录类型的文件信息")
+    classes = models.CharField(max_length=16, choices=CLASS, name="classes", verbose_name="类别", help_text="检验汇报类型处于的层级类别")
+    parent = models.ForeignKey("self", null=True, blank=True, name="parent",verbose_name="父类别", related_name="InspectionReportType_child",
+                               on_delete=models.CASCADE,help_text="当前检验汇报类型属于的上一级别")
+    attach_attribute = models.TextField(null=True, blank=True, name="attach_attribute", verbose_name="检验汇报附加属性",help_text="当前检验汇报类型下检验汇报的附加属性")
+    file = models.ManyToManyField(QualityFileModel, blank=True, name="file", verbose_name="检验汇报类型文件",help_text="当前检验汇报类型的文件信息")
     desc = models.TextField(null=True, blank=True, name="desc", verbose_name="备注",help_text="当前信息未列出的字段项，可以在此字段描述.每一项用;隔开")
     create_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间", help_text="当前信息创建的时间,后台会自动填充此字段")
     update_time = models.DateTimeField(auto_now=True, verbose_name="更新时间", help_text="当前信息最后的更新时间,后台会自动填充此字段")
@@ -352,12 +352,12 @@ class InspectionRecordTypeDefinitionModel(models.Model):
        return self.code
 
     class Meta:
-        db_table = "InspectionRecordTypeDefinitionModel"
+        db_table = "InspectionReportTypeDefinitionModel"
         app_label = 'quality'
-        verbose_name = "品质管理－检验记录类型定义"
+        verbose_name = "品质管理－检验汇报类型定义"
         verbose_name_plural = verbose_name
-        permissions = {("read_inspectionrecordtypedefinitionmodel", u"Can read 品质管理－检验记录类型定义"),
-                       ("admin_inspectionrecordtypedefinitionmodel", u"Can admin 品质管理－检验记录类型定义")}
+        permissions = {("read_inspectionreporttypedefinitionmodel", u"Can read 品质管理－检验汇报类型定义"),
+                       ("admin_inspectionreporttypedefinitionmodel", u"Can admin 品质管理－检验汇报类型定义")}
 
 class QualityBoardModel(models.Model):
     """

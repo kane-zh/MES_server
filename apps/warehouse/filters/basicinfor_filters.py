@@ -23,7 +23,7 @@ class PositionDefinitionFilters(FilterSet):
     """
     class Meta:
         model = PositionDefinitionModel
-        fields = ["state", "auditor", "create_user", "parent"]
+        fields = ["state", "auditor", "create_user", "type"]
 
 
 

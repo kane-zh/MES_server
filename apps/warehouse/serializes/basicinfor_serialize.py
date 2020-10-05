@@ -320,7 +320,7 @@ class PositionDefinitionSerialize_Create(serializers.ModelSerializer):
 
     class Meta:
         model = PositionDefinitionModel
-        fields = ("id", "name", "code","state", "parent", "maximum", "place", "attribute1", "attribute2",
+        fields = ("id", "name", "code","state", "type", "maximum", "place", "attribute1", "attribute2",
                   "attribute3", "attribute4","attribute5", "image", "file", "desc",
                   "auditor","create_user")
    # 所有字段验证
@@ -343,7 +343,7 @@ class PositionDefinitionSerialize_Create(serializers.ModelSerializer):
         return value
 
     # 父仓库字段验证
-    def validate_parent(self, value):
+    def validate_type(self, value):
         list = WarehouseDefinitionModel.objects.get(id=value.id)
         if list is None:  # 判断 父类别是否存在
             raise serializers.ValidationError("指定的仓库不存在")
@@ -355,10 +355,10 @@ class PositionDefinitionSerialize_List(serializers.ModelSerializer):
     """
     仓位信息定义---list
     """
-    parent = WarehouseDefinitionSerialize_List()
+    type = WarehouseDefinitionSerialize_List()
     class Meta:
         model = PositionDefinitionModel
-        fields = ("id", "name", "code", "state","parent","place","maximum", "auditor","create_user","create_time","update_time")
+        fields = ("id", "name", "code", "state","type","place","maximum", "auditor","create_user","create_time","update_time")
 
 class PositionDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     """
@@ -367,7 +367,7 @@ class PositionDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     image = WarehouseImageSerialize_List(many=True)
     file = WarehouseFileSerialize_List(many=True)
     alter = WarehouseAlterRecordSerialize_List(many=True)
-    parent = WarehouseDefinitionSerialize_List()
+    type = WarehouseDefinitionSerialize_List()
 
     class Meta:
         model = PositionDefinitionModel
@@ -380,7 +380,7 @@ class PositionDefinitionSerialize_Update(serializers.ModelSerializer):
 
     class Meta:
         model = PositionDefinitionModel
-        fields = ("id", "name", "code","parent", "image", "file", "maximum", "place", "attribute1", "attribute2",
+        fields = ("id", "name", "code","type", "image", "file", "maximum", "place", "attribute1", "attribute2",
                   "attribute3", "attribute4","attribute5", "desc", "auditor")
 
      # 所有字段验证
@@ -405,7 +405,7 @@ class PositionDefinitionSerialize_Update(serializers.ModelSerializer):
         return value
 
     # 类型字段验证
-    def validate_parent(self, value):
+    def validate_type(self, value):
         if self.instance.state != '新建':  # 如果不是新建状态 该字段不能更改
             raise serializers.ValidationError("当前信息已提交,禁止更改")
         list = WarehouseDefinitionModel.objects.get(id=value.id)
@@ -432,10 +432,9 @@ class PositionDefinitionSerialize_Partial(serializers.ModelSerializer):
             pass
         if attrs['state']=="审核中":
             condtions = {'state__in': ("审核中","使用中", "闲置"),
-                         'parent__code__iexact':self.instance.parent.code}
-            position = PositionDefinitionModel.objects.filter(**condtions)
+                         'type__code__iexact':self.instance.type.code}
             positionNum=PositionDefinitionModel.objects.filter(**condtions).count()
-            if (positionNum > self.instance.parent.position_sum):
+            if (positionNum > self.instance.type.position_sum):
                 raise serializers.ValidationError("提交的仓位数超过了仓库最大仓位数限制")
         return attrs
 

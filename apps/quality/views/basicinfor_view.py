@@ -375,15 +375,15 @@ class InspectionStandardsDefinitionView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
         return InspectionStandardDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
-class InspectionRecordTypeDefinitionView(CreateModelMixin, ListModelMixin,
+class InspectionReportTypeDefinitionView(CreateModelMixin, ListModelMixin,
                              RetrieveModelMixin, UpdateModelMixin,
                             viewsets.GenericViewSet):
     """
-    检验记录类型定义
+    检验汇报类型定义
     """
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
-    filter_class = InspectionRecordTypeDefinitionFilters
+    filter_class = InspectionReportTypeDefinitionFilters
     search_fields = ["name","code"]
     ordering_fields = ["id","update_time","samples_ration","ok_ration","ng_ration","concession_ration"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
@@ -392,21 +392,21 @@ class InspectionRecordTypeDefinitionView(CreateModelMixin, ListModelMixin,
     # 重载获取序列化类的方法，根据不同的操作返回不同的序列化类
     def get_serializer_class(self):
         if self.action == "create":
-            return InspectionRecordTypeDefinitionSerialize_Create
+            return InspectionReportTypeDefinitionSerialize_Create
         elif self.action == "list":
-            return InspectionRecordTypeDefinitionSerialize_List
+            return InspectionReportTypeDefinitionSerialize_List
         elif self.action == "retrieve":
-            return InspectionRecordTypeDefinitionSerialize_Retrieve
+            return InspectionReportTypeDefinitionSerialize_Retrieve
         elif self.action == "update":
-            return InspectionRecordTypeDefinitionSerialize_Update
+            return InspectionReportTypeDefinitionSerialize_Update
         elif self.action == "partial_update":
-            return InspectionRecordTypeDefinitionSerialize_Partial
-        return InspectionRecordTypeDefinitionSerialize_List
+            return InspectionReportTypeDefinitionSerialize_Partial
+        return InspectionReportTypeDefinitionSerialize_List
 
     # 重载数据查询的方法，根据不同的操作查询不同的数据范围
     def get_queryset(self):
         if self.request.user.is_superuser:
-            return InspectionRecordTypeDefinitionModel.objects.all().order_by("-id")  # 超级用户可以查看所有信息
+            return InspectionReportTypeDefinitionModel.objects.all().order_by("-id")  # 超级用户可以查看所有信息
         user = self.request.user.username
         condtions1 = {'create_user__iexact': user,
                       'state__in': ("新建", "审核中", "使用中")  # 信息创建者可以看到 (新建,审核,使用中)的数据,,
@@ -417,28 +417,28 @@ class InspectionRecordTypeDefinitionView(CreateModelMixin, ListModelMixin,
         condtions3 = {'state__in': ("使用中",)  # 其他用户 可以看到(使用中)的数据
                       }
         if self.action == "list":  # 如果是查看列表
-            if not self.request.user.has_perm('quality.view_inspectionrecordtypedefinitionmodel'):  # 如果当前用户没有查看权限
+            if not self.request.user.has_perm('quality.view_inspectionreporttypedefinitionmodel'):  # 如果当前用户没有查看权限
                 condtions3 = {}  #如果普通用户不具备查看列表权限权限,则不能查看列表信息
         if self.action == "retrieve":  # 如果是查看列表
-            if not self.request.user.has_perm('quality.read_inspectionrecordtypedefinitionmodel'):  # 如果当前用户没有查看详情权限
+            if not self.request.user.has_perm('quality.read_inspectionreporttypedefinitionmodel'):  # 如果当前用户没有查看详情权限
                 condtions3 = {} #如果普通用户不具备查看详情权限,则不能查看详情信息
         if self.action == "update":  # 如果是更新列表
             condtions2 = {}
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return InspectionRecordTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
+        return InspectionReportTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
-class InspectionRecordTypeDefinitionViews(ListModelMixin,viewsets.GenericViewSet):
+class InspectionReportTypeDefinitionViews(ListModelMixin,viewsets.GenericViewSet):
     """
-    检验记录类型层级结构
+    检验汇报类型层级结构
     """
-    serializer_class = InspectionRecordTypeDefinitionSerialize_First
+    serializer_class = InspectionReportTypeDefinitionSerialize_First
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
     def get_queryset(self):
-        if (self.request.user.is_superuser or self.request.user.has_perm('quality.view_inspectionrecordtypedefinitionmodel')):
-            return  InspectionRecordTypeDefinitionModel.objects.filter(classes="一级类别")
+        if (self.request.user.is_superuser or self.request.user.has_perm('quality.view_inspectionreporttypedefinitionmodel')):
+            return  InspectionReportTypeDefinitionModel.objects.filter(classes="一级类别")
         else:
             raise exceptions.PermissionDenied
 

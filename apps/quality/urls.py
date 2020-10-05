@@ -16,10 +16,10 @@ router.register('defectInfor', DefectInforDefinitionView, basename= "DefectInfor
 router.register('inspectionStandardType', InspectionStandardTypeDefinitionView, basename="InspectionStandardTypeDefinitionView")
 router.register('inspectionStandardTypes', InspectionStandardTypeDefinitionViews, basename="InspectionStandardTypeDefinitionViews")
 router.register('inspectionStandardInfor', InspectionStandardsDefinitionView, basename="InspectionStandardsDefinitionView")
-router.register('inspectionRecordType', InspectionRecordTypeDefinitionView, basename="InspectionRecordTypeDefinitionView")
-router.register('inspectionRecordTypes', InspectionRecordTypeDefinitionViews, basename="InspectionRecordTypeDefinitionViews")
-router.register('inspectionRecordItem', RecordInforItemDefinitionView, basename="RecordInforItemDefinitionView")
-router.register('inspectionRecord', RecordInforDefinitionView, basename="RecordInforDefinitionView")
+router.register('inspectionReportType', InspectionReportTypeDefinitionView, basename="InspectionReportTypeDefinitionView")
+router.register('inspectionReportTypes', InspectionReportTypeDefinitionViews, basename="InspectionReportTypeDefinitionViews")
+router.register('inspectionReportItem', ReportInforItemDefinitionView, basename="ReportInforItemDefinitionView")
+router.register('inspectionReport', ReportInforDefinitionView, basename="ReportInforDefinitionView")
 router.register('board', QualityBoardView, basename="QualityBoardView")
 
 urlpatterns = [

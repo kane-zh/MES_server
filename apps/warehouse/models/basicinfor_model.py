@@ -164,7 +164,7 @@ class PositionDefinitionModel(models.Model):
     code = models.CharField(max_length=32, name="code", verbose_name="编码",help_text="仓位编号((与类型联合唯一))")
     state = models.CharField(max_length=16,choices=STATUS, default="新建", name="state", verbose_name="状态",
                              help_text="仓位信息的使用状态")
-    parent = models.ForeignKey(WarehouseDefinitionModel,on_delete=models.CASCADE,name="parent", verbose_name="归属仓库",
+    type = models.ForeignKey(WarehouseDefinitionModel,on_delete=models.CASCADE,name="type", verbose_name="归属仓库",
                                related_name="warehouse_item",help_text="当前仓位归属于的仓库")
     maximum = models.IntegerField(name="maximum", verbose_name="最大容量", help_text="当前仓位可放置的最多物品数量")
     place = models.CharField(max_length=32,name="place",verbose_name="所在位置", help_text="当前仓位所在的位置(在仓库中的位置)")
