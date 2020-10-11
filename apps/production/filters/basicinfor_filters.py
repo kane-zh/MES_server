@@ -47,7 +47,7 @@ class PersonnelInforDefinitionFilters(FilterSet):
     """
     class Meta:
         model = PersonnelInforDefinitionModel
-        fields=["create_user"]
+        fields=["create_user","workshop_code","team"]
 
 class AssessmentLevelDefinitionFilters(FilterSet):
     """

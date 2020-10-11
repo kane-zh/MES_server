@@ -190,7 +190,7 @@ class PositionDefinitionModel(models.Model):
         app_label = 'warehouse'
         verbose_name = "仓库管理－仓位信息定义"
         verbose_name_plural = verbose_name
-        unique_together = ('code', 'parent')
+        unique_together = ('code', 'type')
         permissions = {("read_positiondefinitionmodel", u"Can read 仓库管理－仓位信息定义"),
                        ("admin_positiondefinitionmodel", u"Can admin 仓库管理－仓位信息定义")}
 

@@ -28,7 +28,7 @@ class ReportInforItemDefinitionView(CreateModelMixin, ListModelMixin,
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, IsOwnerOrReadOnly]
     permission_classes = [IsAuthenticated, ]
 
-class RepordInforDefinitionView(CreateModelMixin, ListModelMixin,
+class ReportInforDefinitionView(CreateModelMixin, ListModelMixin,
                              RetrieveModelMixin, UpdateModelMixin,
                             viewsets.GenericViewSet):
     """
@@ -36,7 +36,7 @@ class RepordInforDefinitionView(CreateModelMixin, ListModelMixin,
     """
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
-    filter_class = RecordInforDefinitionFilters
+    filter_class = ReportInforDefinitionFilters
     search_fields = ["name","code","result","handler"]
     ordering_fields = ["id","update_time","submit_sum","samples_sum","ok_sum","ng_sum","concession_sum","dataTime"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
@@ -75,10 +75,10 @@ class RepordInforDefinitionView(CreateModelMixin, ListModelMixin,
         condtions3 = {'state__in': ("完成",)  # 其他用户 可以看到(使用中)的数据
                       }
         if self.action == "list":  # 如果是查看列表
-            if not self.request.user.has_perm('quality.view_recordinfordefinitionmodel'):  # 如果当前用户没有查看权限
+            if not self.request.user.has_perm('quality.view_reportinfordefinitionmodel'):  # 如果当前用户没有查看权限
                 condtions3 = {}  #如果普通用户不具备查看列表权限权限,则不能查看列表信息
         if self.action == "retrieve":  # 如果是查看列表
-            if not self.request.user.has_perm('quality.read_recordinfordefinitionmodel'):  # 如果当前用户没有查看详情权限
+            if not self.request.user.has_perm('quality.read_reportinfordefinitionmodel'):  # 如果当前用户没有查看详情权限
                 condtions3 = {}  #如果普通用户不具备查看详情权限,则不能查看详情信息
         if self.action == "update":  # 如果是更新列表
             condtions2 = {}
