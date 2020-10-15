@@ -354,7 +354,7 @@ class DefectGradeDefinitionSerialize_List(serializers.ModelSerializer):
 
 class DefectInforDefinitionSerialize_Grade(serializers.ModelSerializer):
     """
-    缺陷定义--权限等级
+    缺陷定义--缺陷等级
     """
     type = DefectTypeDefinitionSerialize_List(required=False)
     class Meta:

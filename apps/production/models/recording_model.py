@@ -263,3 +263,153 @@ class SemifinishedDailyReportModel(models.Model):
         verbose_name_plural = verbose_name
         permissions = {("read_semifinisheddailyreportmodel", u"Can read 生产管理－半成品生产日报记录"),
                        ("admin_semifinisheddailyreportmodel", u"Can admin 生产管理－半成品生产日报记录")}
+
+class ProductDataDefinitionModel(models.Model):
+    """
+    产品过程数据定义
+    """
+    id = models.AutoField(primary_key=True, unique=True)
+    type = models.ForeignKey(ProductDataTypeDefinitionModel, on_delete=models.CASCADE,
+                             name="type",related_name="productDataType_item", verbose_name="类型", help_text="当前产品过程数据的产品过程数据类型")
+    productType_code = models.CharField(max_length=32, name="productType_code", verbose_name="产品类型编码", help_text="当前信息关联产品类型信息编码")
+    productType_name = models.CharField(max_length=32, name="productType_name", verbose_name="产品类型名称", help_text="当前信息关联产品类型信息名称")
+    product_id = models.CharField(max_length=32, name="product_id", verbose_name="产品ID", help_text="当前订单项对应的产品ID")
+    product_name = models.CharField(max_length=32, name="product_name", verbose_name="产品名称",help_text="当前订单项对应的产品名称")
+    product_code = models.CharField(max_length=32, name="product_code", verbose_name="产品编码",help_text="当前订单项对应的产品编码")
+    personnel = models.TextField(null=True, blank=True, name="personnel", verbose_name="人员信息",help_text="当前产品过程数据关联的人员信息")
+    equipment = models.TextField(null=True, blank=True, name="equipment", verbose_name="设备信息",help_text="当前产品过程数据关联的设备信息")
+    material = models.TextField(null=True, blank=True, name="material", verbose_name="物料信息",help_text="当前产品过程数据关联的物料信息")
+    station = models.TextField(null=True, blank=True, name="station", verbose_name="工位信息",help_text="当前产品过程数据关联的工艺工位信息")
+    quality = models.TextField(null=True, blank=True, name="quality", verbose_name="质量信息",help_text="当前产品过程数据关联的质量信息")
+    dataTime = models.DateTimeField(name="dataTime", null=True, blank=True,verbose_name="记录时间",help_text="当前记录的时间")
+    image = models.ManyToManyField(ProductionImageModel, blank=True, name="image", verbose_name="照片", help_text="当前记录项的照片信息")
+    file = models.ManyToManyField(ProductionFileModel, blank=True, name="file", verbose_name="文件", help_text="当前产品过程数据记录的文件信息")
+    attribute1 = models.CharField(max_length=32, null=True, blank=True, name="attribute1", verbose_name="属性1",
+                                  help_text="当前产品过程数据附加的属性1")
+    attribute2 = models.CharField(max_length=32, null=True, blank=True, name="attribute2", verbose_name="属性2",
+                                  help_text="当前产品过程数据附加的属性2")
+    attribute3 = models.CharField(max_length=32, null=True, blank=True, name="attribute3", verbose_name="属性3",
+                                  help_text="当前产品过程数据附加的属性3")
+    attribute4 = models.CharField(max_length=32, null=True, blank=True, name="attribute4", verbose_name="属性4",
+                                  help_text="当前产品过程数据附加的属性4")
+    attribute5 = models.CharField(max_length=32, null=True, blank=True, name="attribute5", verbose_name="属性5",
+                                  help_text="当前产品过程数据附加的属性5")
+    attribute６ = models.CharField(max_length=32, null=True, blank=True, name="attribute6", verbose_name="属性6",
+                                  help_text="当前产品过程数据附加的属性6")
+    attribute7 = models.CharField(max_length=32, null=True, blank=True, name="attribute7", verbose_name="属性7",
+                                  help_text="当前产品过程数据附加的属性7")
+    attribute8 = models.CharField(max_length=32, null=True, blank=True, name="attribute8", verbose_name="属性8",
+                                  help_text="当前产品过程数据附加的属性8")
+    attribute9 = models.CharField(max_length=32, null=True, blank=True, name="attribute9", verbose_name="属性9",
+                                  help_text="当前产品过程数据附加的属性9")
+    attribute10 = models.CharField(max_length=32, null=True, blank=True, name="attribute10", verbose_name="属性10",
+                                  help_text="当前产品过程数据附加的属性10")
+    attribute11 = models.CharField(max_length=32, null=True, blank=True, name="attribute11", verbose_name="属性11",
+                                  help_text="当前产品过程数据附加的属性11")
+    attribute12 = models.CharField(max_length=32, null=True, blank=True, name="attribute12", verbose_name="属性12",
+                                  help_text="当前产品过程数据附加的属性12")
+    attribute13 = models.CharField(max_length=32, null=True, blank=True, name="attribute13", verbose_name="属性13",
+                                  help_text="当前产品过程数据附加的属性13")
+    attribute14 = models.CharField(max_length=32, null=True, blank=True, name="attribute14", verbose_name="属性14",
+                                  help_text="当前产品过程数据附加的属性14")
+    attribute15 = models.CharField(max_length=32, null=True, blank=True, name="attribute15", verbose_name="属性15",
+                                  help_text="当前产品过程数据附加的属性15")
+    attribute1６ = models.CharField(max_length=32, null=True, blank=True, name="attribute16", verbose_name="属性16",
+                                  help_text="当前产品过程数据附加的属性16")
+    attribute17 = models.CharField(max_length=32, null=True, blank=True, name="attribute17", verbose_name="属性17",
+                                  help_text="当前产品过程数据附加的属性17")
+    attribute18 = models.CharField(max_length=32, null=True, blank=True, name="attribute18", verbose_name="属性18",
+                                  help_text="当前产品过程数据附加的属性18")
+    attribute19 = models.CharField(max_length=32, null=True, blank=True, name="attribute19", verbose_name="属性19",
+                                  help_text="当前产品过程数据附加的属性19")
+    attribute20 = models.CharField(max_length=32, null=True, blank=True, name="attribute20", verbose_name="属性20",
+                                  help_text="当前产品过程数据附加的属性20")
+    desc = models.TextField(null=True, blank=True, name="desc", verbose_name="备注",help_text="当前信息未列出的字段项，可以在此字段描述.每一项用;隔开")
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间", help_text="当前信息创建的时间,后台会自动填充此字段")
+    create_user = models.CharField(max_length=32, name="create_user", verbose_name="创建账号", help_text="创建当前信息的账号名称")
+
+    def __str__(self):
+        return self.id
+
+    class Meta:
+        db_table = 'ProductDataDefinitionModel'
+        app_label = "production"
+        verbose_name = "生产管理－产品过程数据定义"
+        verbose_name_plural = verbose_name
+        permissions = {("read_productdatadefinitionmodel", u"Can read 生产管理－产品过程数据定义"),
+                       ("admin_productdatadefinitionmodel", u"Can admin 生产管理－产品过程数据定义")}
+
+class SemifinishedDataDefinitionModel(models.Model):
+    """
+    半成品过程数据定义
+    """
+    id = models.AutoField(primary_key=True, unique=True)
+    type = models.ForeignKey(SemifinishedDataTypeDefinitionModel, on_delete=models.CASCADE,
+                             name="type",related_name="semifinishedDataType_item", verbose_name="类型", help_text="当前半成品过程数据的半成品过程数据类型")
+    semifinishedType_code = models.CharField(max_length=32, name="semifinishedType_code", verbose_name="半成品类型编码", help_text="当前信息关联半成品类型信息编码")
+    semifinishedType_name = models.CharField(max_length=32, name="semifinishedType_name", verbose_name="半成品类型名称", help_text="当前信息关联半成品类型信息名称")
+    semifinished_id = models.CharField(max_length=32, name="semifinished_id", verbose_name="半成品ID", help_text="当前订单项对应的半成品ID")
+    semifinished_name = models.CharField(max_length=32, name="semifinished_name", verbose_name="半成品名称",help_text="当前订单项对应的半成品名称")
+    semifinished_code = models.CharField(max_length=32, name="semifinished_code", verbose_name="半成品编码",help_text="当前订单项对应的半成品编码")
+    personnel = models.TextField(null=True, blank=True, name="personnel", verbose_name="人员信息",help_text="当前半成品过程数据关联的人员信息")
+    equipment = models.TextField(null=True, blank=True, name="equipment", verbose_name="设备信息",help_text="当前半成品过程数据关联的设备信息")
+    material = models.TextField(null=True, blank=True, name="material", verbose_name="物料信息",help_text="当前半成品过程数据关联的物料信息")
+    station = models.TextField(null=True, blank=True, name="station", verbose_name="工位信息",help_text="当前半成品过程数据关联的工艺工位信息")
+    quality = models.TextField(null=True, blank=True, name="quality", verbose_name="质量信息",help_text="当前半成品过程数据关联的质量信息")
+    dataTime = models.DateTimeField(name="dataTime", null=True, blank=True,verbose_name="记录时间",help_text="当前记录的时间")
+    image = models.ManyToManyField(ProductionImageModel, blank=True, name="image", verbose_name="照片", help_text="当前记录项的照片信息")
+    file = models.ManyToManyField(ProductionFileModel, blank=True, name="file", verbose_name="文件", help_text="当前半成品过程数据记录的文件信息")
+    attribute1 = models.CharField(max_length=32, null=True, blank=True, name="attribute1", verbose_name="属性1",
+                                  help_text="当前半成品过程数据附加的属性1")
+    attribute2 = models.CharField(max_length=32, null=True, blank=True, name="attribute2", verbose_name="属性2",
+                                  help_text="当前半成品过程数据附加的属性2")
+    attribute3 = models.CharField(max_length=32, null=True, blank=True, name="attribute3", verbose_name="属性3",
+                                  help_text="当前半成品过程数据附加的属性3")
+    attribute4 = models.CharField(max_length=32, null=True, blank=True, name="attribute4", verbose_name="属性4",
+                                  help_text="当前半成品过程数据附加的属性4")
+    attribute5 = models.CharField(max_length=32, null=True, blank=True, name="attribute5", verbose_name="属性5",
+                                  help_text="当前半成品过程数据附加的属性5")
+    attribute６ = models.CharField(max_length=32, null=True, blank=True, name="attribute6", verbose_name="属性6",
+                                  help_text="当前半成品过程数据附加的属性6")
+    attribute7 = models.CharField(max_length=32, null=True, blank=True, name="attribute7", verbose_name="属性7",
+                                  help_text="当前半成品过程数据附加的属性7")
+    attribute8 = models.CharField(max_length=32, null=True, blank=True, name="attribute8", verbose_name="属性8",
+                                  help_text="当前半成品过程数据附加的属性8")
+    attribute9 = models.CharField(max_length=32, null=True, blank=True, name="attribute9", verbose_name="属性9",
+                                  help_text="当前半成品过程数据附加的属性9")
+    attribute10 = models.CharField(max_length=32, null=True, blank=True, name="attribute10", verbose_name="属性10",
+                                  help_text="当前半成品过程数据附加的属性10")
+    attribute11 = models.CharField(max_length=32, null=True, blank=True, name="attribute11", verbose_name="属性11",
+                                  help_text="当前半成品过程数据附加的属性11")
+    attribute12 = models.CharField(max_length=32, null=True, blank=True, name="attribute12", verbose_name="属性12",
+                                  help_text="当前半成品过程数据附加的属性12")
+    attribute13 = models.CharField(max_length=32, null=True, blank=True, name="attribute13", verbose_name="属性13",
+                                  help_text="当前半成品过程数据附加的属性13")
+    attribute14 = models.CharField(max_length=32, null=True, blank=True, name="attribute14", verbose_name="属性14",
+                                  help_text="当前半成品过程数据附加的属性14")
+    attribute15 = models.CharField(max_length=32, null=True, blank=True, name="attribute15", verbose_name="属性15",
+                                  help_text="当前半成品过程数据附加的属性15")
+    attribute1６ = models.CharField(max_length=32, null=True, blank=True, name="attribute16", verbose_name="属性16",
+                                  help_text="当前半成品过程数据附加的属性16")
+    attribute17 = models.CharField(max_length=32, null=True, blank=True, name="attribute17", verbose_name="属性17",
+                                  help_text="当前半成品过程数据附加的属性17")
+    attribute18 = models.CharField(max_length=32, null=True, blank=True, name="attribute18", verbose_name="属性18",
+                                  help_text="当前半成品过程数据附加的属性18")
+    attribute19 = models.CharField(max_length=32, null=True, blank=True, name="attribute19", verbose_name="属性19",
+                                  help_text="当前半成品过程数据附加的属性19")
+    attribute20 = models.CharField(max_length=32, null=True, blank=True, name="attribute20", verbose_name="属性20",
+                                  help_text="当前半成品过程数据附加的属性20")
+    desc = models.TextField(null=True, blank=True, name="desc", verbose_name="备注",help_text="当前信息未列出的字段项，可以在此字段描述.每一项用;隔开")
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间", help_text="当前信息创建的时间,后台会自动填充此字段")
+    create_user = models.CharField(max_length=32, name="create_user", verbose_name="创建账号", help_text="创建当前信息的账号名称")
+
+    def __str__(self):
+        return self.id
+
+    class Meta:
+        db_table = 'SemifinishedDataDefinitionModel'
+        app_label = "production"
+        verbose_name = "生产管理－半成品过程数据定义"
+        verbose_name_plural = verbose_name
+        permissions = {("read_semifinisheddatadefinitionmodel", u"Can read 生产管理－半成品过程数据定义"),
+                       ("admin_semifinisheddatadefinitionmodel", u"Can admin 生产管理－半成品过程数据定义")}

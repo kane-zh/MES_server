@@ -54,7 +54,7 @@ class ProductTaskCreateFilters(FilterSet):
     """
     class Meta:
         model = ProductTaskCreateModel
-        fields = ["state", "auditor", "create_user","priority"]
+        fields = ["state", "auditor", "create_user","priority","workshop_code"]
 
 class SemifinishedTaskCreateFilters(FilterSet):
     """

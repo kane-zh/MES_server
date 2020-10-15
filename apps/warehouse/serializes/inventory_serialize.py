@@ -5,6 +5,8 @@ from commonFunction import *
 from django.contrib.auth import get_user_model
 from apps.process.models.basicinfor_model import *
 from apps.equipment.models.basicinfor_model import *
+from apps.quality.models.basicinfor_model import *
+from apps.quality.models.recording_model import *
 
 from Mes import settings
 
@@ -795,11 +797,10 @@ class MaterialManageSerialize_Create(serializers.ModelSerializer) :
 
     class Meta :
         model = MaterialManageModel
-        fields = ("id", "name", "code", "state", "type", "position_id", "material_id", "handler", "batch",
+        fields = ("id", "name", "code", "state", "type", "position_id", "material_id","inspectionReport_id", "handler", "batch",
                   "sum", "dataTime", "attribute1", "attribute2",
                   "attribute3", "attribute4", "attribute5", "desc", "create_user", "auditor"
                   )
-
     # 所有字段验证
     def validate(self, attrs) :
         if not attrs["create_user"].has_perm('warehouse.add_materialmanagemodel') :  # 如果当前用户没有创建权限
@@ -825,6 +826,16 @@ class MaterialManageSerialize_Create(serializers.ModelSerializer) :
         attrs["materialType_name"] = material.type.name  # 获取物料类型名称
         attrs["material_code"] = material.code  # 获取物料编码
         attrs["material_name"] = material.name  # 获取物料名称
+        if 'inspectionReport_id' in attrs.keys():
+            if attrs['inspectionReport_id'] is not '':
+                try:
+                    report = InspectionReportModel.objects.get(id=attrs["inspectionReport_id"])  # 判断指定的质检报告是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的质检报告不存在")
+                attrs["inspectionReportType_code"] = report.type.code  # 获取质检报告类型编码
+                attrs["inspectionReportType_name"] = report.type.name  # 获取质检报告类型名称
+                attrs["inspectionReport_code"] = report.code  # 获取质检报告编码
+                attrs["inspectionReport_name"] = report.name  # 获取质检报告名称
         return attrs
 
     # 审核者字段验证
@@ -867,7 +878,7 @@ class MaterialManageSerialize_Update(serializers.ModelSerializer) :
 
     class Meta :
         model = MaterialManageModel
-        fields = ("id", "name", "code", "type", "position_id", "material_id", "handler", "batch",
+        fields = ("id", "name", "code", "type", "position_id", "material_id","inspectionReport_id", "handler", "batch",
                   "sum", "dataTime", "attribute1", "attribute2",
                   "attribute3", "attribute4", "attribute5", "desc", "auditor", "alter")
 
@@ -893,6 +904,16 @@ class MaterialManageSerialize_Update(serializers.ModelSerializer) :
         attrs["materialType_name"] = material.type.name  # 获取物料类型名称
         attrs["material_code"] = material.code  # 获取物料编码
         attrs["material_name"] = material.name  # 获取物料名称
+        if 'inspectionReport_id' in attrs.keys():
+            if attrs['inspectionReport_id'] is not '':
+                try:
+                    report = InspectionReportModel.objects.get(id=attrs["inspectionReport_id"])  # 判断指定的质检报告是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的质检报告不存在")
+                attrs["inspectionReportType_code"] = report.type.code  # 获取质检报告类型编码
+                attrs["inspectionReportType_name"] = report.type.name  # 获取质检报告类型名称
+                attrs["inspectionReport_code"] = report.code  # 获取质检报告编码
+                attrs["inspectionReport_name"] = report.name  # 获取质检报告名称
         return attrs
 
     # 审核者字段验证
@@ -1012,42 +1033,85 @@ class MaterialManageSerialize_Partial(serializers.ModelSerializer) :
             materialStockDetail.sum += self.instance.sum  # 更新库存数量
             materialStockDetail.save()
 
-    # 出库操作 条件判断
-    def outbound(self, state) :
-        condtions = {'state__iexact' : "使用中",
-                     'material_id__iexact' : self.instance.material_id,
-                     'position_id__iexact' : self.instance.position_id,
-                     'batch__iexact' : self.instance.batch
+    # # 出库操作 条件判断
+    # def outbound(self, state) :
+    #     condtions = {'state__iexact' : "使用中",
+    #                  'material_id__iexact' : self.instance.material_id,
+    #                  'position_id__iexact' : self.instance.position_id,
+    #                  'batch__iexact' : self.instance.batch
+    #                  }
+    #     if state == "作废" :
+    #         return
+    #     try :
+    #         materialStockDetail = MaterialStockDetailModel.objects.get(**condtions)  # 获取指定的库存明细
+    #     except Exception as e :
+    #         raise serializers.ValidationError("当前库存明细不存在,无法进行出库操作")
+    #     position = PositionDefinitionModel.objects.get(id=self.instance.position_id)  # 获取指定的仓位信息
+    #     if state == "审核中" or state == "完成":  # 提交情况下
+    #         if self.instance.sum > materialStockDetail.sum :  # 如果操作数量超出库存数量
+    #             raise serializers.ValidationError("当前出库数量超出库存数量")
+    #     if state == "完成" :  # 通过审核情况下
+    #         condtions1 = {'material_id__iexact' : self.instance.material_id,
+    #                       'warehouse_code__iexact' : self.instance.warehouse_code,
+    #                       'batch__iexact' : self.instance.batch
+    #                       }
+    #         try :
+    #             materialStockInfor = MaterialStockInforModel.objects.get(**condtions1)  # 获取指定的库存信息
+    #         except Exception as e :
+    #             raise serializers.ValidationError("当前库存信息与库存明细不符合")
+    #         materialStockInfor.sum -= self.instance.sum  # 更新库存数量
+    #         materialStockInfor.save()
+    #         materialStockDetail.sum -= self.instance.sum  # 更新库存数量
+    #         materialStockDetail.save()
+    #         if (materialStockDetail.sum <= 0) :
+    #             position.state = "闲置"  # 释放当前仓位(将状态置为‘空闲状态’)
+    #             position.save()
+    #             materialStockDetail.state = "完成"  # 释放当前库存明细(将状态置为‘空闲状态’)
+    #             materialStockDetail.save()
+    def outbound(self, state):
+        condtions = {'state__iexact': "使用中",
+                     'material_id__iexact': self.instance.material_id,
+                     'position_id__iexact': self.instance.position_id,
+                     'batch__iexact': self.instance.batch
                      }
-        if state == "作废" :
-            return
-        try :
+        try:
             materialStockDetail = MaterialStockDetailModel.objects.get(**condtions)  # 获取指定的库存明细
-        except Exception as e :
+        except Exception as e:
             raise serializers.ValidationError("当前库存明细不存在,无法进行出库操作")
-        position = PositionDefinitionModel.objects.get(id=self.instance.position_id)  # 获取指定的仓位信息
-        if state == "审核中" or state == "完成":  # 提交情况下
-            if self.instance.sum > materialStockDetail.sum :  # 如果操作数量超出库存数量
+        condtions1 = {'material_id__iexact': self.instance.material_id,
+                      'warehouse_code__iexact': self.instance.warehouse_code,
+                      'batch__iexact': self.instance.batch
+                      }
+        try:
+            materialStockInfor = MaterialStockInforModel.objects.get(**condtions1)  # 获取指定的库存信息
+        except Exception as e:
+            raise serializers.ValidationError("当前库存信息与库存明细不符合")
+        if (self.instance.state == "新建" and state == "作废"):
+            return
+        if (self.instance.state == "新建" and state == "审核中"):  # 提交情况下
+            if self.instance.sum > materialStockDetail.sum:  # 如果操作数量超出库存数量
                 raise serializers.ValidationError("当前出库数量超出库存数量")
-        if state == "完成" :  # 通过审核情况下
-            condtions1 = {'material_id__iexact' : self.instance.material_id,
-                          'warehouse_code__iexact' : self.instance.warehouse_code,
-                          'batch__iexact' : self.instance.batch
-                          }
-            try :
-                materialStockInfor = MaterialStockInforModel.objects.get(**condtions1)  # 获取指定的库存信息
-            except Exception as e :
-                raise serializers.ValidationError("当前库存信息与库存明细不符合")
             materialStockInfor.sum -= self.instance.sum  # 更新库存数量
             materialStockInfor.save()
             materialStockDetail.sum -= self.instance.sum  # 更新库存数量
             materialStockDetail.save()
-            if (materialStockDetail.sum <= 0) :
+        if (self.instance.state == "审核中" and state == "完成"):  # 通过审核情况下
+            position = PositionDefinitionModel.objects.get(id=self.instance.position_id)  # 获取指定的仓位信息
+            if (materialStockDetail.sum <= 0):
                 position.state = "闲置"  # 释放当前仓位(将状态置为‘空闲状态’)
                 position.save()
                 materialStockDetail.state = "完成"  # 释放当前库存明细(将状态置为‘空闲状态’)
                 materialStockDetail.save()
-
+        if (self.instance.state == "审核中" and state == "新建"):  # 驳回情况下
+            materialStockInfor.sum += self.instance.sum  # 更新库存数量
+            materialStockInfor.save()
+            materialStockDetail.sum += self.instance.sum  # 更新库存数量
+            materialStockDetail.save()
+        if (self.instance.state == "审核中" and state == "作废"):  # 审核作废情况下
+            materialStockInfor.sum += self.instance.sum  # 更新库存数量
+            materialStockInfor.save()
+            materialStockDetail.sum += self.instance.sum  # 更新库存数量
+            materialStockDetail.save()
     # 盘点操作 条件判断
     def inventory(self, state) :
         condtions = {'state__iexact' : "使用中",
@@ -1136,7 +1200,7 @@ class SemifinishedManageSerialize_Create(serializers.ModelSerializer) :
 
     class Meta :
         model = SemifinishedManageModel
-        fields = ("id", "name", "code", "state", "type", "position_id", "semifinished_id", "handler", "batch",
+        fields = ("id", "name", "code", "state", "type", "position_id", "semifinished_id", "inspectionReport_id","handler", "batch",
                   "sum", "dataTime", "attribute1", "attribute2",
                   "attribute3", "attribute4", "attribute5", "desc", "create_user", "auditor"
                   )
@@ -1166,6 +1230,16 @@ class SemifinishedManageSerialize_Create(serializers.ModelSerializer) :
         attrs["semifinishedType_name"] = semifinished.type.name  # 获取半成品类型名称
         attrs["semifinished_code"] = semifinished.code  # 获取半成品编码
         attrs["semifinished_name"] = semifinished.name  # 获取半成品名称
+        if 'inspectionReport_id' in attrs.keys():
+            if attrs['inspectionReport_id'] is not '':
+                try:
+                    report = InspectionReportModel.objects.get(id=attrs["inspectionReport_id"])  # 判断指定的质检报告是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的质检报告不存在")
+                attrs["inspectionReportType_code"] = report.type.code  # 获取质检报告类型编码
+                attrs["inspectionReportType_name"] = report.type.name  # 获取质检报告类型名称
+                attrs["inspectionReport_code"] = report.code  # 获取质检报告编码
+                attrs["inspectionReport_name"] = report.name  # 获取质检报告名称
         return attrs
 
     # 审核者字段验证
@@ -1208,7 +1282,7 @@ class SemifinishedManageSerialize_Update(serializers.ModelSerializer) :
 
     class Meta :
         model = SemifinishedManageModel
-        fields = ("id", "name", "code", "type", "position_id", "semifinished_id", "handler", "batch",
+        fields = ("id", "name", "code", "type", "position_id", "semifinished_id","inspectionReport_id", "handler", "batch",
                   "sum", "dataTime", "attribute1", "attribute2",
                   "attribute3", "attribute4", "attribute5", "desc", "auditor", "alter")
 
@@ -1234,6 +1308,16 @@ class SemifinishedManageSerialize_Update(serializers.ModelSerializer) :
         attrs["semifinishedType_name"] = semifinished.type.name  # 获取半成品类型名称
         attrs["semifinished_code"] = semifinished.code  # 获取半成品编码
         attrs["semifinished_name"] = semifinished.name  # 获取半成品名称
+        if 'inspectionReport_id' in attrs.keys():
+            if attrs['inspectionReport_id'] is not '':
+                try:
+                    report = InspectionReportModel.objects.get(id=attrs["inspectionReport_id"])  # 判断指定的质检报告是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的质检报告不存在")
+                attrs["inspectionReportType_code"] = report.type.code  # 获取质检报告类型编码
+                attrs["inspectionReportType_name"] = report.type.name  # 获取质检报告类型名称
+                attrs["inspectionReport_code"] = report.code  # 获取质检报告编码
+                attrs["inspectionReport_name"] = report.name  # 获取质检报告名称
         return attrs
 
     # 审核者字段验证
@@ -1355,41 +1439,85 @@ class SemifinishedManageSerialize_Partial(serializers.ModelSerializer) :
             semifinishedStockDetail.save()
 
     # 出库操作 条件判断
-    def outbound(self, state) :
-        condtions = {'state__iexact' : "使用中",
-                     'semifinished_id__iexact' : self.instance.semifinished_id,
-                     'position_id__iexact' : self.instance.position_id,
-                     'batch__iexact' : self.instance.batch
+    # def outbound(self, state) :
+    #     condtions = {'state__iexact' : "使用中",
+    #                  'semifinished_id__iexact' : self.instance.semifinished_id,
+    #                  'position_id__iexact' : self.instance.position_id,
+    #                  'batch__iexact' : self.instance.batch
+    #                  }
+    #     if state == "作废" :
+    #         return
+    #     try :
+    #         semifinishedStockDetail = SemifinishedStockDetailModel.objects.get(**condtions)  # 获取指定的库存明细
+    #     except Exception as e :
+    #         raise serializers.ValidationError("当前库存明细不存在,无法进行出库操作")
+    #     position = PositionDefinitionModel.objects.get(id=self.instance.position_id)  # 获取指定的仓位信息
+    #     if state == "审核中" or state == "完成":  # 提交情况下
+    #         if self.instance.sum > semifinishedStockDetail.sum :  # 如果操作数量超出库存数量
+    #             raise serializers.ValidationError("当前出库数量超出库存数量")
+    #     if state == "完成" :  # 通过审核情况下
+    #         condtions1 = {'semifinished_id__iexact' : self.instance.semifinished_id,
+    #                       'warehouse_code__iexact' : self.instance.warehouse_code,
+    #                       'batch__iexact' : self.instance.batch
+    #                       }
+    #         try :
+    #             semifinishedStockInfor = SemifinishedStockInforModel.objects.get(**condtions1)  # 获取指定的库存信息
+    #         except Exception as e :
+    #             raise serializers.ValidationError("当前库存信息与库存明细不符合")
+    #         semifinishedStockInfor.sum -= self.instance.sum  # 更新库存数量
+    #         semifinishedStockInfor.save()
+    #         semifinishedStockDetail.sum -= self.instance.sum  # 更新库存数量
+    #         semifinishedStockDetail.save()
+    #         if (semifinishedStockDetail.sum <= 0) :
+    #             position.state = "闲置"  # 释放当前仓位(将状态置为‘空闲状态’)
+    #             position.save()
+    #             semifinishedStockDetail.state = "完成"  # 释放当前库存明细(将状态置为‘空闲状态’)
+    #             semifinishedStockDetail.save()
+
+    def outbound(self, state):
+        condtions = {'state__iexact': "使用中",
+                     'semifinished_id__iexact': self.instance.semifinished_id,
+                     'position_id__iexact': self.instance.position_id,
+                     'batch__iexact': self.instance.batch
                      }
-        if state == "作废" :
-            return
-        try :
+        try:
             semifinishedStockDetail = SemifinishedStockDetailModel.objects.get(**condtions)  # 获取指定的库存明细
-        except Exception as e :
+        except Exception as e:
             raise serializers.ValidationError("当前库存明细不存在,无法进行出库操作")
-        position = PositionDefinitionModel.objects.get(id=self.instance.position_id)  # 获取指定的仓位信息
-        if state == "审核中" or state == "完成":  # 提交情况下
-            if self.instance.sum > semifinishedStockDetail.sum :  # 如果操作数量超出库存数量
+        condtions1 = {'semifinished_id__iexact': self.instance.semifinished_id,
+                      'warehouse_code__iexact': self.instance.warehouse_code,
+                      'batch__iexact': self.instance.batch
+                      }
+        try:
+            semifinishedStockInfor = SemifinishedStockInforModel.objects.get(**condtions1)  # 获取指定的库存信息
+        except Exception as e:
+            raise serializers.ValidationError("当前库存信息与库存明细不符合")
+        if (self.instance.state == "新建" and state == "作废"):
+            return
+        if (self.instance.state == "新建" and state == "审核中"):  # 提交情况下
+            if self.instance.sum > semifinishedStockDetail.sum:  # 如果操作数量超出库存数量
                 raise serializers.ValidationError("当前出库数量超出库存数量")
-        if state == "完成" :  # 通过审核情况下
-            condtions1 = {'semifinished_id__iexact' : self.instance.semifinished_id,
-                          'warehouse_code__iexact' : self.instance.warehouse_code,
-                          'batch__iexact' : self.instance.batch
-                          }
-            try :
-                semifinishedStockInfor = SemifinishedStockInforModel.objects.get(**condtions1)  # 获取指定的库存信息
-            except Exception as e :
-                raise serializers.ValidationError("当前库存信息与库存明细不符合")
             semifinishedStockInfor.sum -= self.instance.sum  # 更新库存数量
             semifinishedStockInfor.save()
             semifinishedStockDetail.sum -= self.instance.sum  # 更新库存数量
             semifinishedStockDetail.save()
-            if (semifinishedStockDetail.sum <= 0) :
+        if (self.instance.state == "审核中" and state == "完成"):  # 通过审核情况下
+            position = PositionDefinitionModel.objects.get(id=self.instance.position_id)  # 获取指定的仓位信息
+            if (semifinishedStockDetail.sum <= 0):
                 position.state = "闲置"  # 释放当前仓位(将状态置为‘空闲状态’)
                 position.save()
                 semifinishedStockDetail.state = "完成"  # 释放当前库存明细(将状态置为‘空闲状态’)
                 semifinishedStockDetail.save()
-
+        if (self.instance.state == "审核中" and state == "新建"):  # 驳回情况下
+            semifinishedStockInfor.sum += self.instance.sum  # 更新库存数量
+            semifinishedStockInfor.save()
+            semifinishedStockDetail.sum += self.instance.sum  # 更新库存数量
+            semifinishedStockDetail.save()
+        if (self.instance.state == "审核中" and state == "作废"):  # 审核作废情况下
+            semifinishedStockInfor.sum += self.instance.sum  # 更新库存数量
+            semifinishedStockInfor.save()
+            semifinishedStockDetail.sum += self.instance.sum  # 更新库存数量
+            semifinishedStockDetail.save()
     # 盘点操作 条件判断
     def inventory(self, state) :
         condtions = {'state__iexact' : "使用中",
@@ -1478,7 +1606,7 @@ class ProductManageSerialize_Create(serializers.ModelSerializer) :
 
     class Meta :
         model = ProductManageModel
-        fields = ("id", "name", "code", "state", "type", "position_id", "product_id", "handler", "batch",
+        fields = ("id", "name", "code", "state", "type", "position_id", "product_id", "inspectionReport_id","handler", "batch",
                   "sum", "dataTime", "attribute1", "attribute2",
                   "attribute3", "attribute4", "attribute5", "file", "desc", "create_user", "auditor"
                   )
@@ -1508,6 +1636,16 @@ class ProductManageSerialize_Create(serializers.ModelSerializer) :
         attrs["productType_name"] = product.type.name  # 获取产品类型名称
         attrs["product_code"] = product.code  # 获取产品编码
         attrs["product_name"] = product.name  # 获取产品名称
+        if 'inspectionReport_id' in attrs.keys():
+            if attrs['inspectionReport_id'] is not '':
+                try:
+                    report = InspectionReportModel.objects.get(id=attrs["inspectionReport_id"])  # 判断指定的质检报告是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的质检报告不存在")
+                attrs["inspectionReportType_code"] = report.type.code  # 获取质检报告类型编码
+                attrs["inspectionReportType_name"] = report.type.name  # 获取质检报告类型名称
+                attrs["inspectionReport_code"] = report.code  # 获取质检报告编码
+                attrs["inspectionReport_name"] = report.name  # 获取质检报告名称
         return attrs
 
     # 审核者字段验证
@@ -1551,7 +1689,7 @@ class ProductManageSerialize_Update(serializers.ModelSerializer) :
 
     class Meta :
         model = ProductManageModel
-        fields = ("id", "name", "code", "type", "position_id", "product_id", "handler", "batch",
+        fields = ("id", "name", "code", "type", "position_id", "product_id", "inspectionReport_id","handler", "batch",
                   "sum", "dataTime", "attribute1", "attribute2",
                   "attribute3", "attribute4", "attribute5", "desc", "auditor",)
 
@@ -1577,6 +1715,16 @@ class ProductManageSerialize_Update(serializers.ModelSerializer) :
         attrs["productType_name"] = product.type.name  # 获取产品类型名称
         attrs["product_code"] = product.code  # 获取产品编码
         attrs["product_name"] = product.name  # 获取产品名称
+        if 'inspectionReport_id' in attrs.keys():
+            if attrs['inspectionReport_id'] is not '':
+                try:
+                    report = InspectionReportModel.objects.get(id=attrs["inspectionReport_id"])  # 判断指定的质检报告是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的质检报告不存在")
+                attrs["inspectionReportType_code"] = report.type.code  # 获取质检报告类型编码
+                attrs["inspectionReportType_name"] = report.type.name  # 获取质检报告类型名称
+                attrs["inspectionReport_code"] = report.code  # 获取质检报告编码
+                attrs["inspectionReport_name"] = report.name  # 获取质检报告名称
         return attrs
 
     # 审核者字段验证
@@ -1696,6 +1844,41 @@ class ProductManageSerialize_Partial(serializers.ModelSerializer) :
             productStockDetail.sum += self.instance.sum  # 更新库存数量
             productStockDetail.save()
 
+    # # 出库操作 条件判断
+    # def outbound(self, state) :
+    #     condtions = {'state__iexact' : "使用中",
+    #                  'product_id__iexact' : self.instance.product_id,
+    #                  'position_id__iexact' : self.instance.position_id,
+    #                  'batch__iexact' : self.instance.batch
+    #                  }
+    #     if state == "作废" :
+    #         return
+    #     try :
+    #         productStockDetail = ProductStockDetailModel.objects.get(**condtions)  # 获取指定的库存明细
+    #     except Exception as e :
+    #         raise serializers.ValidationError("当前库存明细不存在,无法进行出库操作")
+    #     if state == "审核中" or state == "完成":  # 提交情况下
+    #         if self.instance.sum > productStockDetail.sum :  # 如果操作数量超出库存数量
+    #             raise serializers.ValidationError("当前出库数量超出库存数量")
+    #     if state == "完成" :  # 通过审核情况下
+    #         condtions1 = {'product_id__iexact' : self.instance.product_id,
+    #                       'warehouse_code__iexact' : self.instance.warehouse_code,
+    #                       'batch__iexact' : self.instance.batch
+    #                       }
+    #         try :
+    #             productStockInfor = ProductStockInforModel.objects.get(**condtions1)  # 获取指定的库存信息
+    #         except Exception as e :
+    #             raise serializers.ValidationError("当前库存信息与库存明细不符合")
+    #         position = PositionDefinitionModel.objects.get(id=self.instance.position_id)  # 获取指定的仓位信息
+    #         productStockInfor.sum -= self.instance.sum  # 更新库存数量
+    #         productStockInfor.save()
+    #         productStockDetail.sum -= self.instance.sum  # 更新库存数量
+    #         productStockDetail.save()
+    #         if (productStockDetail.sum <= 0) :
+    #             position.state = "闲置"  # 释放当前仓位(将状态置为‘空闲状态’)
+    #             position.save()
+    #             productStockDetail.state = "完成"  # 释放当前库存明细(将状态置为‘空闲状态’)
+    #             productStockDetail.save()
     # 出库操作 条件判断
     def outbound(self, state) :
         condtions = {'state__iexact' : "使用中",
@@ -1703,34 +1886,44 @@ class ProductManageSerialize_Partial(serializers.ModelSerializer) :
                      'position_id__iexact' : self.instance.position_id,
                      'batch__iexact' : self.instance.batch
                      }
-        if state == "作废" :
-            return
         try :
             productStockDetail = ProductStockDetailModel.objects.get(**condtions)  # 获取指定的库存明细
         except Exception as e :
             raise serializers.ValidationError("当前库存明细不存在,无法进行出库操作")
-        if state == "审核中" or state == "完成":  # 提交情况下
+        condtions1 = {'product_id__iexact': self.instance.product_id,
+                      'warehouse_code__iexact': self.instance.warehouse_code,
+                      'batch__iexact': self.instance.batch
+                      }
+        try:
+            productStockInfor = ProductStockInforModel.objects.get(**condtions1)  # 获取指定的库存信息
+        except Exception as e:
+            raise serializers.ValidationError("当前库存信息与库存明细不符合")
+        if (self.instance.state == "新建" and state == "作废"):
+            return
+        if (self.instance.state=="新建" and state == "审核中"):  # 提交情况下
             if self.instance.sum > productStockDetail.sum :  # 如果操作数量超出库存数量
                 raise serializers.ValidationError("当前出库数量超出库存数量")
-        if state == "完成" :  # 通过审核情况下
-            condtions1 = {'product_id__iexact' : self.instance.product_id,
-                          'warehouse_code__iexact' : self.instance.warehouse_code,
-                          'batch__iexact' : self.instance.batch
-                          }
-            try :
-                productStockInfor = ProductStockInforModel.objects.get(**condtions1)  # 获取指定的库存信息
-            except Exception as e :
-                raise serializers.ValidationError("当前库存信息与库存明细不符合")
-            position = PositionDefinitionModel.objects.get(id=self.instance.position_id)  # 获取指定的仓位信息
             productStockInfor.sum -= self.instance.sum  # 更新库存数量
             productStockInfor.save()
             productStockDetail.sum -= self.instance.sum  # 更新库存数量
             productStockDetail.save()
+        if (self.instance.state=="审核中" and state == "完成"):  # 通过审核情况下
+            position = PositionDefinitionModel.objects.get(id=self.instance.position_id)  # 获取指定的仓位信息
             if (productStockDetail.sum <= 0) :
                 position.state = "闲置"  # 释放当前仓位(将状态置为‘空闲状态’)
                 position.save()
                 productStockDetail.state = "完成"  # 释放当前库存明细(将状态置为‘空闲状态’)
                 productStockDetail.save()
+        if (self.instance.state=="审核中" and state == "新建"):  # 驳回情况下
+            productStockInfor.sum += self.instance.sum  # 更新库存数量
+            productStockInfor.save()
+            productStockDetail.sum += self.instance.sum  # 更新库存数量
+            productStockDetail.save()
+        if (self.instance.state=="审核中" and state == "作废"):  # 审核作废情况下
+            productStockInfor.sum += self.instance.sum  # 更新库存数量
+            productStockInfor.save()
+            productStockDetail.sum += self.instance.sum  # 更新库存数量
+            productStockDetail.save()
 
     # 盘点操作 条件判断
     def inventory(self, state) :

@@ -65,6 +65,22 @@ class AssessmentTypeDefinitionFilters(FilterSet):
         model = AssessmentTypeDefinitionModel
         fields=["state","classes","auditor","create_user"]
 
+class ProductDataTypeDefinitionFilters(FilterSet):
+    """
+    产品过程数据类型定义
+    """
+    class Meta:
+        model = ProductDataTypeDefinitionModel
+        fields=["state","classes","auditor","create_user"]
+
+class SemifinishedDataTypeDefinitionFilters(FilterSet):
+    """
+    半成品过程数据类型定义
+    """
+    class Meta:
+        model = SemifinishedDataTypeDefinitionModel
+        fields=["state","classes","auditor","create_user"]
+
 class ProductionBoardFilters(FilterSet):
     """
     生产看板定义

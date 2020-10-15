@@ -368,7 +368,6 @@ class PositionDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = WarehouseFileSerialize_List(many=True)
     alter = WarehouseAlterRecordSerialize_List(many=True)
     type = WarehouseDefinitionSerialize_List()
-
     class Meta:
         model = PositionDefinitionModel
         fields = "__all__"

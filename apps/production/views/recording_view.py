@@ -10,6 +10,7 @@ from rest_framework.mixins import (CreateModelMixin,
                                    ListModelMixin,
                                    RetrieveModelMixin,
                                    UpdateModelMixin,
+                                   DestroyModelMixin
                                    )
 from apps.production.serializes.recording_serialize import *
 from apps.production.filters.recording_filters import *
@@ -234,3 +235,104 @@ class SemifinishedDailyReportView(CreateModelMixin, ListModelMixin,
             return SemifinishedDailyReportModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by(
                 "-id")
 
+class ProductDataDefinitionView(CreateModelMixin, ListModelMixin,
+                             DestroyModelMixin,
+                             viewsets.GenericViewSet):
+    """
+    产品过程数据定义
+    """
+    pagination_class = StandardResultsSetPagination
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
+    filter_class = ProductdDataDefinitionFilters
+    ordering_fields = ["id","update_time","dataTime"]
+    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    # 重载获取序列化类的方法，根据不同的操作返回不同的序列化类
+    def get_serializer_class(self):
+        if self.action == "create":
+            return ProductDataSerialize_Create
+        elif self.action == "list":
+            return ProductDataSerialize_List
+        elif self.action == "retrieve":
+            return ProductDataSerialize_Retrieve
+        return ProductDataSerialize_List
+
+    # 重载数据查询的方法，根据不同的操作查询不同的数据范围
+    def get_queryset(self):
+        start = self.request.query_params.get('start_time', None)
+        stop = self.request.query_params.get('stop_time', None)
+        if self.request.user.is_superuser:
+            if start and stop:
+                return ProductDataDefinitionModel.objects.filter(dataTime__gte=start).filter(dataTime__lte=stop).order_by("-id")
+            else:
+                return ProductDataDefinitionModel.objects.all().order_by("-id")  # 超级用户可以查看所有信息
+        user = self.request.user.username
+        condtions1 = {'create_user__iexact': user  # 信息创建者可以看到 (自己创建的)的数据,,
+                      }
+        condtions3 = { 'id__gt': 0       # 其他用户
+                      }
+
+        if self.action == "list":  # 如果是查看列表
+            if not self.request.user.has_perm('production.view_productdatadefinitionmodel'):  # 如果当前用户没有查看权限
+                condtions3 = {}  #如果普通用户不具备查看列表权限权限,则不能查看列表信息
+        if self.action == "retrieve":  # 如果是查看列表
+            if not self.request.user.has_perm('production.read_productdatadefinitionmodel'):  # 如果当前用户没有查看详情权限
+                condtions3 = {} #如果普通用户不具备查看详情权限,则不能查看详情信息
+        if start and stop:
+            return ProductDataDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions3)).filter(
+                dataTime__gte=start).filter(dataTime__lte=stop).order_by("-id")
+        else:
+            return ProductDataDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions3)).order_by(
+                "-id")
+
+class SemifinishedDataDefinitionView(CreateModelMixin, ListModelMixin,
+                             DestroyModelMixin,
+                             viewsets.GenericViewSet):
+    """
+    半成品过程数据定义
+    """
+    pagination_class = StandardResultsSetPagination
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
+    filter_class = SemifinishedDataDefinitionFilters
+    ordering_fields = ["id","update_time","dataTime"]
+    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    # 重载获取序列化类的方法，根据不同的操作返回不同的序列化类
+    def get_serializer_class(self):
+        if self.action == "create":
+            return SemifinishedDataSerialize_Create
+        elif self.action == "list":
+            return SemifinishedDataSerialize_List
+        elif self.action == "retrieve":
+            return SemifinishedDataSerialize_Retrieve
+        return SemifinishedDataSerialize_List
+
+    # 重载数据查询的方法，根据不同的操作查询不同的数据范围
+    def get_queryset(self):
+        start = self.request.query_params.get('start_time', None)
+        stop = self.request.query_params.get('stop_time', None)
+        if self.request.user.is_superuser:
+            if start and stop:
+                return SemifinishedDataDefinitionModel.objects.filter(dataTime__gte=start).filter(dataTime__lte=stop).order_by("-id")
+            else:
+                return SemifinishedDataDefinitionModel.objects.all().order_by("-id")  # 超级用户可以查看所有信息
+        user = self.request.user.username
+        condtions1 = {'create_user__iexact': user  # 信息创建者可以看到 (自己创建的)的数据,,
+                      }
+        condtions3 = { 'id__gt': 0       # 其他用户
+                      }
+
+        if self.action == "list":  # 如果是查看列表
+            if not self.request.user.has_perm('production.view_semifinisheddatadefinitionmodel'):  # 如果当前用户没有查看权限
+                condtions3 = {}  #如果普通用户不具备查看列表权限权限,则不能查看列表信息
+        if self.action == "retrieve":  # 如果是查看列表
+            if not self.request.user.has_perm('production.read_semifinisheddatadefinitionmodel'):  # 如果当前用户没有查看详情权限
+                condtions3 = {} #如果普通用户不具备查看详情权限,则不能查看详情信息
+        if start and stop:
+            return SemifinishedDataDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions3)).filter(
+                dataTime__gte=start).filter(dataTime__lte=stop).order_by("-id")
+        else:
+            return SemifinishedDataDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions3)).order_by(
+                "-id")

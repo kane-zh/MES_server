@@ -64,7 +64,7 @@ class AssessmentRecordSerialize_List(serializers.ModelSerializer):
     """
     考核信息定义--list
     """
-    type = WorkshopInforDefinitionSerialize_List(required=False)
+    type = AssessmentTypeDefinitionSerialize_List(required=False)
     personnel=PersonnelInforDefinitionSerialize_List()
     class Meta:
         model = AssessmentRecordModel
@@ -78,7 +78,7 @@ class AssessmentRecordSerialize_Retrieve(serializers.ModelSerializer):
     image =ProductionImageSerialize_List(many=True)
     file =ProductionFileSerialize_List(many=True)
     alter =ProductionAlterRecordSerialize_List(many=True)
-    type = WorkshopInforDefinitionSerialize_List(required=False)
+    type = AssessmentTypeDefinitionSerialize_List(required=False)
     personnel=PersonnelInforDefinitionSerialize_List()
     level = AssessmentLevelDefinitionSerialize_List()
 
@@ -173,7 +173,6 @@ class AssessmentRecordSerialize_Partial(serializers.ModelSerializer):
             obj.add(data.id)
         return value
 # endregion
-
 # region 产品生产日报子项定义 序列化器
 class ProductDailyReportItemSerialize_Create(serializers.ModelSerializer):
     """
@@ -367,8 +366,6 @@ class ProductDailyReportSerialize_Partial(serializers.ModelSerializer):
         return value
 
 # endregion
-
-
 # region 半成品生产日报子项定义 序列化器
 class SemifinishedDailyReportItemSerialize_Create(serializers.ModelSerializer):
     """
@@ -565,3 +562,106 @@ class SemifinishedDailyReportSerialize_Partial(serializers.ModelSerializer):
         return value
 
 # endregion
+# region 产品过程数据定义 序列化器
+class ProductDataSerialize_Create(serializers.ModelSerializer):
+    """
+    产品过程数据定义--create
+    """
+    create_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    class Meta:
+        model = ProductDataDefinitionModel
+        fields = ("id","type","product_id","personnel","equipment","material","station","quality","dataTime",
+                  "attribute1", "attribute2", "attribute3", "attribute4","attribute5","attribute6", "attribute7", "attribute8", "attribute9", "attribute10",
+                  "attribute11", "attribute12", "attribute13", "attribute14", "attribute15","attribute16", "attribute17", "attribute18", "attribute19", "attribute20",
+                  "image", "file","desc", "create_user")
+
+    # 所有字段验证
+    def validate(self, attrs):
+        if not attrs["create_user"].has_perm('production.add_productdatadefinitionmodel'):  # 如果当前用户没有创建权限
+            raise serializers.ValidationError("当前用户不具备创建权限'")
+        return attrs
+
+
+    # 类型字段验证
+    def validate_type(self, value):
+        list = ProductDataTypeDefinitionModel.objects.get(id=value.id)
+        if list is None:  # 判断 父类别是否存在
+            raise serializers.ValidationError("指定的类型不存在")
+        elif (list.state != "使用中"):  # 判断 父类别状态是否合适
+            raise serializers.ValidationError("指定的类型不在--'使用状态'")
+        return value
+
+
+class ProductDataSerialize_List(serializers.ModelSerializer):
+    """
+    产品过程数据定义--list
+    """
+    type = ProductDataTypeDefinitionSerialize_List(required=False)
+    class Meta:
+        model = ProductDataDefinitionModel
+        fields = ("id","type","productType_code","productType_name","product_name","product_id","product_code",
+                  "personnel","equipment","material","station","quality","dataTime","desc", "create_user")
+
+class ProductDataSerialize_Retrieve(serializers.ModelSerializer):
+    """
+    产品过程数据定义--retrieve
+    """
+    image =ProductionImageSerialize_List(many=True)
+    file =ProductionFileSerialize_List(many=True)
+    type = ProductDataTypeDefinitionSerialize_List(required=False)
+    class Meta:
+        model = ProductDataDefinitionModel
+        fields = "__all__"
+# endregion
+# region 半成品过程数据定义 序列化器
+class SemifinishedDataSerialize_Create(serializers.ModelSerializer):
+    """
+    半成品过程数据定义--create
+    """
+    create_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    class Meta:
+        model = SemifinishedDataDefinitionModel
+        fields = ("id","type","Semifinished_id","personnel","equipment","material","station","quality","dataTime",
+                  "attribute1", "attribute2", "attribute3", "attribute4","attribute5","attribute6", "attribute7", "attribute8", "attribute9", "attribute10",
+                  "attribute11", "attribute12", "attribute13", "attribute14", "attribute15","attribute16", "attribute17", "attribute18", "attribute19", "attribute20",
+                  "image", "file","desc", "create_user")
+
+    # 所有字段验证
+    def validate(self, attrs):
+        if not attrs["create_user"].has_perm('production.add_semifinisheddatadefinitionmodel'):  # 如果当前用户没有创建权限
+            raise serializers.ValidationError("当前用户不具备创建权限'")
+        return attrs
+
+
+    # 类型字段验证
+    def validate_type(self, value):
+        list = SemifinishedDataTypeDefinitionModel.objects.get(id=value.id)
+        if list is None:  # 判断 父类别是否存在
+            raise serializers.ValidationError("指定的类型不存在")
+        elif (list.state != "使用中"):  # 判断 父类别状态是否合适
+            raise serializers.ValidationError("指定的类型不在--'使用状态'")
+        return value
+
+
+class SemifinishedDataSerialize_List(serializers.ModelSerializer):
+    """
+    半成品过程数据定义--list
+    """
+    type = SemifinishedDataTypeDefinitionSerialize_List(required=False)
+    class Meta:
+        model = SemifinishedDataDefinitionModel
+        fields = ("id","type","semifinishedType_code","semifinishedType_name","semifinished_name","semifinished_id","semifinished_code",
+                  "personnel","equipment","material","station","quality","dataTime","desc", "create_user")
+
+class SemifinishedDataSerialize_Retrieve(serializers.ModelSerializer):
+    """
+    半成品过程数据定义--retrieve
+    """
+    image =ProductionImageSerialize_List(many=True)
+    file =ProductionFileSerialize_List(many=True)
+    type = SemifinishedDataTypeDefinitionSerialize_List(required=False)
+    class Meta:
+        model = SemifinishedDataDefinitionModel
+        fields = "__all__"
+# endregion
+

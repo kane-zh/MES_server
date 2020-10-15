@@ -8,7 +8,7 @@ class AssessmentRecordFilters(FilterSet):
     """
     class Meta:
         model = AssessmentRecordModel
-        fields = ["state", "auditor", "create_user", "type"]
+        fields = ["state", "auditor", "create_user", "type","personnel"]
 
 class ProductDailyReportFilters(FilterSet):
     """
@@ -25,3 +25,22 @@ class SemifinishedDailyReportFilters(FilterSet):
     class Meta:
         model = SemifinishedDailyReportModel
         fields = ["state", "auditor", "create_user"]
+
+
+class ProductdDataDefinitionFilters(FilterSet):
+    """
+    产品过程数据定义
+    """
+    class Meta:
+        model = ProductDataDefinitionModel
+        fields = ["create_user", "type","product_id"]
+
+
+class SemifinishedDataDefinitionFilters(FilterSet):
+    """
+    半成品过程数据定义
+    """
+
+    class Meta:
+        model = SemifinishedDataDefinitionModel
+        fields = ["create_user", "type", "semifinished_id"]

@@ -370,6 +370,14 @@ class TeamInforDefinitionSerialize_List(serializers.ModelSerializer):
         model = TeamInforDefinitionModel
         fields = ("id", "name", "code", "state","type", "principal", "duties", "desc", "auditor", "create_user",
                   "create_time","update_time")
+class PersonnelInforDefinitionSerialize_team(serializers.ModelSerializer):
+    """
+    人员信息定义--班组信息定义
+    """
+    class Meta:
+        model = PersonnelInforDefinitionModel
+        fields = ("id", "name", "code","job_number","post","wechat","mobile", "create_user"
+                  ,"create_time","update_time")
 
 class TeamInforDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     """
@@ -379,7 +387,7 @@ class TeamInforDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file =ProductionFileSerialize_List(many=True)
     alter =ProductionAlterRecordSerialize_List(many=True)
     type = WorkshopInforDefinitionSerialize_List(required=False)
-
+    team_personnel=PersonnelInforDefinitionSerialize_team(many=True)
     class Meta:
         model = TeamInforDefinitionModel
         fields = "__all__"
@@ -1253,6 +1261,440 @@ class AssessmentTypeDefinitionSerialize_First(serializers.ModelSerializer):
         fields = ("id", "name", "code", "state","assessmentType_child")
 
 # endregion
+
+# region 产品过程数据类型定义 序列化器
+class ProductDataTypeDefinitionSerialize_Create(serializers.ModelSerializer):
+    """
+    产品过程数据类型定义--create
+    """
+    state = serializers.HiddenField(default="新建")
+    create_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = ProductDataTypeDefinitionModel
+        fields = ("id", "name", "code", "state", "classes", "parent", "attach_attribute",
+                  "file", "desc", "auditor", "create_user")
+
+    # 所有字段验证
+    def validate(self, attrs):
+        if not attrs["create_user"].has_perm('production.add_productDatatypedefinitionmodel'):  # 如果当前用户没有创建权限
+            raise serializers.ValidationError("当前用户不具备创建权限'")
+        if settings.SAME_USER!=True:
+            if attrs["create_user"].username == attrs["auditor"]:   # 审核帐号不能与创建帐号相同
+                raise serializers.ValidationError("审核帐号不能与创建帐号相同'")
+        return attrs
+
+    # 审核者字段验证
+    def validate_auditor(self, value):
+        try:
+            auditor = User.objects.get(username=value)
+        except Exception as e:
+            raise serializers.ValidationError("指定的审核账号不存在")
+        if not auditor.has_perm('production.admin_productDatatypedefinitionmodel'):
+            raise serializers.ValidationError("指定的审核账号不具备审核权限")
+        return value
+
+    # 父类别字段验证
+    def validate_parent(self, value):
+        if self.initial_data['classes'] == "一级类别":  # 判断 类别是否为一级类别
+            if value != None:  # 一级类别不能指定父类别
+                raise serializers.ValidationError("处于[一级类别]的信息不能指定父类别")
+        else:
+            if value is None:  # 非一级类别必须指定父类别
+                raise serializers.ValidationError("处于" + self.initial_data["classes"] + "类别的信息必须指定父类别")
+            else:  # 判断指定的父类别是否符合条件
+                list = ProductDataTypeDefinitionModel.objects.get(id=value.id)
+                if list is None:  # 判断 父类别是否存在
+                    raise serializers.ValidationError("指定的父类别不存在")
+                elif (list.state != "使用中"):  # 判断 父类别状态是否合适
+                    raise serializers.ValidationError("指定的父类别不在--'使用中'状态")
+                else:  # 判断  子父类别的层级是否合适
+                    if self.initial_data['classes'] == "二级类别" and list.classes != "一级类别":
+                        raise serializers.ValidationError("[二级类别]的父类别必须是[一级类别]'")
+                    if self.initial_data['classes'] == "三级类别" and list.classes != "二级类别":
+                        raise serializers.ValidationError("[三级类别]的父类别必须是[二级类别]")
+                    if self.initial_data['classes'] == "四级类别" and list.classes != "三级类别":
+                        raise serializers.ValidationError("[四级类别]的父类别必须是[三级类别]")
+        return value
+
+
+class ProductDataTypeDefinitionSerialize_List(serializers.ModelSerializer):
+    """
+    产品过程数据类型定义--list
+    """
+    class Meta:
+        model = ProductDataTypeDefinitionModel
+        fields = ("id", "name", "code", "state", "classes", "auditor", "create_user","create_time","update_time")
+
+
+class ProductDataDefinitionSerialize_Type(serializers.ModelSerializer):
+    """
+    产品过程数据定义--产品过程数据类型定义
+    """
+
+    class Meta:
+        model = ProductDataDefinitionModel
+        fields = ("id", "name", "code", "state", "create_user")
+
+class ProductDataTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
+    """
+    产品过程数据类型定义--retrieve
+    """
+    file = ProductionFileSerialize_List(many=True)                 # 类型文件信息
+    alter = ProductionAlterRecordSerialize_List(many=True)         # 审核记录信息
+    parent = ProductDataTypeDefinitionSerialize_List(required=False)      # 父类别信息
+    productDataType_child = ProductDataTypeDefinitionSerialize_List(many=True)  # 子类别信息
+    productDataType_item = ProductDataDefinitionSerialize_Type(many=True)  # 附属项信息
+
+    class Meta:
+        model = ProductDataTypeDefinitionModel
+        fields = "__all__"
+
+
+class ProductDataTypeDefinitionSerialize_Update(serializers.ModelSerializer):
+    """
+    产品过程数据类型定义--update
+    """
+    class Meta:
+        model = ProductDataTypeDefinitionModel
+        fields = ("id", "name", "code", "classes", "parent", "attach_attribute",
+                  "file", "desc", "auditor",)
+
+    # 所有字段验证
+    def validate(self, attrs):
+        if self.instance.state != '新建':  # 如果不是新建状态 不能更改信息
+            raise serializers.ValidationError("当前信息已提交,禁止更改")
+        return attrs
+
+    # 审核者字段验证
+    def validate_auditor(self, value):
+        if self.instance.state != '新建':  # 如果不是新建状态 该字段不能更改
+            raise serializers.ValidationError("当前信息已提交,禁止更改")
+        if settings.SAME_USER != True:
+            if self.instance.create_user == value:  # 审核帐号不能与创建帐号相同
+                raise serializers.ValidationError("审核帐号不能与创建帐号相同'")
+        try:
+            auditor = User.objects.get(username=value)
+        except Exception as e:
+            raise serializers.ValidationError("指定的审核账号不存在")
+        if not auditor.has_perm('production.admin_productDatatypedefinitionmodel'):
+            raise serializers.ValidationError("指定的审核账号不具备审核权限")
+        return value
+
+    # 父类别字段验证
+    def validate_parent(self, value):
+        if self.instance.state != '新建':  # 如果不是新建状态 该字段不能更改
+            raise serializers.ValidationError("当前信息已提交,禁止更改")
+        if self.initial_data['classes'] == "一级类别":  # 判断 类别是否为一级类别
+            if value != None:  # 一级类别不能指定父类别
+                raise serializers.ValidationError("处于[一级类别]的信息不能指定父类别")
+        else:
+            if value is None:  # 非一级类别必须指定父类别
+                raise serializers.ValidationError("处于" + self.initial_data["classes"] + "类别的信息必须指定父类别")
+            else:  # 判断指定的父类别是否符合条件
+                list = ProductDataTypeDefinitionModel.objects.get(id=value.id)
+                if list is None:  # 判断 父类别是否存在
+                    raise serializers.ValidationError("指定的父类别不存在")
+                elif (list.state != "使用中"):  # 判断 父类别状态是否合适
+                    raise serializers.ValidationError("指定的父类别不在--'使用状态'")
+                else:  # 判断  子父类别的层级是否合适
+                    if self.initial_data['classes'] == "二级类别" and list.classes != "一级类别":
+                        raise serializers.ValidationError("[二级类别]的父类别必须是[一级类别]'")
+                    if self.initial_data['classes'] == "三级类别" and list.classes != "二级类别":
+                        raise serializers.ValidationError("[三级类别]的父类别必须是[二级类别]")
+                    if self.initial_data['classes'] == "四级类别" and list.classes != "三级类别":
+                        raise serializers.ValidationError("[四级类别]的父类别必须是[三级类别]")
+        return value
+
+
+class ProductDataTypeDefinitionSerialize_Partial(serializers.ModelSerializer):
+    """
+    产品过程数据类型定义--partial
+    """
+    class Meta:
+        model = ProductDataTypeDefinitionModel
+        fields = ("id", "state", "alter")
+
+    # 所有字段验证
+    def validate(self, attrs):
+        try:
+            del attrs['alter']  # 删除alter字段
+        except Exception:
+            pass
+        return attrs
+
+    # 状态字段验证
+    def validate_state(self, value):
+        validate_states(self.instance.state, value)
+        if (self.instance.create_user == self.context['request'].user.username) and\
+           (self.instance.auditor != self.context['request'].user.username):  # 如果当前用户为创建账号但不是审核账号
+            if not (self.instance.state == "新建" and (value == "审核中" or value == "作废")):
+                raise serializers.ValidationError("创建者只能将[新建]信息更改成[审核中]或[作废]")
+        return value
+
+    # 审核记录字段验证
+    def validate_alter(self, value):
+        obj = ProductDataTypeDefinitionModel.objects.get(id=self.instance.id).alter
+        for data in value:
+            obj.add(data.id)
+        return value
+# endregion
+
+# region 产品过程数据类型层级结构 序列化器
+class ProductDataTypeDefinitionSerialize_Fourth(serializers.ModelSerializer):
+    """
+    产品过程数据类型层级结构--fourth
+    """
+    class Meta:
+        model = ProductDataTypeDefinitionModel
+        fields = ("id", "name", "code", "state")
+
+class ProductDataTypeDefinitionSerialize_Third(serializers.ModelSerializer):
+    """
+    产品过程数据类型层级结构--third
+    """
+    productDataType_child = ProductDataTypeDefinitionSerialize_Fourth(many=True)  # 子类别信息
+    class Meta:
+        model = ProductDataTypeDefinitionModel
+        fields = ("id", "name", "code", "state", "productDataType_child")
+
+class ProductDataTypeDefinitionSerialize_Second(serializers.ModelSerializer):
+    """
+    产品过程数据类型层级结构--second
+    """
+    productDataType_child = ProductDataTypeDefinitionSerialize_Third(many=True)  # 子类别信息
+    class Meta:
+        model = ProductDataTypeDefinitionModel
+        fields = ("id", "name", "code", "state", "productDataType_child")
+
+class ProductDataTypeDefinitionSerialize_First(serializers.ModelSerializer):
+    """
+    产品过程数据类型层级结构--fitst
+    """
+    productDataType_child = ProductDataTypeDefinitionSerialize_Second(many=True) # 子类别信息
+    class Meta:
+        model = ProductDataTypeDefinitionModel
+        fields = ("id", "name", "code", "state","productDataType_child")
+
+# endregion
+
+# region 半成品过程数据类型定义 序列化器
+class SemifinishedDataTypeDefinitionSerialize_Create(serializers.ModelSerializer):
+    """
+    半成品过程数据类型定义--create
+    """
+    state = serializers.HiddenField(default="新建")
+    create_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = SemifinishedDataTypeDefinitionModel
+        fields = ("id", "name", "code", "state", "classes", "parent", "attach_attribute",
+                  "file", "desc", "auditor", "create_user")
+
+    # 所有字段验证
+    def validate(self, attrs):
+        if not attrs["create_user"].has_perm('production.add_semifinishedDatatypedefinitionmodel'):  # 如果当前用户没有创建权限
+            raise serializers.ValidationError("当前用户不具备创建权限'")
+        if settings.SAME_USER!=True:
+            if attrs["create_user"].username == attrs["auditor"]:   # 审核帐号不能与创建帐号相同
+                raise serializers.ValidationError("审核帐号不能与创建帐号相同'")
+        return attrs
+
+    # 审核者字段验证
+    def validate_auditor(self, value):
+        try:
+            auditor = User.objects.get(username=value)
+        except Exception as e:
+            raise serializers.ValidationError("指定的审核账号不存在")
+        if not auditor.has_perm('production.admin_semifinishedDatatypedefinitionmodel'):
+            raise serializers.ValidationError("指定的审核账号不具备审核权限")
+        return value
+
+    # 父类别字段验证
+    def validate_parent(self, value):
+        if self.initial_data['classes'] == "一级类别":  # 判断 类别是否为一级类别
+            if value != None:  # 一级类别不能指定父类别
+                raise serializers.ValidationError("处于[一级类别]的信息不能指定父类别")
+        else:
+            if value is None:  # 非一级类别必须指定父类别
+                raise serializers.ValidationError("处于" + self.initial_data["classes"] + "类别的信息必须指定父类别")
+            else:  # 判断指定的父类别是否符合条件
+                list = SemifinishedDataTypeDefinitionModel.objects.get(id=value.id)
+                if list is None:  # 判断 父类别是否存在
+                    raise serializers.ValidationError("指定的父类别不存在")
+                elif (list.state != "使用中"):  # 判断 父类别状态是否合适
+                    raise serializers.ValidationError("指定的父类别不在--'使用中'状态")
+                else:  # 判断  子父类别的层级是否合适
+                    if self.initial_data['classes'] == "二级类别" and list.classes != "一级类别":
+                        raise serializers.ValidationError("[二级类别]的父类别必须是[一级类别]'")
+                    if self.initial_data['classes'] == "三级类别" and list.classes != "二级类别":
+                        raise serializers.ValidationError("[三级类别]的父类别必须是[二级类别]")
+                    if self.initial_data['classes'] == "四级类别" and list.classes != "三级类别":
+                        raise serializers.ValidationError("[四级类别]的父类别必须是[三级类别]")
+        return value
+
+
+class SemifinishedDataTypeDefinitionSerialize_List(serializers.ModelSerializer):
+    """
+    半成品过程数据类型定义--list
+    """
+    class Meta:
+        model = SemifinishedDataTypeDefinitionModel
+        fields = ("id", "name", "code", "state", "classes", "auditor", "create_user","create_time","update_time")
+
+
+class SemifinishedDataDefinitionSerialize_Type(serializers.ModelSerializer):
+    """
+    半成品过程数据定义--半成品过程数据类型定义
+    """
+
+    class Meta:
+        model = SemifinishedDataDefinitionModel
+        fields = ("id", "name", "code", "state", "create_user")
+
+class SemifinishedDataTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
+    """
+    半成品过程数据类型定义--retrieve
+    """
+    file = ProductionFileSerialize_List(many=True)                 # 类型文件信息
+    alter = ProductionAlterRecordSerialize_List(many=True)         # 审核记录信息
+    parent = SemifinishedDataTypeDefinitionSerialize_List(required=False)      # 父类别信息
+    semifinishedDataType_child = SemifinishedDataTypeDefinitionSerialize_List(many=True)  # 子类别信息
+    semifinishedDataType_item = SemifinishedDataDefinitionSerialize_Type(many=True)  # 附属项信息
+
+    class Meta:
+        model = SemifinishedDataTypeDefinitionModel
+        fields = "__all__"
+
+
+class SemifinishedDataTypeDefinitionSerialize_Update(serializers.ModelSerializer):
+    """
+    半成品过程数据类型定义--update
+    """
+    class Meta:
+        model = SemifinishedDataTypeDefinitionModel
+        fields = ("id", "name", "code", "classes", "parent", "attach_attribute",
+                  "file", "desc", "auditor",)
+
+    # 所有字段验证
+    def validate(self, attrs):
+        if self.instance.state != '新建':  # 如果不是新建状态 不能更改信息
+            raise serializers.ValidationError("当前信息已提交,禁止更改")
+        return attrs
+
+    # 审核者字段验证
+    def validate_auditor(self, value):
+        if self.instance.state != '新建':  # 如果不是新建状态 该字段不能更改
+            raise serializers.ValidationError("当前信息已提交,禁止更改")
+        if settings.SAME_USER != True:
+            if self.instance.create_user == value:  # 审核帐号不能与创建帐号相同
+                raise serializers.ValidationError("审核帐号不能与创建帐号相同'")
+        try:
+            auditor = User.objects.get(username=value)
+        except Exception as e:
+            raise serializers.ValidationError("指定的审核账号不存在")
+        if not auditor.has_perm('production.admin_semifinishedDatatypedefinitionmodel'):
+            raise serializers.ValidationError("指定的审核账号不具备审核权限")
+        return value
+
+    # 父类别字段验证
+    def validate_parent(self, value):
+        if self.instance.state != '新建':  # 如果不是新建状态 该字段不能更改
+            raise serializers.ValidationError("当前信息已提交,禁止更改")
+        if self.initial_data['classes'] == "一级类别":  # 判断 类别是否为一级类别
+            if value != None:  # 一级类别不能指定父类别
+                raise serializers.ValidationError("处于[一级类别]的信息不能指定父类别")
+        else:
+            if value is None:  # 非一级类别必须指定父类别
+                raise serializers.ValidationError("处于" + self.initial_data["classes"] + "类别的信息必须指定父类别")
+            else:  # 判断指定的父类别是否符合条件
+                list = SemifinishedDataTypeDefinitionModel.objects.get(id=value.id)
+                if list is None:  # 判断 父类别是否存在
+                    raise serializers.ValidationError("指定的父类别不存在")
+                elif (list.state != "使用中"):  # 判断 父类别状态是否合适
+                    raise serializers.ValidationError("指定的父类别不在--'使用状态'")
+                else:  # 判断  子父类别的层级是否合适
+                    if self.initial_data['classes'] == "二级类别" and list.classes != "一级类别":
+                        raise serializers.ValidationError("[二级类别]的父类别必须是[一级类别]'")
+                    if self.initial_data['classes'] == "三级类别" and list.classes != "二级类别":
+                        raise serializers.ValidationError("[三级类别]的父类别必须是[二级类别]")
+                    if self.initial_data['classes'] == "四级类别" and list.classes != "三级类别":
+                        raise serializers.ValidationError("[四级类别]的父类别必须是[三级类别]")
+        return value
+
+
+class SemifinishedDataTypeDefinitionSerialize_Partial(serializers.ModelSerializer):
+    """
+    半成品过程数据类型定义--partial
+    """
+    class Meta:
+        model = SemifinishedDataTypeDefinitionModel
+        fields = ("id", "state", "alter")
+
+    # 所有字段验证
+    def validate(self, attrs):
+        try:
+            del attrs['alter']  # 删除alter字段
+        except Exception:
+            pass
+        return attrs
+
+    # 状态字段验证
+    def validate_state(self, value):
+        validate_states(self.instance.state, value)
+        if (self.instance.create_user == self.context['request'].user.username) and\
+           (self.instance.auditor != self.context['request'].user.username):  # 如果当前用户为创建账号但不是审核账号
+            if not (self.instance.state == "新建" and (value == "审核中" or value == "作废")):
+                raise serializers.ValidationError("创建者只能将[新建]信息更改成[审核中]或[作废]")
+        return value
+
+    # 审核记录字段验证
+    def validate_alter(self, value):
+        obj = SemifinishedDataTypeDefinitionModel.objects.get(id=self.instance.id).alter
+        for data in value:
+            obj.add(data.id)
+        return value
+# endregion
+
+# region 半成品过程数据类型层级结构 序列化器
+class SemifinishedDataTypeDefinitionSerialize_Fourth(serializers.ModelSerializer):
+    """
+    半成品过程数据类型层级结构--fourth
+    """
+    class Meta:
+        model = SemifinishedDataTypeDefinitionModel
+        fields = ("id", "name", "code", "state")
+
+class SemifinishedDataTypeDefinitionSerialize_Third(serializers.ModelSerializer):
+    """
+    半成品过程数据类型层级结构--third
+    """
+    semifinishedDataType_child = SemifinishedDataTypeDefinitionSerialize_Fourth(many=True)  # 子类别信息
+    class Meta:
+        model = SemifinishedDataTypeDefinitionModel
+        fields = ("id", "name", "code", "state", "semifinishedDataType_child")
+
+class SemifinishedDataTypeDefinitionSerialize_Second(serializers.ModelSerializer):
+    """
+    半成品过程数据类型层级结构--second
+    """
+    semifinishedDataType_child = SemifinishedDataTypeDefinitionSerialize_Third(many=True)  # 子类别信息
+    class Meta:
+        model = SemifinishedDataTypeDefinitionModel
+        fields = ("id", "name", "code", "state", "semifinishedDataType_child")
+
+class SemifinishedDataTypeDefinitionSerialize_First(serializers.ModelSerializer):
+    """
+    半成品过程数据类型层级结构--fitst
+    """
+    semifinishedDataType_child = SemifinishedDataTypeDefinitionSerialize_Second(many=True) # 子类别信息
+    class Meta:
+        model = SemifinishedDataTypeDefinitionModel
+        fields = ("id", "name", "code", "state","semifinishedDataType_child")
+
+# endregion
+
+
 
 # region  生产看板定义  序列化器
 class ProductionBoardSerialize_Create(serializers.ModelSerializer):
