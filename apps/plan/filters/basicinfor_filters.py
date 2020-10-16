@@ -48,6 +48,14 @@ class SalesOrderCreateFilters(FilterSet):
         model = SalesOrderCreateModel
         fields = ["state", "auditor", "create_user"]
 
+class ProductTaskTypeFilters(FilterSet):
+    """
+    产品生产任务类型定义
+    """
+    class Meta:
+        model = ProductTaskTypeModel
+        fields=["state","classes","auditor","create_user"]
+
 class ProductTaskCreateFilters(FilterSet):
     """
     产品生产任务单创建
@@ -55,6 +63,13 @@ class ProductTaskCreateFilters(FilterSet):
     class Meta:
         model = ProductTaskCreateModel
         fields = ["state", "auditor", "create_user","priority","workshop_code"]
+class SemifinishedTaskTypeFilters(FilterSet):
+    """
+    半成品生产任务类型定义
+    """
+    class Meta:
+        model = SemifinishedTaskTypeModel
+        fields=["state","classes","auditor","create_user"]
 
 class SemifinishedTaskCreateFilters(FilterSet):
     """

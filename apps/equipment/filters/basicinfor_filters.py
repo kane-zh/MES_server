@@ -29,8 +29,8 @@ class PartsInforDefinitionFilters(FilterSet):
     配件信息定义
     """
     class Meta:
-            model = PartsInforDefinitionModel
-            fields = ["state", "auditor", "create_user", "type"]
+        model = PartsInforDefinitionModel
+        fields = ["state", "auditor", "create_user", "type"]
 
 class EquipmentTypeDefinitionFilters(FilterSet):
     """

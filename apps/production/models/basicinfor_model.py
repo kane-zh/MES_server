@@ -403,8 +403,8 @@ class AssessmentLevelDefinitionModel(models.Model):
         app_label = 'production'
         verbose_name = "生产管理－考核等级定义"
         verbose_name_plural = verbose_name
-        permissions = {("read_assessmentleveldefinitionModel", u"Can read 生产管理－考核等级定义"),
-                       ("admin_assessmentleveldefinitionModel", u"Can admin 生产管理－考核等级定义")}
+        permissions = {("read_assessmentleveldefinitionmodel", u"Can read 生产管理－考核等级定义"),
+                       ("admin_assessmentleveldefinitionmodel", u"Can admin 生产管理－考核等级定义")}
 class ProductDataTypeDefinitionModel(models.Model):
     """
     产品过程数据类型定义

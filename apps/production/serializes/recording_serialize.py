@@ -570,7 +570,7 @@ class ProductDataSerialize_Create(serializers.ModelSerializer):
     create_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     class Meta:
         model = ProductDataDefinitionModel
-        fields = ("id","type","product_id","personnel","equipment","material","station","quality","dataTime",
+        fields = ("id","type","product_id","batch","sn","personnel","equipment","material","station","quality","dataTime",
                   "attribute1", "attribute2", "attribute3", "attribute4","attribute5","attribute6", "attribute7", "attribute8", "attribute9", "attribute10",
                   "attribute11", "attribute12", "attribute13", "attribute14", "attribute15","attribute16", "attribute17", "attribute18", "attribute19", "attribute20",
                   "image", "file","desc", "create_user")
@@ -579,6 +579,16 @@ class ProductDataSerialize_Create(serializers.ModelSerializer):
     def validate(self, attrs):
         if not attrs["create_user"].has_perm('production.add_productdatadefinitionmodel'):  # 如果当前用户没有创建权限
             raise serializers.ValidationError("当前用户不具备创建权限'")
+        if 'product_id' in attrs.keys():
+            if attrs['product_id'] is not '':
+                try:
+                    product = ProductInforDefinitionModel.objects.get(id=attrs["product_id"])  # 判断指定的产品是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的产品不存在")
+                attrs["productType_code"] = product.type.code  # 获取产品类型编码
+                attrs["productType_name"] = product.type.name  # 获取产品类型名称
+                attrs["product_code"] = product.code  # 获取产品编码
+                attrs["product_name"] = product.name  # 获取产品名称
         return attrs
 
 
@@ -599,7 +609,7 @@ class ProductDataSerialize_List(serializers.ModelSerializer):
     type = ProductDataTypeDefinitionSerialize_List(required=False)
     class Meta:
         model = ProductDataDefinitionModel
-        fields = ("id","type","productType_code","productType_name","product_name","product_id","product_code",
+        fields = ("id","type","productType_code","productType_name","product_name","product_id","product_code","batch","sn",
                   "personnel","equipment","material","station","quality","dataTime","desc", "create_user")
 
 class ProductDataSerialize_Retrieve(serializers.ModelSerializer):
@@ -621,7 +631,7 @@ class SemifinishedDataSerialize_Create(serializers.ModelSerializer):
     create_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     class Meta:
         model = SemifinishedDataDefinitionModel
-        fields = ("id","type","Semifinished_id","personnel","equipment","material","station","quality","dataTime",
+        fields = ("id","type","semifinished_id","batch","sn","personnel","equipment","material","station","quality","dataTime",
                   "attribute1", "attribute2", "attribute3", "attribute4","attribute5","attribute6", "attribute7", "attribute8", "attribute9", "attribute10",
                   "attribute11", "attribute12", "attribute13", "attribute14", "attribute15","attribute16", "attribute17", "attribute18", "attribute19", "attribute20",
                   "image", "file","desc", "create_user")
@@ -630,6 +640,16 @@ class SemifinishedDataSerialize_Create(serializers.ModelSerializer):
     def validate(self, attrs):
         if not attrs["create_user"].has_perm('production.add_semifinisheddatadefinitionmodel'):  # 如果当前用户没有创建权限
             raise serializers.ValidationError("当前用户不具备创建权限'")
+        if 'semifinished_id' in attrs.keys():
+            if attrs['semifinished_id'] is not '':
+                try:
+                    semifinished = SemifinishedInforDefinitionModel.objects.get(id=attrs["semifinished_id"])  # 判断指定的半成品是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的半成品不存在")
+                attrs["semifinishedType_code"] = semifinished.type.code  # 获取半成品类型编码
+                attrs["semifinishedType_name"] = semifinished.type.name  # 获取半成品类型名称
+                attrs["semifinished_code"] = semifinished.code  # 获取半成品编码
+                attrs["semifinished_name"] = semifinished.name  # 获取半成品名称
         return attrs
 
 
@@ -650,7 +670,7 @@ class SemifinishedDataSerialize_List(serializers.ModelSerializer):
     type = SemifinishedDataTypeDefinitionSerialize_List(required=False)
     class Meta:
         model = SemifinishedDataDefinitionModel
-        fields = ("id","type","semifinishedType_code","semifinishedType_name","semifinished_name","semifinished_id","semifinished_code",
+        fields = ("id","type","semifinishedType_code","semifinishedType_name","semifinished_name","semifinished_id","semifinished_code","batch","sn",
                   "personnel","equipment","material","station","quality","dataTime","desc", "create_user")
 
 class SemifinishedDataSerialize_Retrieve(serializers.ModelSerializer):

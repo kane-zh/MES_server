@@ -1331,10 +1331,11 @@ class ProductDataDefinitionSerialize_Type(serializers.ModelSerializer):
     """
     产品过程数据定义--产品过程数据类型定义
     """
-
+    type = ProductDataTypeDefinitionSerialize_List(required=False)
     class Meta:
         model = ProductDataDefinitionModel
-        fields = ("id", "name", "code", "state", "create_user")
+        fields = ("id","type","productType_code","productType_name","product_name","product_id","product_code","batch","sn",
+                  "personnel","equipment","material","station","quality","dataTime","desc", "create_user")
 
 class ProductDataTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     """
@@ -1547,10 +1548,11 @@ class SemifinishedDataDefinitionSerialize_Type(serializers.ModelSerializer):
     """
     半成品过程数据定义--半成品过程数据类型定义
     """
-
+    type = SemifinishedDataTypeDefinitionSerialize_List(required=False)
     class Meta:
         model = SemifinishedDataDefinitionModel
-        fields = ("id", "name", "code", "state", "create_user")
+        fields = ("id","type","semifinishedType_code","semifinishedType_name","semifinished_name","semifinished_id","semifinished_code","batch","sn",
+                  "personnel","equipment","material","station","quality","dataTime","desc", "create_user")
 
 class SemifinishedDataTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     """

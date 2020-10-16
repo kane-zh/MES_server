@@ -400,6 +400,72 @@ class SalesOrderCreateView(CreateModelMixin, ListModelMixin,
         else:
             return SalesOrderCreateModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by(
                 "-id")
+class ProductTaskTypeView(CreateModelMixin, ListModelMixin,
+                             RetrieveModelMixin, UpdateModelMixin,
+                            viewsets.GenericViewSet):
+    """
+    产品生产任务类型定义
+    """
+    pagination_class = StandardResultsSetPagination
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
+    filter_class = ProductTaskTypeFilters
+    search_fields = ["name","code","company_name","company_abbre","qualification"]
+    ordering_fields = ["id","update_time"]
+    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    # 重载获取序列化类的方法，根据不同的操作返回不同的序列化类
+    def get_serializer_class(self):
+        if self.action == "create":
+            return ProductTaskTypeSerialize_Create
+        elif self.action == "list":
+            return ProductTaskTypeSerialize_List
+        elif self.action == "retrieve":
+            return ProductTaskTypeSerialize_Retrieve
+        elif self.action == "update":
+            return ProductTaskTypeSerialize_Update
+        elif self.action == "partial_update":
+            return ProductTaskTypeSerialize_Partial
+        return ProductTaskTypeSerialize_List
+
+    # 重载数据查询的方法，根据不同的操作查询不同的数据范围
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return ProductTaskTypeModel.objects.all().order_by("-id") # 超级用户可以查看所有信息
+        user = self.request.user.username
+        condtions1 = {'create_user__iexact': user,
+                      'state__in': ("新建", "审核中", "使用中")  # 信息创建者可以看到 (新建,审核,使用中)的数据,,
+                      }
+        condtions2 = {'auditor__iexact': user,
+                      'state__in': ("审核中", "使用中",)  # 信息审核者可以看到 (审核,使用中)的数据
+                      }
+        condtions3 = {'state__in': ("使用中",)  # 其他用户 可以看到(使用中)的数据
+                      }
+        if self.action == "list":  # 如果是查看列表
+            if not self.request.user.has_perm('plan.view_productTasktypemodel'):  # 如果当前用户没有查看权限
+                condtions3 = {}  #如果普通用户不具备查看列表权限权限,则不能查看列表信息
+        if self.action == "retrieve":  # 如果是查看列表
+            if not self.request.user.has_perm('plan.read_productTasktypemodel'):  # 如果当前用户没有查看详情权限
+                condtions3 = {} #如果普通用户不具备查看详情权限,则不能查看详情信息
+        if self.action == "update":  # 如果是更新列表
+            condtions2 = {}
+            condtions3 = {}  # 只有创建者可以更新
+        if self.action == "partial_update":  # 如果是部分更新列表
+            condtions3 = {}  # 只有创建者跟审核者可以部分更新
+        return ProductTaskTypeModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+
+class ProductTaskTypeViews(ListModelMixin,viewsets.GenericViewSet):
+    """
+    产品生产任务类型层级结构
+    """
+    serializer_class = ProductTaskTypeSerialize_First
+    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+    def get_queryset(self):
+        if (self.request.user.is_superuser or self.request.user.has_perm('plan.view_productTasktypemodel')):
+            return ProductTaskTypeModel.objects.filter(classes="一级类别")
+        else:
+            raise exceptions.PermissionDenied
 class ProductTaskItemCreateView(CreateModelMixin, UpdateModelMixin,
                              viewsets.GenericViewSet):
     """
@@ -479,7 +545,72 @@ class ProductTaskCreateView(CreateModelMixin, ListModelMixin,
         else:
             return ProductTaskCreateModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by(
                 "-id")
+class SemifinishedTaskTypeView(CreateModelMixin, ListModelMixin,
+                             RetrieveModelMixin, UpdateModelMixin,
+                            viewsets.GenericViewSet):
+    """
+    半成品生产任务类型定义
+    """
+    pagination_class = StandardResultsSetPagination
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
+    filter_class = SemifinishedTaskTypeFilters
+    search_fields = ["name","code","company_name","company_abbre","qualification"]
+    ordering_fields = ["id","update_time"]
+    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
 
+    # 重载获取序列化类的方法，根据不同的操作返回不同的序列化类
+    def get_serializer_class(self):
+        if self.action == "create":
+            return SemifinishedTaskTypeSerialize_Create
+        elif self.action == "list":
+            return SemifinishedTaskTypeSerialize_List
+        elif self.action == "retrieve":
+            return SemifinishedTaskTypeSerialize_Retrieve
+        elif self.action == "update":
+            return SemifinishedTaskTypeSerialize_Update
+        elif self.action == "partial_update":
+            return SemifinishedTaskTypeSerialize_Partial
+        return SemifinishedTaskTypeSerialize_List
+
+    # 重载数据查询的方法，根据不同的操作查询不同的数据范围
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return SemifinishedTaskTypeModel.objects.all().order_by("-id") # 超级用户可以查看所有信息
+        user = self.request.user.username
+        condtions1 = {'create_user__iexact': user,
+                      'state__in': ("新建", "审核中", "使用中")  # 信息创建者可以看到 (新建,审核,使用中)的数据,,
+                      }
+        condtions2 = {'auditor__iexact': user,
+                      'state__in': ("审核中", "使用中",)  # 信息审核者可以看到 (审核,使用中)的数据
+                      }
+        condtions3 = {'state__in': ("使用中",)  # 其他用户 可以看到(使用中)的数据
+                      }
+        if self.action == "list":  # 如果是查看列表
+            if not self.request.user.has_perm('plan.view_semifinishedTasktypemodel'):  # 如果当前用户没有查看权限
+                condtions3 = {}  #如果普通用户不具备查看列表权限权限,则不能查看列表信息
+        if self.action == "retrieve":  # 如果是查看列表
+            if not self.request.user.has_perm('plan.read_semifinishedTasktypemodel'):  # 如果当前用户没有查看详情权限
+                condtions3 = {} #如果普通用户不具备查看详情权限,则不能查看详情信息
+        if self.action == "update":  # 如果是更新列表
+            condtions2 = {}
+            condtions3 = {}  # 只有创建者可以更新
+        if self.action == "partial_update":  # 如果是部分更新列表
+            condtions3 = {}  # 只有创建者跟审核者可以部分更新
+        return SemifinishedTaskTypeModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+
+class SemifinishedTaskTypeViews(ListModelMixin,viewsets.GenericViewSet):
+    """
+    半成品生产任务类型层级结构
+    """
+    serializer_class = SemifinishedTaskTypeSerialize_First
+    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+    def get_queryset(self):
+        if (self.request.user.is_superuser or self.request.user.has_perm('plan.view_semifinishedTasktypemodel')):
+            return SemifinishedTaskTypeModel.objects.filter(classes="一级类别")
+        else:
+            raise exceptions.PermissionDenied
 class SemifinishedTaskItemCreateView(CreateModelMixin, UpdateModelMixin,
                              viewsets.GenericViewSet):
     """

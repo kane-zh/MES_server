@@ -236,7 +236,7 @@ class SemifinishedDailyReportView(CreateModelMixin, ListModelMixin,
                 "-id")
 
 class ProductDataDefinitionView(CreateModelMixin, ListModelMixin,
-                             DestroyModelMixin,
+                             DestroyModelMixin,RetrieveModelMixin,
                              viewsets.GenericViewSet):
     """
     产品过程数据定义
@@ -287,7 +287,7 @@ class ProductDataDefinitionView(CreateModelMixin, ListModelMixin,
                 "-id")
 
 class SemifinishedDataDefinitionView(CreateModelMixin, ListModelMixin,
-                             DestroyModelMixin,
+                             DestroyModelMixin,RetrieveModelMixin,
                              viewsets.GenericViewSet):
     """
     半成品过程数据定义

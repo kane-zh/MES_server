@@ -33,7 +33,7 @@ class ProductdDataDefinitionFilters(FilterSet):
     """
     class Meta:
         model = ProductDataDefinitionModel
-        fields = ["create_user", "type","product_id"]
+        fields = ["create_user", "type","productType_code","product_id","batch","sn"]
 
 
 class SemifinishedDataDefinitionFilters(FilterSet):
@@ -43,4 +43,4 @@ class SemifinishedDataDefinitionFilters(FilterSet):
 
     class Meta:
         model = SemifinishedDataDefinitionModel
-        fields = ["create_user", "type", "semifinished_id"]
+        fields = ["create_user", "type", "semifinishedType_code","semifinished_id","batch","sn"]

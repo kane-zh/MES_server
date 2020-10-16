@@ -332,6 +332,7 @@ class  SalesOrderItemCreateModel(models.Model):
     product_id = models.CharField(max_length=32, name="product_id", verbose_name="产品ID", help_text="当前订单项对应的产品ID")
     product_name = models.CharField(max_length=32, name="product_name", verbose_name="产品名称",help_text="当前订单项对应的产品名称")
     product_code = models.CharField(max_length=32, name="product_code", verbose_name="产品编码",help_text="当前订单项对应的产品编码")
+    batch = models.CharField(max_length=32,null=True, blank=True, name="batch", verbose_name="批次号", help_text="当前产品的批次")
     sum = models.IntegerField(name="sum", verbose_name="产品数量", help_text="当前项需要的产品数量")
     assigned = models.IntegerField(name="assigned", default=0, null=True, blank=True, verbose_name="已分配数量", help_text="当前项已分配给生产任务的数量")
     completed = models.IntegerField(name="completed",default=0, null=True, blank=True, verbose_name="完成数量", help_text="当前项已完成的数量")
@@ -401,6 +402,54 @@ class SalesOrderCreateModel(models.Model):
         permissions = {("read_salesordercreatemodel", u"Can read 计划管理－销售订单定义"),
                        ("admin_salesordercreatemodel", u"Can admin 计划管理－销售订单定义"),
                        ("deal_salesordercreatemodel", u"Can deal 计划管理－销售订单定义")}
+
+class ProductTaskTypeModel(models.Model):
+    """
+    产品生产类型定义
+    """
+    STATUS = (
+        ("新建", "新建"),
+        ("审核中", "审核中"),
+        ("使用中", "使用中"),
+        ("作废", "作废"),
+    )
+    CLASS = (
+        ("一级类别", "一级类别"),
+        ("二级类别", "二级类别"),
+        ("三级类别", "三级类别"),
+        ("四级类别", "四级类别"),
+    )
+    id = models.AutoField(primary_key=True, unique=True)
+    name = models.CharField(max_length=32, name="name",null=True, blank=True, verbose_name="名称", help_text="产品生产任务类型名称(建议唯一)")
+    code = models.CharField(max_length=32, name="code", unique=True, verbose_name="编码", help_text="产品生产任务类型编码(必须唯一)")
+    state = models.CharField(max_length=16, choices=STATUS, default="新建", name="state", verbose_name="状态",
+                             help_text="当前信息的状态")
+    classes = models.CharField(max_length=16, choices=CLASS, name="classes", verbose_name="类别", help_text="产品生产任务类型处于的层级类别")
+    parent = models.ForeignKey("self", null=True, blank=True, name="parent", verbose_name="父类别",
+                               related_name="clientType_child",on_delete=models.CASCADE, help_text="当前产品生产任务类型属于的上一级别")
+    attach_attribute = models.TextField(null=True, blank=True, name="attach_attribute", verbose_name="产品生产任务附加属性",
+                                        help_text="当前产品生产任务类型下产品生产任务的附加属性")
+    file = models.ManyToManyField(PlanFileModel, blank=True, name="file", verbose_name="产品生产任务类型文件",
+                                  help_text="当前产品生产任务类型的文件信息")
+    desc = models.TextField(null=True, blank=True, name="desc", verbose_name="备注",
+                            help_text="当前信息未列出的字段项，可以在此字段描述.每一项用;隔开")
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间", help_text="当前信息创建的时间,后台会自动填充此字段")
+    update_time = models.DateTimeField(auto_now=True, verbose_name="更新时间", help_text="当前信息最后的更新时间,后台会自动填充此字段")
+    create_user = models.CharField(max_length=32, name="create_user", verbose_name="创建账号", help_text="创建当前信息的账号名称")
+    auditor = models.CharField(max_length=32, name="auditor", verbose_name="审核账号", help_text="可对当前信息进行审核的账号名称")
+    alter = models.ManyToManyField(PlanAlterRecordModel, blank=True, name="alter", verbose_name="审核记录",
+                                   help_text="当前信息的审核记录")
+
+    def __str__(self):
+        return self.code
+
+    class Meta:
+        db_table = "ProductTaskTypeModel"
+        app_label = 'plan'
+        verbose_name = "计划管理－产品生产任务类型定义"
+        verbose_name_plural = verbose_name
+        permissions = {("read_producttasktypemodel", u"Can read 计划管理－产品生产任务类型定义"),
+                       ("admin_producttasktypemodel", u"Can admin 计划管理－产品生产任务类型定义")}
 
 class   ProductTaskItemCreateModel(models.Model):
     """
@@ -494,6 +543,8 @@ class ProductTaskCreateModel(models.Model):
     code = models.CharField(max_length=32, unique=True, name="code", verbose_name="编码", help_text="产品生产任务单编码(必须唯一)")
     state = models.CharField(max_length=16, null=True, blank=True, choices=STATUS, default="新建", name="state", verbose_name="状态",
                              help_text="当前信息的状态")
+    type = models.ForeignKey(ProductTaskTypeModel, on_delete=models.CASCADE,name="type", related_name="productTaskType_item", verbose_name="类型",
+                             help_text="当前产品生产任务属于的产品生产任务类型")
     priority = models.CharField(max_length=16, choices=PRIORITY, default="正常", name="priority", verbose_name="优先级",
                              help_text="当前信息的优先级")
     delivery_time = models.DateTimeField(verbose_name="交付日期",help_text="当前生产需要的交付日期")
@@ -530,6 +581,53 @@ class ProductTaskCreateModel(models.Model):
                        ("admin_producttaskcreatemodel", u"Can admin 计划管理－产品生产任务单创建"),
                        ("deal_producttaskcreatemodel", u"Can deal 计划管理－产品生产任务单创建")}
 
+class SemifinishedTaskTypeModel(models.Model):
+    """
+    半成品生产类型定义
+    """
+    STATUS = (
+        ("新建", "新建"),
+        ("审核中", "审核中"),
+        ("使用中", "使用中"),
+        ("作废", "作废"),
+    )
+    CLASS = (
+        ("一级类别", "一级类别"),
+        ("二级类别", "二级类别"),
+        ("三级类别", "三级类别"),
+        ("四级类别", "四级类别"),
+    )
+    id = models.AutoField(primary_key=True, unique=True)
+    name = models.CharField(max_length=32, name="name",null=True, blank=True, verbose_name="名称", help_text="半成品生产任务类型名称(建议唯一)")
+    code = models.CharField(max_length=32, name="code", unique=True, verbose_name="编码", help_text="半成品生产任务类型编码(必须唯一)")
+    state = models.CharField(max_length=16, choices=STATUS, default="新建", name="state", verbose_name="状态",
+                             help_text="当前信息的状态")
+    classes = models.CharField(max_length=16, choices=CLASS, name="classes", verbose_name="类别", help_text="半成品生产任务类型处于的层级类别")
+    parent = models.ForeignKey("self", null=True, blank=True, name="parent", verbose_name="父类别",
+                               related_name="clientType_child",on_delete=models.CASCADE, help_text="当前半成品生产任务类型属于的上一级别")
+    attach_attribute = models.TextField(null=True, blank=True, name="attach_attribute", verbose_name="半成品生产任务附加属性",
+                                        help_text="当前半成品生产任务类型下半成品生产任务的附加属性")
+    file = models.ManyToManyField(PlanFileModel, blank=True, name="file", verbose_name="半成品生产任务类型文件",
+                                  help_text="当前半成品生产任务类型的文件信息")
+    desc = models.TextField(null=True, blank=True, name="desc", verbose_name="备注",
+                            help_text="当前信息未列出的字段项，可以在此字段描述.每一项用;隔开")
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间", help_text="当前信息创建的时间,后台会自动填充此字段")
+    update_time = models.DateTimeField(auto_now=True, verbose_name="更新时间", help_text="当前信息最后的更新时间,后台会自动填充此字段")
+    create_user = models.CharField(max_length=32, name="create_user", verbose_name="创建账号", help_text="创建当前信息的账号名称")
+    auditor = models.CharField(max_length=32, name="auditor", verbose_name="审核账号", help_text="可对当前信息进行审核的账号名称")
+    alter = models.ManyToManyField(PlanAlterRecordModel, blank=True, name="alter", verbose_name="审核记录",
+                                   help_text="当前信息的审核记录")
+
+    def __str__(self):
+        return self.code
+
+    class Meta:
+        db_table = "SemifinishedTaskTypeModel"
+        app_label = 'plan'
+        verbose_name = "计划管理－半成品生产任务类型定义"
+        verbose_name_plural = verbose_name
+        permissions = {("read_semifinishedtasktypemodel", u"Can read 计划管理－半成品生产任务类型定义"),
+                       ("admin_semifinishedtasktypemodel", u"Can admin 计划管理－半成品生产任务类型定义")}
 
 class   SemifinishedTaskItemCreateModel(models.Model):
     """
@@ -555,6 +653,7 @@ class   SemifinishedTaskItemCreateModel(models.Model):
                                        help_text="当前订单项对应的半成品名称")
     semifinished_code = models.CharField(max_length=32, name="semifinished_code", verbose_name="半成品编码",
                                        help_text="当前订单项对应的半成品编码")
+    batch = models.CharField(max_length=32,null=True, blank=True, name="batch", verbose_name="批次号", help_text="当前半成品的批次")
     routeType_code = models.CharField(max_length=32, null=True, blank=True, name="routeType_code",
                                       verbose_name="工艺路线类型编码",
                                       help_text="当前项使用的工艺路线类型编码")
@@ -633,6 +732,8 @@ class SemifinishedTaskCreateModel(models.Model):
     code = models.CharField(max_length=32, unique=True, name="code", verbose_name="编码", help_text="半成品生产任务单编码(必须唯一)")
     state = models.CharField(max_length=16, null=True, blank=True, choices=STATUS, default="新建", name="state", verbose_name="状态",
                              help_text="当前信息的状态")
+    type = models.ForeignKey(SemifinishedTaskTypeModel, on_delete=models.CASCADE,name="type", related_name="semifinishedTaskType_item", verbose_name="类型",
+                             help_text="当前半成品生产任务属于的半成品生产任务类型")
     priority = models.CharField(max_length=16, choices=PRIORITY, default="正常", name="priority", verbose_name="优先级",
                              help_text="当前信息的优先级")
     delivery_time = models.DateTimeField(verbose_name="交付日期",help_text="当前生产需要的交付日期")
