@@ -9,6 +9,9 @@ router.register('auditRecord', LeanAuditRecordView, basename="LeanAuditRecordVie
 router.register('alterRecord', LeanAlterRecordView, basename="LeanAlterRecordView")
 router.register('image', LeanImageView, basename="LeanImageView")
 router.register('file', LeanFileView, basename="LeanFileView")
+router.register('eventType', EventTypeDefinitionView, basename="EventTypeDefinitionView")
+router.register('eventTypes', EventTypeDefinitionViews, basename="EventTypeDefinitionViews")
+router.register('eventInfor', EventInforDefinitionView, basename="EventInforDefinitionView")
 router.register('board', LeanBoardView, basename="LeanBoardView")
 
 urlpatterns = [

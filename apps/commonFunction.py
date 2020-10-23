@@ -107,6 +107,7 @@ def validate_states4(curstate, newstate):
         return newstate
     raise serializers.ValidationError("不能从" + curstate + "更新到" + newstate)
     return newstate
+
 class StandardResultsSetPagination (PageNumberPagination):
     """
     通用分页器类

@@ -466,7 +466,7 @@ class ProductTaskTypeViews(ListModelMixin,viewsets.GenericViewSet):
             return ProductTaskTypeModel.objects.filter(classes="一级类别")
         else:
             raise exceptions.PermissionDenied
-class ProductTaskItemCreateView(CreateModelMixin, UpdateModelMixin,
+class ProductTaskItemCreateView(CreateModelMixin, UpdateModelMixin,RetrieveModelMixin,
                              viewsets.GenericViewSet):
     """
     产品生产任务子项创建
@@ -479,8 +479,8 @@ class ProductTaskItemCreateView(CreateModelMixin, UpdateModelMixin,
     def get_serializer_class(self):
         if self.action == "create":
             return ProductTaskItemCreateSerialize_Create
-        elif self.action == "list":
-            return ProductTaskItemCreateSerialize_List
+        elif self.action == "retrieve":
+            return ProductTaskItemCreateSerialize_Retrieve
         elif self.action == "partial_update":
             return ProductTaskItemCreateSerialize_Partial
         return ProductTaskItemCreateSerialize_List
@@ -611,7 +611,7 @@ class SemifinishedTaskTypeViews(ListModelMixin,viewsets.GenericViewSet):
             return SemifinishedTaskTypeModel.objects.filter(classes="一级类别")
         else:
             raise exceptions.PermissionDenied
-class SemifinishedTaskItemCreateView(CreateModelMixin, UpdateModelMixin,
+class SemifinishedTaskItemCreateView(CreateModelMixin, UpdateModelMixin,RetrieveModelMixin,
                              viewsets.GenericViewSet):
     """
     半成品生产任务子项创建
@@ -624,8 +624,8 @@ class SemifinishedTaskItemCreateView(CreateModelMixin, UpdateModelMixin,
     def get_serializer_class(self):
         if self.action == "create":
             return SemifinishedTaskItemCreateSerialize_Create
-        elif self.action == "list":
-            return SemifinishedTaskItemCreateSerialize_List
+        elif self.action == "retrieve":
+            return SemifinishedTaskItemCreateSerialize_Retrieve
         elif self.action == "partial_update":
             return SemifinishedTaskItemCreateSerialize_Partial
         return SemifinishedTaskItemCreateSerialize_List

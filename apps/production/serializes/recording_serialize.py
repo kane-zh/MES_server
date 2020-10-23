@@ -570,7 +570,7 @@ class ProductDataSerialize_Create(serializers.ModelSerializer):
     create_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     class Meta:
         model = ProductDataDefinitionModel
-        fields = ("id","type","product_id","batch","sn","personnel","equipment","material","station","quality","dataTime",
+        fields = ("id","type","product_id","task_id","batch","sn","personnel","equipment","material","station","quality","dataTime",
                   "attribute1", "attribute2", "attribute3", "attribute4","attribute5","attribute6", "attribute7", "attribute8", "attribute9", "attribute10",
                   "attribute11", "attribute12", "attribute13", "attribute14", "attribute15","attribute16", "attribute17", "attribute18", "attribute19", "attribute20",
                   "image", "file","desc", "create_user")
@@ -589,6 +589,16 @@ class ProductDataSerialize_Create(serializers.ModelSerializer):
                 attrs["productType_name"] = product.type.name  # 获取产品类型名称
                 attrs["product_code"] = product.code  # 获取产品编码
                 attrs["product_name"] = product.name  # 获取产品名称
+        if 'task_id' in attrs.keys():
+            if attrs['task_id'] is not '':
+                try:
+                    task = ProductTaskCreateModel.objects.get(id=attrs["task_id"])  # 判断指定的任务是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的任务不存在")
+                attrs["taskType_code"] = task.type.code  # 获取任务类型编码
+                attrs["taskType_name"] = task.type.name  # 获取任务类型名称
+                attrs["task_code"] = task.code  # 获取任务编码
+                attrs["task_name"] = task.name  # 获取任务名称
         return attrs
 
 
@@ -609,7 +619,8 @@ class ProductDataSerialize_List(serializers.ModelSerializer):
     type = ProductDataTypeDefinitionSerialize_List(required=False)
     class Meta:
         model = ProductDataDefinitionModel
-        fields = ("id","type","productType_code","productType_name","product_name","product_id","product_code","batch","sn",
+        fields = ("id","type","productType_code","productType_name","product_name","product_id","product_code",
+                  "taskType_code","taskType_name","task_name","task_id","task_code","batch","sn",
                   "personnel","equipment","material","station","quality","dataTime","desc", "create_user")
 
 class ProductDataSerialize_Retrieve(serializers.ModelSerializer):
@@ -631,7 +642,7 @@ class SemifinishedDataSerialize_Create(serializers.ModelSerializer):
     create_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     class Meta:
         model = SemifinishedDataDefinitionModel
-        fields = ("id","type","semifinished_id","batch","sn","personnel","equipment","material","station","quality","dataTime",
+        fields = ("id","type","semifinished_id","task_id","batch","sn","personnel","equipment","material","station","quality","dataTime",
                   "attribute1", "attribute2", "attribute3", "attribute4","attribute5","attribute6", "attribute7", "attribute8", "attribute9", "attribute10",
                   "attribute11", "attribute12", "attribute13", "attribute14", "attribute15","attribute16", "attribute17", "attribute18", "attribute19", "attribute20",
                   "image", "file","desc", "create_user")
@@ -650,6 +661,16 @@ class SemifinishedDataSerialize_Create(serializers.ModelSerializer):
                 attrs["semifinishedType_name"] = semifinished.type.name  # 获取半成品类型名称
                 attrs["semifinished_code"] = semifinished.code  # 获取半成品编码
                 attrs["semifinished_name"] = semifinished.name  # 获取半成品名称
+        if 'task_id' in attrs.keys():
+            if attrs['task_id'] is not '':
+                try:
+                    task = ProductTaskCreateModel.objects.get(id=attrs["task_id"])  # 判断指定的任务是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的任务不存在")
+                attrs["taskType_code"] = task.type.code  # 获取任务类型编码
+                attrs["taskType_name"] = task.type.name  # 获取任务类型名称
+                attrs["task_code"] = task.code  # 获取任务编码
+                attrs["task_name"] = task.name  # 获取任务名称
         return attrs
 
 
@@ -670,7 +691,8 @@ class SemifinishedDataSerialize_List(serializers.ModelSerializer):
     type = SemifinishedDataTypeDefinitionSerialize_List(required=False)
     class Meta:
         model = SemifinishedDataDefinitionModel
-        fields = ("id","type","semifinishedType_code","semifinishedType_name","semifinished_name","semifinished_id","semifinished_code","batch","sn",
+        fields = ("id","type","semifinishedType_code","semifinishedType_name","semifinished_name","semifinished_id","semifinished_code",
+                  "taskType_code","taskType_name","task_name","task_id","task_code","batch","sn",
                   "personnel","equipment","material","station","quality","dataTime","desc", "create_user")
 
 class SemifinishedDataSerialize_Retrieve(serializers.ModelSerializer):

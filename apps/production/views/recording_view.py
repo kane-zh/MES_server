@@ -244,6 +244,7 @@ class ProductDataDefinitionView(CreateModelMixin, ListModelMixin,
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
     filter_class = ProductdDataDefinitionFilters
+    search_fields = ["batch","sn"]
     ordering_fields = ["id","update_time","dataTime"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -295,6 +296,7 @@ class SemifinishedDataDefinitionView(CreateModelMixin, ListModelMixin,
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
     filter_class = SemifinishedDataDefinitionFilters
+    search_fields = ["batch","sn"]
     ordering_fields = ["id","update_time","dataTime"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]

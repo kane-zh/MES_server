@@ -502,53 +502,6 @@ class SemifinishedDataTypeDefinitionModel(models.Model):
         permissions = {("read_semifinisheddatatypedefinitionmodel", u"Can read 生产管理－半成品过程数据类型定义"),
                        ("admin_semifinisheddatatypedefinitionmodel", u"Can admin 生产管理－半成品过程数据类型定义")}
 
-class EventTypeDefinitionModel(models.Model):
-    """
-    事件类型定义
-    """
-    STATUS = (
-        ("新建", "新建"),
-        ("审核中", "审核中"),
-        ("使用中", "使用中"),
-        ("作废", "作废"),
-    )
-    CLASS = (
-        ("一级类别", "一级类别"),
-        ("二级类别", "二级类别"),
-        ("三级类别", "三级类别"),
-        ("四级类别", "四级类别"),
-    )
-    id = models.AutoField(primary_key=True, unique=True)
-    name = models.CharField(max_length=32, name="name",null=True, blank=True, verbose_name="名称", help_text="事件类型名称(建议唯一)")
-    code = models.CharField(max_length=32, name="code", unique=True, verbose_name="编码", help_text="事件类型编码(必须唯一)")
-    state = models.CharField(max_length=16, choices=STATUS, default="新建", name="state", verbose_name="状态",
-                             help_text="当前信息的状态")
-    classes = models.CharField(max_length=16, choices=CLASS, name="classes", verbose_name="类别", help_text="事件类型处于的层级类别")
-    parent = models.ForeignKey("self", null=True, blank=True, name="parent", verbose_name="父类别",
-                               related_name="eventType_child", on_delete=models.CASCADE, help_text="当前事件类型属于的上一级别")
-    attach_attribute = models.TextField(null=True, blank=True, name="attach_attribute", verbose_name="事件附加属性",
-                                        help_text="当前事件类型下事件的附加属性")
-    file = models.ManyToManyField(ProductionFileModel, blank=True, name="file", verbose_name="事件类型文件",
-                                  help_text="当前事件类型的文件信息")
-    desc = models.TextField(null=True, blank=True, name="desc", verbose_name="备注",
-                            help_text="当前信息未列出的字段项，可以在此字段描述.每一项用;隔开")
-    create_time = models.DateTimeField(auto_now_add=True, verbose_name="创建时间", help_text="当前信息创建的时间,后台会自动填充此字段")
-    update_time = models.DateTimeField(auto_now=True, verbose_name="更新时间", help_text="当前信息最后的更新时间,后台会自动填充此字段")
-    create_user = models.CharField(max_length=32, name="create_user", verbose_name="创建账号", help_text="创建当前信息的账号名称")
-    auditor = models.CharField(max_length=32, name="auditor", verbose_name="审核账号", help_text="可对当前信息进行审核的账号名称")
-    alter = models.ManyToManyField(ProductionAlterRecordModel, blank=True, name="alter", verbose_name="审核记录",
-                                   help_text="当前信息的审核记录")
-
-    def __str__(self):
-        return self.code
-
-    class Meta:
-        db_table = "EventTypeDefinitionModel"
-        app_label = 'production'
-        verbose_name = "生产管理－事件类型定义"
-        verbose_name_plural = verbose_name
-        permissions = {("read_eventtypedefinitionmodel", u"Can read 生产管理－事件类型定义"),
-                       ("admin_eventtypedefinitionmodel", u"Can admin 生产管理－事件类型定义")}
 class ProductionBoardModel(models.Model):
     """
     生产看板定义

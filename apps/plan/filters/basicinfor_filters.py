@@ -62,7 +62,7 @@ class ProductTaskCreateFilters(FilterSet):
     """
     class Meta:
         model = ProductTaskCreateModel
-        fields = ["state", "auditor", "create_user","priority","workshop_code"]
+        fields = ["state", "type","auditor", "create_user","priority","workshop_code"]
 class SemifinishedTaskTypeFilters(FilterSet):
     """
     半成品生产任务类型定义
@@ -77,7 +77,7 @@ class SemifinishedTaskCreateFilters(FilterSet):
     """
     class Meta:
         model = SemifinishedTaskCreateModel
-        fields = ["state", "auditor", "create_user","priority"]
+        fields = ["state","type","auditor", "create_user","priority","workshop_code"]
 
 class PurchaseRequireCreateFilters(FilterSet):
     """

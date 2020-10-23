@@ -847,13 +847,22 @@ class SalesOrderItemCreateSerialize_Create(serializers.ModelSerializer):
         attrs["product_name"] = product.name  # 获取产品名称
         return attrs
 
+class ProductTaskTypeSerialize_ProductTask(serializers.ModelSerializer):
+    """
+    产品生产任务类型定义--产品生产任务创建
+    """
+    class Meta:
+        model = ProductTaskTypeModel
+        fields = ("id", "name", "code", "state", "classes")
+
 class ProductTaskCreateSerialize_ProductTaskItem(serializers.ModelSerializer):
     """
     产品生产任务创建--产品生产任务子项创建--销售订单子项创建
     """
+    type=ProductTaskTypeSerialize_ProductTask(required=False)
     class Meta:
         model = ProductTaskCreateModel
-        fields = ("id", "name", "code", "state","update_time",)
+        fields = ("id", "name", "code","type","state","update_time",)
 
 class ProductTaskItemCreateSerialize_SalesOrderItem(serializers.ModelSerializer):
     """
@@ -1126,7 +1135,6 @@ class ProductTaskTypeSerialize_Create(serializers.ModelSerializer):
                         raise serializers.ValidationError("[四级类别]的父类别必须是[三级类别]")
         return value
 
-
 class ProductTaskTypeSerialize_List(serializers.ModelSerializer):
     """
     产品生产任务类型定义--list
@@ -1359,6 +1367,16 @@ class ProductTaskItemCreateSerialize_List(serializers.ModelSerializer):
         model = ProductTaskItemCreateModel
         fields = "__all__"
 
+class ProductTaskItemCreateSerialize_Retrieve(serializers.ModelSerializer):
+    """
+    产品生产任务子项创建--Retrieve
+    """
+    salesOrderItem =SalesOrderItemCreateSerialize_ProductTaskItem()
+    productTaskItem_parent=ProductTaskCreateSerialize_ProductTaskItem(many=True)
+    class Meta:
+        model = ProductTaskItemCreateModel
+        fields = "__all__"
+
 class ProductTaskItemCreateSerialize_Partial(serializers.ModelSerializer):
     """
     产品生产任务子项创建--partial
@@ -1366,7 +1384,7 @@ class ProductTaskItemCreateSerialize_Partial(serializers.ModelSerializer):
 
     class Meta:
         model = ProductTaskItemCreateModel
-    fields = ("id", "state","completed","attribute1","attribute2","attribute3","attribute4","attribute5","attribute6","attribute7","attribute8","attribute9","attribute10",
+        fields = ("id", "state","completed","attribute1","attribute2","attribute3","attribute4","attribute5","attribute6","attribute7","attribute8","attribute9","attribute10",
               "attribute11", "attribute12", "attribute13", "attribute14", "attribute15", "attribute16", "attribute17",
               "attribute18", "attribute19", "attribute20", )
 
@@ -1901,6 +1919,24 @@ class SemifinishedTaskItemCreateSerialize_List(serializers.ModelSerializer):
     """
     半成品生产任务子项创建--list
     """
+    class Meta:
+        model = SemifinishedTaskItemCreateModel
+        fields = "__all__"
+
+class SemifinishedTaskCreateSerialize_SemifinishedTaskItem(serializers.ModelSerializer):
+    """
+    半成品生产任务创建--半成品生产任务子项创建
+    """
+    type = SemifinishedTaskTypeSerialize_List(required=False)
+    class Meta:
+        model = SemifinishedTaskCreateModel
+        fields = ("id", "name", "code","type", "state", "priority", "delivery_time",)
+
+class SemifinishedTaskItemCreateSerialize_Retrieve(serializers.ModelSerializer):
+    """
+    半成品生产任务子项创建--Retrieve
+    """
+    semifinishedTaskItem_parent=SemifinishedTaskCreateSerialize_SemifinishedTaskItem(many=True)
     class Meta:
         model = SemifinishedTaskItemCreateModel
         fields = "__all__"

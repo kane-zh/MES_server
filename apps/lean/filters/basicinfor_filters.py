@@ -8,6 +8,21 @@ class LeanAuditRecordFilters(FilterSet):
     class Meta:
         model = LeanAuditRecordModel
         fields=["uri"]
+class EventTypeDefinitionFilters(FilterSet):
+    """
+    事件类型定义
+    """
+    class Meta:
+        model = EventTypeDefinitionModel
+        fields=["state","classes","auditor","create_user"]
+
+class EventInforDefinitionFilters(FilterSet):
+    """
+    事件信息定义
+    """
+    class Meta:
+        model = EventInforDefinitionModel
+        fields=["state","create_user","type"]
 
 class LeanBoardFilters(FilterSet):
     """

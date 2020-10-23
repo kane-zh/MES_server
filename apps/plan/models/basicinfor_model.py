@@ -426,7 +426,7 @@ class ProductTaskTypeModel(models.Model):
                              help_text="当前信息的状态")
     classes = models.CharField(max_length=16, choices=CLASS, name="classes", verbose_name="类别", help_text="产品生产任务类型处于的层级类别")
     parent = models.ForeignKey("self", null=True, blank=True, name="parent", verbose_name="父类别",
-                               related_name="clientType_child",on_delete=models.CASCADE, help_text="当前产品生产任务类型属于的上一级别")
+                               related_name="productTaskType_child",on_delete=models.CASCADE, help_text="当前产品生产任务类型属于的上一级别")
     attach_attribute = models.TextField(null=True, blank=True, name="attach_attribute", verbose_name="产品生产任务附加属性",
                                         help_text="当前产品生产任务类型下产品生产任务的附加属性")
     file = models.ManyToManyField(PlanFileModel, blank=True, name="file", verbose_name="产品生产任务类型文件",
@@ -604,7 +604,7 @@ class SemifinishedTaskTypeModel(models.Model):
                              help_text="当前信息的状态")
     classes = models.CharField(max_length=16, choices=CLASS, name="classes", verbose_name="类别", help_text="半成品生产任务类型处于的层级类别")
     parent = models.ForeignKey("self", null=True, blank=True, name="parent", verbose_name="父类别",
-                               related_name="clientType_child",on_delete=models.CASCADE, help_text="当前半成品生产任务类型属于的上一级别")
+                               related_name="semifinishedTaskType_child",on_delete=models.CASCADE, help_text="当前半成品生产任务类型属于的上一级别")
     attach_attribute = models.TextField(null=True, blank=True, name="attach_attribute", verbose_name="半成品生产任务附加属性",
                                         help_text="当前半成品生产任务类型下半成品生产任务的附加属性")
     file = models.ManyToManyField(PlanFileModel, blank=True, name="file", verbose_name="半成品生产任务类型文件",
