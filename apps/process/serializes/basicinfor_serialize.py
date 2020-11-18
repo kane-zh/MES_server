@@ -1073,6 +1073,8 @@ class SemifinishedInforDefinitionSerialize_Create(serializers.ModelSerializer):
                     route = ProductRouteDefinitionModel.objects.get(id=attrs["route_id"])  # 判断指定的产品是否存在
                 except Exception as e:
                     raise serializers.ValidationError("指定的生产线路不存在")
+                if (route.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的生产路线不在--'使用状态'")
                 attrs["routeType_code"] = route.type.code  # 获取生产线路类型编码
                 attrs["routeType_name"] = route.type.name  # 获取生产线路类型名称
                 attrs["route_code"] = route.code  # 获取生产线路编码
@@ -1175,6 +1177,8 @@ class SemifinishedInforDefinitionSerialize_Update(serializers.ModelSerializer):
                     route = ProductRouteDefinitionModel.objects.get(id=attrs["route_id"])  # 判断指定的产品是否存在
                 except Exception as e:
                     raise serializers.ValidationError("指定的生产线路不存在")
+                if (route.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的生产路线不在--'使用状态'")
                 attrs["routeType_code"] = route.type.code  # 获取生产线路类型编码
                 attrs["routeType_name"] = route.type.name  # 获取生产线路类型名称
                 attrs["route_code"] = route.code  # 获取生产线路编码
@@ -1511,6 +1515,8 @@ class ProductInforDefinitionSerialize_Create(serializers.ModelSerializer):
                     route = ProductRouteDefinitionModel.objects.get(id=attrs["route_id"])  # 判断指定的产品是否存在
                 except Exception as e:
                     raise serializers.ValidationError("指定的生产线路不存在")
+                if (route.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的生产路线不在--'使用状态'")
                 attrs["routeType_code"] = route.type.code  # 获取生产线路类型编码
                 attrs["routeType_name"] = route.type.name  # 获取生产线路类型名称
                 attrs["route_code"] = route.code  # 获取生产线路编码
@@ -1609,6 +1615,8 @@ class ProductInforDefinitionSerialize_Update(serializers.ModelSerializer):
                     route = ProductRouteDefinitionModel.objects.get(id=attrs["route_id"])  # 判断指定的产品是否存在
                 except Exception as e:
                     raise serializers.ValidationError("指定的生产线路不存在")
+                if (route.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的生产路线不在--'使用状态'")
                 attrs["routeType_code"] = route.type.code  # 获取生产线路类型编码
                 attrs["routeType_name"] = route.type.name  # 获取生产线路类型名称
                 attrs["route_code"] = route.code  # 获取生产线路编码

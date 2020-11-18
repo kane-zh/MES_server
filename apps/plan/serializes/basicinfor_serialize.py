@@ -841,6 +841,8 @@ class SalesOrderItemCreateSerialize_Create(serializers.ModelSerializer):
             product = ProductInforDefinitionModel.objects.get(id=attrs["product_id"])  # 判断指定的产品是否存在
         except Exception as e:
             raise serializers.ValidationError("指定的产品不存在")
+        if (product.state != "使用中"):  # 判断 状态是否合适
+            raise serializers.ValidationError("指定的产品不在--'使用状态'")
         attrs["productType_code"] = product.type.code  # 获取产品类型编码
         attrs["productType_name"] = product.type.name  # 获取产品类型名称
         attrs["product_code"] = product.code  # 获取产品编码
@@ -1315,6 +1317,8 @@ class ProductTaskItemCreateSerialize_Create(serializers.ModelSerializer):
                     route = ProductRouteDefinitionModel.objects.get(id=attrs["route_id"])  # 判断指定的生产线路是否存在
                 except Exception as e:
                     raise serializers.ValidationError("指定的生产线路不存在")
+                if (route.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的生产路线不在--'使用状态'")
                 attrs["routeType_code"] = route.type.code  # 获取生产线路类型编码
                 attrs["routeType_name"] = route.type.name  # 获取生产线路类型名称
                 attrs["route_code"] = route.code  # 获取生产线路编码
@@ -1384,10 +1388,34 @@ class ProductTaskItemCreateSerialize_Partial(serializers.ModelSerializer):
 
     class Meta:
         model = ProductTaskItemCreateModel
-        fields = ("id", "state","completed","attribute1","attribute2","attribute3","attribute4","attribute5","attribute6","attribute7","attribute8","attribute9","attribute10",
+        fields = ("id", "state","completed","equipment_id","attribute1","attribute2","attribute3","attribute4","attribute5","attribute6","attribute7","attribute8","attribute9","attribute10",
               "attribute11", "attribute12", "attribute13", "attribute14", "attribute15", "attribute16", "attribute17",
               "attribute18", "attribute19", "attribute20", )
 
+    def validate(self, attrs):
+        if 'equipment_id' in attrs.keys():
+            if attrs['equipment_id'] is not '':
+                try:
+                    equipment = EquipmentAccountModel.objects.get(id=attrs["equipment_id"])  # 判断指定的设备是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的设备不存在")
+                if (equipment.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的设备不在--'使用状态'")
+                attrs["equipmentType_code"] = equipment.type.code  # 获取设备类型编码
+                attrs["equipmentType_name"] = equipment.type.name  # 获取设备类型名称
+                attrs["equipment_code"] = equipment.code  # 获取设备编码
+                attrs["equipment_name"] = equipment.name  # 获取设备名称
+        if 'team_id' in attrs.keys():
+            if attrs['team_id'] is not '':
+                try:
+                    team = TeamInforDefinitionModel.objects.get(id=attrs["team_id"])  # 判断指定的班组是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的班组不存在")
+                if (team.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的班组不在--'使用状态'")
+                attrs["team_code"] = team.code  # 获取班组编码
+                attrs["team_name"] = team.name  # 获取班组名称
+        return attrs
     # 状态字段验证
     def validate_state(self, value):
         parentState = ProductTaskItemCreateModel.objects.filter(
@@ -1486,9 +1514,11 @@ class ProductTaskCreateSerialize_Create(serializers.ModelSerializer):
         if 'workshop_code' in attrs.keys():
             if attrs['workshop_code'] is not '':
                 try:
-                    workshop = WorkshopInforDefinitionModel.objects.get(code=attrs["workshop_code"])  # 判断指定的车间务是否存在
+                    workshop = WorkshopInforDefinitionModel.objects.get(code=attrs["workshop_code"])  # 判断指定的车间是否存在
                 except Exception as e:
                     raise serializers.ValidationError("指定的车间不存在")
+                if (workshop.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的车间不在--'使用状态'")
                 attrs["workshop_name"] = workshop.name  # 获取车间名称
         return attrs
 
@@ -1518,7 +1548,7 @@ class ProductTaskCreateSerialize_List(serializers.ModelSerializer):
     type =ProductTaskTypeSerialize_List(required=False)
     class Meta:
         model = ProductTaskCreateModel
-        fields = ("id", "name", "code","type", "state", "priority", "delivery_time", "auditor", "create_user","create_time","update_time")
+        fields = ("id", "name", "code","type", "state", "workshop_code","workshop_name","priority", "delivery_time", "auditor", "create_user","create_time","update_time")
 
 
 class ProductTaskCreateSerialize_Retrieve(serializers.ModelSerializer):
@@ -1542,13 +1572,22 @@ class ProductTaskCreateSerialize_Update(serializers.ModelSerializer):
 
     class Meta:
         model = ProductTaskCreateModel
-        fields = ("id", "name", "code","type", "priority", "file", "delivery_time", "child", "attribute1", "attribute2",
+        fields = ("id", "name", "code","type","workshop_code", "priority", "file", "delivery_time", "child", "attribute1", "attribute2",
                   "attribute3", "attribute4", "attribute5", "desc", "auditor",)
 
     # 所有字段验证
     def validate(self, attrs):
         if self.instance.state != '新建':  # 如果不是新建状态 不能更改信息
             raise serializers.ValidationError("当前信息已提交,禁止更改")
+        if 'workshop_code' in attrs.keys():
+            if attrs['workshop_code'] is not '':
+                try:
+                    workshop = WorkshopInforDefinitionModel.objects.get(code=attrs["workshop_code"])  # 判断指定的车间是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的车间不存在")
+                if (workshop.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的车间不在--'使用状态'")
+                attrs["workshop_name"] = workshop.name  # 获取车间名称
         return attrs
 
     # 审核者字段验证
@@ -1888,6 +1927,8 @@ class SemifinishedTaskItemCreateSerialize_Create(serializers.ModelSerializer):
                         route = ProductRouteDefinitionModel.objects.get(id=attrs["route_id"])  # 判断指定的生产线路是否存在
                     except Exception as e:
                         raise serializers.ValidationError("指定的生产线路不存在")
+                    if (route.state != "使用中"):  # 判断 状态是否合适
+                        raise serializers.ValidationError("指定的生产路线不在--'使用状态'")
                     attrs["routeType_code"] = route.type.code  # 获取生产线路类型编码
                     attrs["routeType_name"] = route.type.name  # 获取生产线路类型名称
                     attrs["route_code"] = route.code  # 获取生产线路编码
@@ -1896,6 +1937,8 @@ class SemifinishedTaskItemCreateSerialize_Create(serializers.ModelSerializer):
                 semifinished = SemifinishedInforDefinitionModel.objects.get(id=attrs["semifinished_id"])  # 判断指定的半成品是否存在
             except Exception as e:
                 raise serializers.ValidationError("指定的半成品不存在")
+            if (semifinished.state != "使用中"):  # 判断 状态是否合适
+                raise serializers.ValidationError("指定的半成品不在--'使用状态'")
             attrs["semifinishedType_code"] = semifinished.type.code  # 获取半成品类型编码
             attrs["semifinishedType_name"] = semifinished.type.name  # 获取半成品类型名称
             attrs["semifinished_code"] = semifinished.code  # 获取半成品编码
@@ -1949,10 +1992,34 @@ class SemifinishedTaskItemCreateSerialize_Partial(serializers.ModelSerializer):
     class Meta:
         model = SemifinishedTaskItemCreateModel
         fields = (
-        "id", "state", "completed", "attribute1", "attribute2", "attribute3", "attribute4", "attribute5", "attribute6",
+        "id", "state", "completed","equipment_id", "team_id","attribute1", "attribute2", "attribute3", "attribute4", "attribute5", "attribute6",
         "attribute7", "attribute8", "attribute9", "attribute10","attribute11", "attribute12", "attribute13", "attribute14",
         "attribute15", "attribute16", "attribute17", "attribute18", "attribute19", "attribute20",)
 
+    def validate(self, attrs):
+        if 'equipment_id' in attrs.keys():
+            if attrs['equipment_id'] is not '':
+                try:
+                    equipment = EquipmentAccountModel.objects.get(id=attrs["equipment_id"])  # 判断指定的设备是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的设备不存在")
+                if (equipment.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的设备不在--'使用状态'")
+                attrs["equipmentType_code"] = equipment.type.code  # 获取设备类型编码
+                attrs["equipmentType_name"] = equipment.type.name  # 获取设备类型名称
+                attrs["equipment_code"] = equipment.code  # 获取设备编码
+                attrs["equipment_name"] = equipment.name  # 获取设备名称
+        if 'team_id' in attrs.keys():
+            if attrs['team_id'] is not '':
+                try:
+                    team = TeamInforDefinitionModel.objects.get(id=attrs["team_id"])  # 判断指定的班组是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的班组不存在")
+                if (team.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的班组不在--'使用状态'")
+                attrs["team_code"] = team.code  # 获取班组编码
+                attrs["team_name"] = team.name  # 获取班组名称
+        return attrs
     # 状态字段验证
     def validate_state(self, value):
         parentState = SemifinishedTaskItemCreateModel.objects.filter(
@@ -2015,9 +2082,11 @@ class SemifinishedTaskCreateSerialize_Create(serializers.ModelSerializer):
         if 'workshop_code' in attrs.keys():
             if attrs['workshop_code'] is not '':
                 try:
-                    workshop = WorkshopInforDefinitionModel.objects.get(code=attrs["workshop_code"])  # 判断指定的车间务是否存在
+                    workshop = WorkshopInforDefinitionModel.objects.get(code=attrs["workshop_code"])  # 判断指定的车间是否存在
                 except Exception as e:
                     raise serializers.ValidationError("指定的车间不存在")
+                if (workshop.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的车间不在--'使用状态'")
                 attrs["workshop_name"] = workshop.name  # 获取车间名称
         return attrs
 
@@ -2048,7 +2117,7 @@ class SemifinishedTaskCreateSerialize_List(serializers.ModelSerializer):
     type = SemifinishedTaskTypeSerialize_List(required=False)
     class Meta:
         model = SemifinishedTaskCreateModel
-        fields = ("id", "name", "code","type", "state", "priority", "delivery_time", "auditor", "create_user","create_time","update_time")
+        fields = ("id", "name", "code","type", "state", "workshop_code","workshop_name","priority", "delivery_time", "auditor", "create_user","create_time","update_time")
 
 
 class SemifinishedTaskCreateSerialize_Retrieve(serializers.ModelSerializer):
@@ -2072,13 +2141,22 @@ class SemifinishedTaskCreateSerialize_Update(serializers.ModelSerializer):
 
     class Meta:
         model = SemifinishedTaskCreateModel
-        fields = ("id", "name", "code", "type","priority", "file", "delivery_time", "child", "attribute1", "attribute2",
+        fields = ("id", "name", "code", "type","workshop_code","priority", "file", "delivery_time", "child", "attribute1", "attribute2",
                   "attribute3", "attribute4", "attribute5", "desc", "auditor",)
 
     # 所有字段验证
     def validate(self, attrs):
         if self.instance.state != '新建':  # 如果不是新建状态 不能更改信息
             raise serializers.ValidationError("当前信息已提交,禁止更改")
+        if 'workshop_code' in attrs.keys():
+            if attrs['workshop_code'] is not '':
+                try:
+                    workshop = WorkshopInforDefinitionModel.objects.get(code=attrs["workshop_code"])  # 判断指定的车间是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的车间不存在")
+                if (workshop.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的车间不在--'使用状态'")
+                attrs["workshop_name"] = workshop.name  # 获取车间名称
         return attrs
 
     # 审核者字段验证
@@ -2197,6 +2275,8 @@ class PurchaseRequireItemCreateSerialize_Create(serializers.ModelSerializer):
             material = MaterialInforDefinitionModel.objects.get(id=attrs["material_id"])  # 判断指定的物料是否存在
         except Exception as e:
             raise serializers.ValidationError("指定的物料不存在")
+        if (material.state != "使用中"):  # 判断 状态是否合适
+            raise serializers.ValidationError("指定的物料不在--'使用状态'")
         attrs["materialType_code"] = material.type.code  # 获取物料类型编码
         attrs["materialType_name"] = material.type.name  # 获取物料类型名称
         attrs["material_code"] = material.code  # 获取物料编码

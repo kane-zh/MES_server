@@ -199,6 +199,8 @@ class ProductDailyReportItemSerialize_Create(serializers.ModelSerializer):
                     task = ProductTaskCreateModel.objects.get(code=attrs["producttask_code"])  # 判断指定的生产任务是否存在
                 except Exception as e:
                     raise serializers.ValidationError("指定的生产任务不存在")
+                if (task.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的生产任务不在--'使用状态'")
                 attrs["producttask_name"] = task.name  # 获取生产任务名称
         attrs["productType_code"] = product.type.code  # 获取产品类型编码
         attrs["productType_name"] = product.type.name  # 获取产品类型名称
@@ -393,6 +395,8 @@ class SemifinishedDailyReportItemSerialize_Create(serializers.ModelSerializer):
                     task = ProductTaskCreateModel.objects.get(code=attrs["producttask_code"])  # 判断指定的生产任务是否存在
                 except Exception as e:
                     raise serializers.ValidationError("指定的生产任务不存在")
+                if (task.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的生产任务不在--'使用状态'")
                 attrs["producttask_name"] = task.name  # 获取生产任务名称
         attrs["producttask_name"] = task.name  # 获取生产任务名称
         attrs["semifinished"] = semifinished.type.code  # 获取半成品类型编码
@@ -585,6 +589,8 @@ class ProductDataSerialize_Create(serializers.ModelSerializer):
                     product = ProductInforDefinitionModel.objects.get(id=attrs["product_id"])  # 判断指定的产品是否存在
                 except Exception as e:
                     raise serializers.ValidationError("指定的产品不存在")
+                if (product.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的产品不在--'使用状态'")
                 attrs["productType_code"] = product.type.code  # 获取产品类型编码
                 attrs["productType_name"] = product.type.name  # 获取产品类型名称
                 attrs["product_code"] = product.code  # 获取产品编码
@@ -595,6 +601,8 @@ class ProductDataSerialize_Create(serializers.ModelSerializer):
                     task = ProductTaskCreateModel.objects.get(id=attrs["task_id"])  # 判断指定的任务是否存在
                 except Exception as e:
                     raise serializers.ValidationError("指定的任务不存在")
+                if (task.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的生产任务不在--'使用状态'")
                 attrs["taskType_code"] = task.type.code  # 获取任务类型编码
                 attrs["taskType_name"] = task.type.name  # 获取任务类型名称
                 attrs["task_code"] = task.code  # 获取任务编码
@@ -657,6 +665,8 @@ class SemifinishedDataSerialize_Create(serializers.ModelSerializer):
                     semifinished = SemifinishedInforDefinitionModel.objects.get(id=attrs["semifinished_id"])  # 判断指定的半成品是否存在
                 except Exception as e:
                     raise serializers.ValidationError("指定的半成品不存在")
+                if (semifinished.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的半成品不在--'使用状态'")
                 attrs["semifinishedType_code"] = semifinished.type.code  # 获取半成品类型编码
                 attrs["semifinishedType_name"] = semifinished.type.name  # 获取半成品类型名称
                 attrs["semifinished_code"] = semifinished.code  # 获取半成品编码
@@ -667,6 +677,8 @@ class SemifinishedDataSerialize_Create(serializers.ModelSerializer):
                     task = ProductTaskCreateModel.objects.get(id=attrs["task_id"])  # 判断指定的任务是否存在
                 except Exception as e:
                     raise serializers.ValidationError("指定的任务不存在")
+                if (task.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的生产任务不在--'使用状态'")
                 attrs["taskType_code"] = task.type.code  # 获取任务类型编码
                 attrs["taskType_name"] = task.type.name  # 获取任务类型名称
                 attrs["task_code"] = task.code  # 获取任务编码

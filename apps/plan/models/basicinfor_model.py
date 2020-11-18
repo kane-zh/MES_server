@@ -477,6 +477,24 @@ class   ProductTaskItemCreateModel(models.Model):
                             help_text="当前项使用的工艺路线编码")
     route_name = models.CharField(max_length=32, null=True, blank=True,name="route_name", verbose_name="工艺路线名称",
                             help_text="当前项使用的工艺路线名称")
+    equipmentType_code = models.CharField(max_length=32, null=True, blank=True, name="equipmentType_code",
+                                          verbose_name="设备类型编码",
+                                          help_text="当前项使用的设备类型编码")
+    equipmentType_name = models.CharField(max_length=32, null=True, blank=True, name="equipmentType_name",
+                                          verbose_name="设备类型名称",
+                                          help_text="当前项使用的设备类型名称")
+    equipment_id = models.CharField(max_length=16, null=True, blank=True, name="equipment_id", verbose_name="设备ID",
+                                    help_text="当前项使用的设备ID")
+    equipment_code = models.CharField(max_length=32, null=True, blank=True, name="equipment_code", verbose_name="设备编码",
+                                      help_text="当前项使用的设备编码")
+    equipment_name = models.CharField(max_length=32, null=True, blank=True, name="equipment_name", verbose_name="设备名称",
+                                      help_text="当前项使用的设备名称")
+    team_id = models.CharField(max_length=16, null=True, blank=True, name="team_id", verbose_name="班组ID",
+                               help_text="当前项使用的班组ID")
+    team_code = models.CharField(max_length=32, null=True, blank=True, name="team_code", verbose_name="班组编码",
+                                 help_text="当前项使用的班组编码")
+    team_name = models.CharField(max_length=32, null=True, blank=True, name="team_name", verbose_name="班组名称",
+                                 help_text="当前项使用的班组名称")
     sum = models.IntegerField(name="sum", verbose_name="数量", help_text="当前生产任务单子项需求数量")
     completed = models.IntegerField(name="completed",default=0, null=True, blank=True,    verbose_name="完成数量", help_text="当前生产任务单子项完成数量")
     attribute1 = models.CharField(max_length=32, null=True, blank=True, name="attribute1", verbose_name="属性1", help_text="当前附加属性1")
@@ -666,6 +684,24 @@ class   SemifinishedTaskItemCreateModel(models.Model):
                                   help_text="当前项使用的工艺路线编码")
     route_name = models.CharField(max_length=32, null=True, blank=True, name="route_name", verbose_name="工艺路线名称",
                                   help_text="当前项使用的工艺路线名称")
+    equipmentType_code = models.CharField(max_length=32, null=True, blank=True, name="equipmentType_code",
+                                          verbose_name="设备类型编码",
+                                          help_text="当前项使用的设备类型编码")
+    equipmentType_name = models.CharField(max_length=32, null=True, blank=True, name="equipmentType_name",
+                                          verbose_name="设备类型名称",
+                                          help_text="当前项使用的设备类型名称")
+    equipment_id = models.CharField(max_length=16, null=True, blank=True, name="equipment_id", verbose_name="设备ID",
+                                    help_text="当前项使用的设备ID")
+    equipment_code = models.CharField(max_length=32, null=True, blank=True, name="equipment_code", verbose_name="设备编码",
+                                      help_text="当前项使用的设备编码")
+    equipment_name = models.CharField(max_length=32, null=True, blank=True, name="equipment_name", verbose_name="设备名称",
+                                      help_text="当前项使用的设备名称")
+    team_id = models.CharField(max_length=16, null=True, blank=True, name="team_id", verbose_name="班组ID",
+                               help_text="当前项使用的班组ID")
+    team_code = models.CharField(max_length=32, null=True, blank=True, name="team_code", verbose_name="班组编码",
+                                 help_text="当前项使用的班组编码")
+    team_name = models.CharField(max_length=32, null=True, blank=True, name="team_name", verbose_name="班组名称",
+                                 help_text="当前项使用的班组名称")
     sum = models.IntegerField(name="sum", verbose_name="半成品数量", help_text="当前项需要的半成品数量")
     completed = models.IntegerField(name="completed",default=0, null=True, blank=True,    verbose_name="完成数量", help_text="当前生产任务单子项完成数量")
     attribute1 = models.CharField(max_length=32, null=True, blank=True, name="attribute1", verbose_name="属性1", help_text="当前附加属性1")

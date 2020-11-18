@@ -153,8 +153,8 @@ class EquipmentManageSerialize_Create(serializers.ModelSerializer) :
             raise serializers.ValidationError("指定的设备不存在")
         if equipment.state != "使用中" :
             raise serializers.ValidationError("指定的设备不在'使用中'状态")
-        attrs["warehouse_code"] = position.parent.code  # 获取仓库编码
-        attrs["warehouse_name"] = position.parent.name  # 获取仓库名称
+        attrs["warehouse_code"] = position.type.code  # 获取仓库编码
+        attrs["warehouse_name"] = position.type.name  # 获取仓库名称
         attrs["position_code"] = position.code  # 获取仓位编码
         attrs["position_name"] = position.name  # 获取仓位名称
         attrs["equipmentType_code"] = equipment.type.code  # 获取设备类型编码
@@ -222,8 +222,8 @@ class EquipmentManageSerialize_Update(serializers.ModelSerializer) :
             raise serializers.ValidationError("指定的设备不存在")
         if equipment.state != "使用中" :
             raise serializers.ValidationError("指定的设备不在'使用中'状态")
-        attrs["warehouse_code"] = position.parent.code  # 获取仓库编码
-        attrs["warehouse_name"] = position.parent.name  # 获取仓库名称
+        attrs["warehouse_code"] = position.type.code  # 获取仓库编码
+        attrs["warehouse_name"] = position.type.name  # 获取仓库名称
         attrs["position_code"] = position.code  # 获取仓位编码
         attrs["position_name"] = position.name  # 获取仓位名称
         attrs["equipmentType_code"] = equipment.type.code  # 获取设备类型编码
@@ -487,8 +487,8 @@ class PartsManageSerialize_Create(serializers.ModelSerializer) :
             raise serializers.ValidationError("指定的设备配件不存在")
         if parts.state != "使用中" :
             raise serializers.ValidationError("指定的设备配件不在'使用中'状态")
-        attrs["warehouse_code"] = position.parent.code  # 获取仓库编码
-        attrs["warehouse_name"] = position.parent.name  # 获取仓库名称
+        attrs["warehouse_code"] = position.type.code  # 获取仓库编码
+        attrs["warehouse_name"] = position.type.name  # 获取仓库名称
         attrs["position_code"] = position.code  # 获取仓位编码
         attrs["position_name"] = position.name  # 获取仓位名称
         attrs["partsType_code"] = parts.type.code  # 获取设备配件类型编码
@@ -555,8 +555,8 @@ class PartsManageSerialize_Update(serializers.ModelSerializer) :
             raise serializers.ValidationError("指定的设备配件不存在")
         if parts.state != "使用中" :
             raise serializers.ValidationError("指定的设备配件不在'使用中'状态")
-        attrs["warehouse_code"] = position.parent.code  # 获取仓库编码
-        attrs["warehouse_name"] = position.parent.name  # 获取仓库名称
+        attrs["warehouse_code"] = position.type.code  # 获取仓库编码
+        attrs["warehouse_name"] = position.type.name  # 获取仓库名称
         attrs["position_code"] = position.code  # 获取仓位编码
         attrs["position_name"] = position.name  # 获取仓位名称
         attrs["partsType_code"] = parts.type.code  # 获取设备配件类型编码
@@ -812,14 +812,16 @@ class MaterialManageSerialize_Create(serializers.ModelSerializer) :
             position = PositionDefinitionModel.objects.get(id=attrs["position_id"])  # 判断指定的仓位是否存在
         except Exception as e :
             raise serializers.ValidationError("指定的仓位不存在")
+        if position.state != "闲置":
+            raise serializers.ValidationError("指定的仓位不在'闲置'状态")
         try :
             material = MaterialInforDefinitionModel.objects.get(id=attrs["material_id"])  # 判断指定的物料是否存在
         except Exception as e :
             raise serializers.ValidationError("指定的物料不存在")
         if material.state != "使用中" :
             raise serializers.ValidationError("指定的物料不在'使用中'状态")
-        attrs["warehouse_code"] = position.parent.code  # 获取仓库编码
-        attrs["warehouse_name"] = position.parent.name  # 获取仓库名称
+        attrs["warehouse_code"] = position.type.code  # 获取仓库编码
+        attrs["warehouse_name"] = position.type.name  # 获取仓库名称
         attrs["position_code"] = position.code  # 获取仓位编码
         attrs["position_name"] = position.name  # 获取仓位名称
         attrs["materialType_code"] = material.type.code  # 获取物料类型编码
@@ -896,8 +898,8 @@ class MaterialManageSerialize_Update(serializers.ModelSerializer) :
             raise serializers.ValidationError("指定的物料不存在")
         if material.state != "使用中" :
             raise serializers.ValidationError("指定的物料不在'使用中'状态")
-        attrs["warehouse_code"] = position.parent.code  # 获取仓库编码
-        attrs["warehouse_name"] = position.parent.name  # 获取仓库名称
+        attrs["warehouse_code"] = position.type.code  # 获取仓库编码
+        attrs["warehouse_name"] = position.type.name  # 获取仓库名称
         attrs["position_code"] = position.code  # 获取仓位编码
         attrs["position_name"] = position.name  # 获取仓位名称
         attrs["materialType_code"] = material.type.code  # 获取物料类型编码
@@ -1222,8 +1224,8 @@ class SemifinishedManageSerialize_Create(serializers.ModelSerializer) :
             raise serializers.ValidationError("指定的半成品不存在")
         if semifinished.state != "使用中" :
             raise serializers.ValidationError("指定的半成品不在'使用中'状态")
-        attrs["warehouse_code"] = position.parent.code  # 获取仓库编码
-        attrs["warehouse_name"] = position.parent.name  # 获取仓库名称
+        attrs["warehouse_code"] = position.type.code  # 获取仓库编码
+        attrs["warehouse_name"] = position.type.name  # 获取仓库名称
         attrs["position_code"] = position.code  # 获取仓位编码
         attrs["position_name"] = position.name  # 获取仓位名称
         attrs["semifinishedType_code"] = semifinished.type.code  # 获取半成品类型编码
@@ -1300,8 +1302,8 @@ class SemifinishedManageSerialize_Update(serializers.ModelSerializer) :
             raise serializers.ValidationError("指定的半成品不存在")
         if semifinished.state != "使用中" :
             raise serializers.ValidationError("指定的半成品不在'使用中'状态")
-        attrs["warehouse_code"] = position.parent.code  # 获取仓库编码
-        attrs["warehouse_name"] = position.parent.name  # 获取仓库名称
+        attrs["warehouse_code"] = position.type.code  # 获取仓库编码
+        attrs["warehouse_name"] = position.type.name  # 获取仓库名称
         attrs["position_code"] = position.code  # 获取仓位编码
         attrs["position_name"] = position.name  # 获取仓位名称
         attrs["semifinishedType_code"] = semifinished.type.code  # 获取半成品类型编码
@@ -1628,8 +1630,8 @@ class ProductManageSerialize_Create(serializers.ModelSerializer) :
             raise serializers.ValidationError("指定的产品不存在")
         if product.state != "使用中" :
             raise serializers.ValidationError("指定的产品不在'使用中'状态")
-        attrs["warehouse_code"] = position.parent.code  # 获取仓库编码
-        attrs["warehouse_name"] = position.parent.name  # 获取仓库名称
+        attrs["warehouse_code"] = position.type.code  # 获取仓库编码
+        attrs["warehouse_name"] = position.type.name  # 获取仓库名称
         attrs["position_code"] = position.code  # 获取仓位编码
         attrs["position_name"] = position.name  # 获取仓位名称
         attrs["productType_code"] = product.type.code  # 获取产品类型编码
@@ -1707,8 +1709,8 @@ class ProductManageSerialize_Update(serializers.ModelSerializer) :
             raise serializers.ValidationError("指定的产品不存在")
         if product.state != "使用中" :
             raise serializers.ValidationError("指定的产品不在'使用中'状态")
-        attrs["warehouse_code"] = position.parent.code  # 获取仓库编码
-        attrs["warehouse_name"] = position.parent.name  # 获取仓库名称
+        attrs["warehouse_code"] = position.type.code  # 获取仓库编码
+        attrs["warehouse_name"] = position.type.name  # 获取仓库名称
         attrs["position_code"] = position.code  # 获取仓位编码
         attrs["position_name"] = position.name  # 获取仓位名称
         attrs["productType_code"] = product.type.code  # 获取产品类型编码
