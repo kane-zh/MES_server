@@ -433,7 +433,7 @@ class PositionDefinitionSerialize_Partial(serializers.ModelSerializer):
             condtions = {'state__in': ("审核中","使用中", "闲置"),
                          'type__code__iexact':self.instance.type.code}
             positionNum=PositionDefinitionModel.objects.filter(**condtions).count()
-            if (positionNum > self.instance.type.position_sum):
+            if (positionNum >= self.instance.type.position_sum):
                 raise serializers.ValidationError("提交的仓位数超过了仓库最大仓位数限制")
         return attrs
 

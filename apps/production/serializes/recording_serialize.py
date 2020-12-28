@@ -398,11 +398,10 @@ class SemifinishedDailyReportItemSerialize_Create(serializers.ModelSerializer):
                 if (task.state != "使用中"):  # 判断 状态是否合适
                     raise serializers.ValidationError("指定的生产任务不在--'使用状态'")
                 attrs["producttask_name"] = task.name  # 获取生产任务名称
-        attrs["producttask_name"] = task.name  # 获取生产任务名称
-        attrs["semifinished"] = semifinished.type.code  # 获取半成品类型编码
-        attrs["semifinished"] = semifinished.type.name  # 获取半成品类型名称
-        attrs["semifinished"] = semifinished.code  # 获取半成品编码
-        attrs["semifinished"] = semifinished.name  # 获取半成品名称
+        attrs["semifinishedType_code"] = semifinished.type.code  # 获取半成品类型编码
+        attrs["semifinishedType_name"] = semifinished.type.name  # 获取半成品类型名称
+        attrs["semifinished_code"] = semifinished.code  # 获取半成品编码
+        attrs["semifinished_name"] = semifinished.name  # 获取半成品名称
         return attrs
 
 

@@ -236,7 +236,7 @@ class LeanBoardView(CreateModelMixin, ListModelMixin,
     # 重载数据查询的方法，根据不同的操作查询不同的数据范围
     def get_queryset(self):
         if self.request.user.is_superuser:
-            return LeanBoardModel.objects.all().oorder_by("-id")   # 超级用户可以查看所有信息
+            return LeanBoardModel.objects.all().order_by("-id")   # 超级用户可以查看所有信息
         user = self.request.user.username
         condtions1 = {'create_user__iexact': user,
                       'state__in': ("新建", "审核中", "使用中")  # 信息创建者可以看到 (新建,审核,使用中)的数据,,
@@ -257,4 +257,4 @@ class LeanBoardView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return LeanBoardModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).oorder_by("-id")
+        return LeanBoardModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")

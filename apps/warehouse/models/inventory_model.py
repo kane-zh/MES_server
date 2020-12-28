@@ -410,7 +410,7 @@ class EquipmentManageModel(models.Model) :
     position_name = models.CharField(max_length=32, name="position_name", verbose_name="仓位名称", help_text="设备放置的仓位名称")
     equipmentType_code = models.CharField(max_length=32, name="equipmentType_code", verbose_name="设备类型编码",
                                          help_text="当前物品的设备类型编码")
-    equipmentType_name = models.CharField(max_length=32, name="EquipmentType_name", verbose_name="设备类型名称",
+    equipmentType_name = models.CharField(max_length=32, name="equipmentType_name", verbose_name="设备类型名称",
                                          help_text="当前物品的设备类型名称")
     equipment_id = models.CharField(max_length=16, name="equipment_id", verbose_name="设备id", help_text="当前物品的设备id")
     equipment_code = models.CharField(max_length=32, name="equipment_code", verbose_name="设备编码", help_text="当前物品的设备编码")

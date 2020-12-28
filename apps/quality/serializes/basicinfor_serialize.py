@@ -1013,7 +1013,7 @@ class InspectionReportTypeDefinitionSerialize_Retrieve(serializers.ModelSerializ
     file = QualityFileSerialize_List(many=True)                 # 类型文件信息
     alter = QualityAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = InspectionReportTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    InspectionReportType_child = InspectionReportTypeDefinitionSerialize_List(many=True)# 子类别信息
+    inspectionReportType_child = InspectionReportTypeDefinitionSerialize_List(many=True)# 子类别信息
     inspectionReportType_item = InspectionReportInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
@@ -1144,7 +1144,7 @@ class InspectionReportTypeDefinitionSerialize_First(serializers.ModelSerializer)
     inspectionReportType_child = InspectionReportTypeDefinitionSerialize_Second(many=True) # 子类别信息
     class Meta:
         model = InspectionReportTypeDefinitionModel
-        fields = ("id", "name", "code", "state","inspectionReportype_child")
+        fields = ("id", "name", "code", "state","inspectionReportType_child")
 
 # endregion
 

@@ -182,7 +182,8 @@ class EquipmentManageSerialize_List(serializers.ModelSerializer) :
     class Meta :
         model = EquipmentManageModel
         fields = ("id", "name", "code", "state", "type", "warehouse_name", "warehouse_code", "position_code", "position_name",
-        "equipment_code", "equipment_name", "handler", "sum", "dataTime", "auditor", "create_user","create_time","update_time")
+                  "equipmentType_code", "equipmentType_name","equipment_code", "equipment_name", "handler", "sum", "dataTime",
+                  "auditor", "create_user","create_time","update_time")
 
 
 class EquipmentManageSerialize_Retrieve(serializers.ModelSerializer) :
@@ -516,7 +517,8 @@ class PartsManageSerialize_List(serializers.ModelSerializer) :
     class Meta :
         model = PartsManageModel
         fields = ("id", "name", "code", "state", "type", "warehouse_name", "warehouse_code", "position_code", "position_name",
-        "parts_code", "parts_name", "handler", "sum", "dataTime", "auditor", "create_user","create_time","update_time")
+                  "partsType_code", "partsType_name", "parts_code", "parts_name", "handler", "sum", "dataTime", "auditor",
+                  "create_user","create_time","update_time")
 
 
 class PartsManageSerialize_Retrieve(serializers.ModelSerializer) :
@@ -859,7 +861,8 @@ class MaterialManageSerialize_List(serializers.ModelSerializer) :
     class Meta :
         model = MaterialManageModel
         fields = ("id", "name", "code", "state", "type", "warehouse_name", "warehouse_code", "position_code", "position_name",
-        "material_code", "material_name", "handler", "batch", "sum", "dataTime", "auditor", "create_user","create_time","update_time")
+                  "materialType_code", "materialType_name","material_code", "material_name", "handler", "batch", "sum", "dataTime",
+                  "auditor", "create_user","create_time","update_time")
 
 
 class MaterialManageSerialize_Retrieve(serializers.ModelSerializer) :
@@ -1263,7 +1266,8 @@ class SemifinishedManageSerialize_List(serializers.ModelSerializer) :
     class Meta :
         model = SemifinishedManageModel
         fields = ( "id", "name", "code", "state", "type", "warehouse_name", "warehouse_code", "position_code", "position_name",
-        "semifinished_code", "semifinished_name", "handler", "batch", "sum", "dataTime", "auditor", "create_user","create_time","update_time")
+              "semifinishedType_code", "semifinishedType_name","semifinished_code", "semifinished_name", "handler", "batch", "sum",
+              "dataTime", "auditor", "create_user","create_time","update_time")
 
 
 class SemifinishedManageSerialize_Retrieve(serializers.ModelSerializer) :
@@ -1670,7 +1674,8 @@ class ProductManageSerialize_List(serializers.ModelSerializer) :
         model = ProductManageModel
         fields = (
         "id", "name", "code", "state", "type", "warehouse_code", "warehouse_name", "position_code", "position_name",
-        "product_code", "product_name", "handler", "batch", "sum", "dataTime", "auditor", "create_user","create_time","update_time")
+        "productType_code", "productType_name", "product_code", "product_name", "handler", "batch", "sum", "dataTime", "auditor",
+        "create_user","create_time","update_time")
 
 
 class ProductManageSerialize_Retrieve(serializers.ModelSerializer) :

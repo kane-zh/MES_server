@@ -1393,6 +1393,8 @@ class ProductTaskItemCreateSerialize_Partial(serializers.ModelSerializer):
               "attribute18", "attribute19", "attribute20", )
 
     def validate(self, attrs):
+        if 'state' in attrs.keys() and 'completed' in attrs.keys():
+            raise serializers.ValidationError("不能同时更新状态与完成数量")
         if 'equipment_id' in attrs.keys():
             if attrs['equipment_id'] is not '':
                 try:
@@ -1442,13 +1444,14 @@ class ProductTaskItemCreateSerialize_Partial(serializers.ModelSerializer):
                     if count == len(data2):
                         parentModel.state = "终止"
                         parentModel.save()
+            # 获取未完成的任务数量,并将订单的已分配数量减少，已完成数量增加
         return value
 
     # 完成总数字段验证
     def validate_completed(self, value):
         if not (self.instance.state == "加工中"):
             raise serializers.ValidationError("只有在[加工中状态]下,才能更新加工完成数")
-        if value>=self.instance.sum:
+        if value>=self.instance.sum:            #当完成总数大于分配总数时,自动更新订单完成数量
             list = SalesOrderItemCreateModel.objects.get(id=self.instance.salesOrderItem_id)
             list.completed+=self.instance.sum
             list.save()

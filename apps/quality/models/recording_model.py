@@ -52,7 +52,7 @@ class InspectionReportModel(models.Model):
     name = models.CharField(max_length=32, name="name", null=True, blank=True, verbose_name="名称",help_text="检验汇报名称(建议唯一)")
     code = models.CharField(max_length=32, name="code",null=True, blank=True,  verbose_name="编码", help_text="检验汇报编码(与类型联合唯一)")
     type = models.ForeignKey(InspectionReportTypeDefinitionModel, on_delete=models.CASCADE,name="type",
-                             related_name="InspectionReportType_item",verbose_name="类型", help_text="当前检验汇报属于的检验汇报类型")
+                             related_name="inspectionReportType_item",verbose_name="类型", help_text="当前检验汇报属于的检验汇报类型")
     state = models.CharField(max_length=16,choices=STATUS, default="新建", name="state", verbose_name="状态", help_text="当前信息的状态")
     child = models.ManyToManyField(InspectionReportItemModel, blank=True, name="child", verbose_name="检验汇报子项",
                                     help_text="当前检验汇报子项")

@@ -336,7 +336,7 @@ class InspectionReportTypeDefinitionModel(models.Model):
     code = models.CharField(max_length=32, name="code", unique=True, verbose_name="编码", help_text="检验汇报类型编码(必须唯一)")
     state = models.CharField(max_length=16,  choices=STATUS, default="新建", name="state", verbose_name="状态", help_text="当前信息的状态")
     classes = models.CharField(max_length=16, choices=CLASS, name="classes", verbose_name="类别", help_text="检验汇报类型处于的层级类别")
-    parent = models.ForeignKey("self", null=True, blank=True, name="parent",verbose_name="父类别", related_name="InspectionReportType_child",
+    parent = models.ForeignKey("self", null=True, blank=True, name="parent",verbose_name="父类别", related_name="inspectionReportType_child",
                                on_delete=models.CASCADE,help_text="当前检验汇报类型属于的上一级别")
     attach_attribute = models.TextField(null=True, blank=True, name="attach_attribute", verbose_name="检验汇报附加属性",help_text="当前检验汇报类型下检验汇报的附加属性")
     file = models.ManyToManyField(QualityFileModel, blank=True, name="file", verbose_name="检验汇报类型文件",help_text="当前检验汇报类型的文件信息")
