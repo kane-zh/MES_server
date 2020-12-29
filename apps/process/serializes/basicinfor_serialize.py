@@ -2528,17 +2528,25 @@ class StationInforDefinitionSerialize(serializers.ModelSerializer):
         model = StationInforDefinitionModel
         fields = "__all__"
 
-class ProcessInforSerialize(serializers.ModelSerializer):
+class ProcessInforSerialize_Retrieve(serializers.ModelSerializer):
     """
     生产路线信息(工艺信息)
     """
     file = ProcessFileSerialize_List(many=True)
     alter = ProcessAlterRecordSerialize_List(many=True)
     type = ProductRouteTypeDefinitionSerialize_List()
-    station= StationInforDefinitionSerialize(many=True)
+    station= StationInforDefinitionSerialize_Retrieve(many=True)
     class Meta:
         model = ProductRouteDefinitionModel
         fields = "__all__"
+
+class ProcessInforSerialize_List(serializers.ModelSerializer):
+    """
+    生产路线信息(工艺信息)
+    """
+    class Meta:
+        model = ProductRouteDefinitionModel
+        fields = ("id", "name", "code", "state",)
 
 # endregion
 # region  工艺看板定义  序列化器

@@ -128,7 +128,7 @@ class EventTypeDefinitionView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return EventTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+        return EventTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
 class EventTypeDefinitionViews(ListModelMixin,viewsets.GenericViewSet):
     """

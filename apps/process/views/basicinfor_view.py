@@ -129,7 +129,7 @@ class UnitTypeDefinitionView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return UnitTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+        return UnitTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
 
 
@@ -255,7 +255,7 @@ class MaterialTypeDefinitionView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return MaterialTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+        return MaterialTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
 class MaterialTypeDefinitionViews(ListModelMixin,viewsets.GenericViewSet):
     """
@@ -377,7 +377,7 @@ class SemifinishedTypeDefinitionView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return SemifinishedTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+        return SemifinishedTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
 class SemifinishedTypeDefinitionViews(ListModelMixin,viewsets.GenericViewSet):
     """
@@ -445,7 +445,7 @@ class SemifinishedInforDefinitionView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return SemifinishedInforDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+        return SemifinishedInforDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
 class ProductTypeDefinitionView(CreateModelMixin, ListModelMixin,
                              RetrieveModelMixin, UpdateModelMixin,
@@ -499,7 +499,7 @@ class ProductTypeDefinitionView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return ProductTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+        return ProductTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
 class ProductTypeDefinitionViews(ListModelMixin,viewsets.GenericViewSet):
     """
@@ -567,7 +567,7 @@ class ProductInforDefinitionView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return ProductInforDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+        return ProductInforDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
 
 class StationTypeDefinitionView(CreateModelMixin, ListModelMixin,
@@ -622,7 +622,7 @@ class StationTypeDefinitionView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return StationTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+        return StationTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
 class StationTypeDefinitionViews(ListModelMixin,viewsets.GenericViewSet):
     """
@@ -708,7 +708,7 @@ class StationInforDefinitionView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return StationInforDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+        return StationInforDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
 class ProductRouteTypeDefinitionView(CreateModelMixin, ListModelMixin,
                              RetrieveModelMixin, UpdateModelMixin,
@@ -762,7 +762,7 @@ class ProductRouteTypeDefinitionView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return ProductRouteTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+        return ProductRouteTypeDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
 class ProductRouteTypeDefinitionViews(ListModelMixin,viewsets.GenericViewSet):
     """
@@ -833,26 +833,33 @@ class ProductRouteDefinitionView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
         return ProductRouteDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
-class ProcessInforView( RetrieveModelMixin,viewsets.GenericViewSet):
+class ProcessInforView(ListModelMixin,RetrieveModelMixin, viewsets.GenericViewSet):
     """
     工艺信息浏览
     """
-    serializer_class  = ProcessInforSerialize
-    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication,]
+    pagination_class = StandardResultsSetPagination
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
+    filter_class = ProductRouteDefinitionFilters
+    search_fields = ["name","code"]
+    ordering_fields = ["id","update_time"]
+    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
 
-
+    # 重载获取序列化类的方法，根据不同的操作返回不同的序列化类
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return ProcessInforSerialize_Retrieve
+        else:
+            return ProcessInforSerialize_List
 
     # 重载数据查询的方法，根据不同的操作查询不同的数据范围
     def get_queryset(self):
-        if self.request.user.is_superuser:
-            return ProductRouteDefinitionModel.objects.all().order_by("-id")  # 超级用户可以查看所有信息
-        condtions3 = {'state__in': ("使用中",)  # 其他用户 可以看到(使用中)的数据
-                      }
-        if self.action == "list":  # 如果是查看列表
+            if self.request.user.is_superuser:
+                return ProductRouteDefinitionModel.objects.all().order_by("-id")  # 超级用户可以查看所有信息
+            condtions3 = {'state__in': ("使用中")}
             if not self.request.user.has_perm('process.browse_productroutedefinitionmodel'):  # 如果当前用户没有查看权限
-                condtions3 = {}  #如果普通用户不具备查看列表权限权限,则不能查看列表信息
-        return ProductRouteDefinitionModel.objects.filter(Q(**condtions3)).order_by("id")
+                condtions3 = { }
+            return ProductRouteDefinitionModel.objects.filter(Q(**condtions3)).order_by("-id")
 
 
 class ProcessBoardView(CreateModelMixin, ListModelMixin,
@@ -907,4 +914,4 @@ class ProcessBoardView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return ProcessBoardModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+        return ProcessBoardModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")

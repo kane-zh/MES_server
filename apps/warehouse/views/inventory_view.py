@@ -616,7 +616,7 @@ class MaterialWaringRuleView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return MaterialWaringRuleModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+        return MaterialWaringRuleModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
 class SemifinishedWaringRuleItemView(CreateModelMixin, viewsets.GenericViewSet):
     """
@@ -680,7 +680,7 @@ class SemifinishedWaringRuleView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return SemifinishedWaringRuleModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+        return SemifinishedWaringRuleModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
 class ProductWaringRuleItemView(CreateModelMixin, viewsets.GenericViewSet):
     """
@@ -743,5 +743,5 @@ class ProductWaringRuleView(CreateModelMixin, ListModelMixin,
             condtions3 = {}  # 只有创建者可以更新
         if self.action == "partial_update":  # 如果是部分更新列表
             condtions3 = {}  # 只有创建者跟审核者可以部分更新
-        return ProductWaringRuleModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("id")
+        return ProductWaringRuleModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
 
