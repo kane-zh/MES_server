@@ -673,7 +673,7 @@ class SemifinishedDataSerialize_Create(serializers.ModelSerializer):
         if 'task_id' in attrs.keys():
             if attrs['task_id'] is not '':
                 try:
-                    task = ProductTaskCreateModel.objects.get(id=attrs["task_id"])  # 判断指定的任务是否存在
+                    task = SemifinishedTaskCreateModel.objects.get(id=attrs["task_id"])  # 判断指定的任务是否存在
                 except Exception as e:
                     raise serializers.ValidationError("指定的任务不存在")
                 if (task.state != "使用中"):  # 判断 状态是否合适

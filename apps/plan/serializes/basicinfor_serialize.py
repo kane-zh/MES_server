@@ -1334,16 +1334,6 @@ class ProductTaskItemCreateSerialize_Create(serializers.ModelSerializer):
             raise serializers.ValidationError("指定的订单子项不在--'等待状态'")
         return value
 
-    # 生产线路字段验证
-    def validate_route_id(self, value):
-        if len(value) ==0 :
-            return value
-        list = ProductRouteDefinitionModel.objects.get(id=int(value))
-        if list is None:  # 判断 父类别是否存在
-            raise serializers.ValidationError("指定的生产线路不存在")
-        elif (list.state != "使用中"):  # 判断 父类别状态是否合适
-            raise serializers.ValidationError("指定的生产线路不在--'使用状态'")
-        return value
 
 class SalesOrderCreateSerialize_ProductTaskItem(serializers.ModelSerializer):
     """
@@ -1618,7 +1608,6 @@ class ProductTaskCreateSerialize_Update(serializers.ModelSerializer):
         elif (list.state != "使用中"):  # 判断 父类别状态是否合适
             raise serializers.ValidationError("指定的类型不在--'使用状态'")
         return value
-
 
 
 class ProductTaskCreateSerialize_Partial(serializers.ModelSerializer):
@@ -1923,43 +1912,31 @@ class SemifinishedTaskItemCreateSerialize_Create(serializers.ModelSerializer):
         fields = ("id","state",  "semifinished_id", "batch","route_id", "sum", "file", "attribute1", "attribute2",
                   "attribute3", "attribute4", "attribute5", "desc", "create_user")
 
-        def validate(self, attrs):
-            if 'route_id' in attrs.keys():
-                if attrs['route_id'] is not '':
-                    try:
-                        route = ProductRouteDefinitionModel.objects.get(id=attrs["route_id"])  # 判断指定的生产线路是否存在
-                    except Exception as e:
-                        raise serializers.ValidationError("指定的生产线路不存在")
-                    if (route.state != "使用中"):  # 判断 状态是否合适
-                        raise serializers.ValidationError("指定的生产路线不在--'使用状态'")
-                    attrs["routeType_code"] = route.type.code  # 获取生产线路类型编码
-                    attrs["routeType_name"] = route.type.name  # 获取生产线路类型名称
-                    attrs["route_code"] = route.code  # 获取生产线路编码
-                    attrs["route_name"] = route.name  # 获取生产线路名称
-            try:              
-                semifinished = SemifinishedInforDefinitionModel.objects.get(id=attrs["semifinished_id"])  # 判断指定的半成品是否存在
-            except Exception as e:
-                raise serializers.ValidationError("指定的半成品不存在")
-            if (semifinished.state != "使用中"):  # 判断 状态是否合适
-                raise serializers.ValidationError("指定的半成品不在--'使用状态'")
-            attrs["semifinishedType_code"] = semifinished.type.code  # 获取半成品类型编码
-            attrs["semifinishedType_name"] = semifinished.type.name  # 获取半成品类型名称
-            attrs["semifinished_code"] = semifinished.code  # 获取半成品编码
-            attrs["semifinished_name"] = semifinished.name  # 获取半成品名称
-            return attrs
+    def validate(self, attrs):
+        if 'route_id' in attrs.keys():
+            if attrs['route_id'] is not '':
+                try:
+                    route = ProductRouteDefinitionModel.objects.get(id=attrs["route_id"])  # 判断指定的生产线路是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的生产线路不存在")
+                if (route.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的生产路线不在--'使用状态'")
+                attrs["routeType_code"] = route.type.code  # 获取生产线路类型编码
+                attrs["routeType_name"] = route.type.name  # 获取生产线路类型名称
+                attrs["route_code"] = route.code  # 获取生产线路编码
+                attrs["route_name"] = route.name  # 获取生产线路名称
+        try:
+            semifinished = SemifinishedInforDefinitionModel.objects.get(id=attrs["semifinished_id"])  # 判断指定的半成品是否存在
+        except Exception as e:
+            raise serializers.ValidationError("指定的半成品不存在")
+        if (semifinished.state != "使用中"):  # 判断 状态是否合适
+            raise serializers.ValidationError("指定的半成品不在--'使用状态'")
+        attrs["semifinishedType_code"] = semifinished.type.code  # 获取半成品类型编码
+        attrs["semifinishedType_name"] = semifinished.type.name  # 获取半成品类型名称
+        attrs["semifinished_code"] = semifinished.code  # 获取半成品编码
+        attrs["semifinished_name"] = semifinished.name  # 获取半成品名称
+        return attrs
 
-        # 生产线路字段验证
-        def validate_route_id(self, value) :
-            if len(value) == 0 :
-                return value
-            if self.instance.state != '新建' :  # 如果不是新建状态 该字段不能更改
-                raise serializers.ValidationError("当前信息已提交,禁止更改")
-            list = ProductRouteDefinitionModel.objects.get(id=int(value))
-            if list is None :  # 判断 父类别是否存在
-                raise serializers.ValidationError("指定的生产线路不存在")
-            elif (list.state != "使用中") :  # 判断 父类别状态是否合适
-                raise serializers.ValidationError("指定的生产线路不在--'使用状态'")
-            return value
 
 class SemifinishedTaskItemCreateSerialize_List(serializers.ModelSerializer):
     """
@@ -2230,8 +2207,6 @@ class SemifinishedTaskCreateSerialize_Partial(serializers.ModelSerializer):
                     raise serializers.ValidationError("当前半成品生产任务项下的子项不存在")
                 child.state = "等待"
                 child.save()
-                child.salesOrderItem.assigned += child.sum
-                child.salesOrderItem.save()
         if ((self.instance.state == "挂起" and  value == "使用中") or
             (self.instance.state == "使用中" and  value == "挂起")): # 如果是由挂起状态转与使用中状态互相转换
             if not (self.context['request'].user.has_perm('plan.deal_semifinishedtaskcreatemodel')):
