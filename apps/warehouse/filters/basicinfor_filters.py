@@ -7,7 +7,7 @@ class WarehouseAuditRecordFilters(FilterSet):
     """
     class Meta:
         model = WarehouseAuditRecordModel
-        fields=["uri"]
+        fields = ["uri", "classes"]
 
 class WarehouseDefinitionFilters(FilterSet):
     """

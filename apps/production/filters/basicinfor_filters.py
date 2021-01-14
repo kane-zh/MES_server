@@ -7,7 +7,7 @@ class ProductionAuditRecordFilters(FilterSet):
     """
     class Meta:
         model = ProductionAuditRecordModel
-        fields=["uri"]
+        fields = ["uri", "classes"]
 
 class WorkshopInforDefinitionFilters(FilterSet):
     """

@@ -7,7 +7,7 @@ class PlanAuditRecordFilters(FilterSet):
     """
     class Meta:
         model = PlanAuditRecordModel
-        fields=["uri"]
+        fields = ["uri", "classes"]
 class VendorTypeDefinitionFilters(FilterSet):
     """
     供应商类型定义

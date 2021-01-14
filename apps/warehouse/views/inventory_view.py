@@ -24,8 +24,7 @@ class EquipmentStockDetailView(ListModelMixin, viewsets.GenericViewSet) :
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     filter_class = EquipmentStockDetailFilters
-    search_fields = ["warehouse_name", "warehouse_code", "position_name", "position_code", "equipmentType_name",
-                     "equipmentType_code", "equipment_name", "equipment_code",]
+    search_fields = ["position_name", "position_code","equipment_name", "equipment_code",]
     ordering_fields = ["id", "update_time", "sum"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -46,8 +45,7 @@ class PartsStockDetailView(ListModelMixin, viewsets.GenericViewSet) :
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     filter_class = PartsStockDetailFilters
-    search_fields = ["warehouse_name", "warehouse_code", "position_name", "position_code", "partsType_name",
-                     "partsType_code", "parts_name", "parts_code", ]
+    search_fields = ["position_name", "position_code","parts_name", "parts_code", ]
     ordering_fields = ["id", "update_time", "sum"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -69,7 +67,7 @@ class MaterialStockDetailView( ListModelMixin,viewsets.GenericViewSet):
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
     filter_class= MaterialStockDetailFilters
-    search_fields=["warehouse_name","warehouse_code","position_name","position_code","materialType_name","materialType_code","material_name","material_code","batch"]
+    search_fields=["position_name","position_code","material_name","material_code","batch"]
     ordering_fields=["id","update_time","sum"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -90,8 +88,7 @@ class SemifinishedStockDetailView( ListModelMixin,viewsets.GenericViewSet):
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
     filter_class= SemifinishedStockDetailFilters
-    search_fields = ["warehouse_name", "warehouse_code", "position_name", "position_code", "semifinishedType_name",
-                     "semifinishedType_code", "semifinished_name", "semifinished_code", "batch"]
+    search_fields = ["position_name", "position_code","semifinished_name", "semifinished_code", "batch"]
     ordering_fields = ["id", "update_time", "sum"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -112,8 +109,7 @@ class ProductStockDetailView( ListModelMixin,viewsets.GenericViewSet):
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
     filter_class= ProductStockDetailFilters
-    search_fields = ["warehouse_name", "warehouse_code", "position_name", "position_code", "productType_name",
-                     "productType_code", "product_name", "product_code", "batch"]
+    search_fields = ["position_name", "position_code","product_name", "product_code", "batch"]
     ordering_fields = ["id", "update_time", "sum"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -133,8 +129,7 @@ class EquipmentStockInforView(ListModelMixin, viewsets.GenericViewSet) :
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     filter_class = EquipmentStockInforFilters
-    search_fields = ["warehouse_name", "warehouse_code", "equipmentType_name", "equipmentType_code", "equipment_name",
-                     "equipment_code", ]
+    search_fields = ["equipment_name","equipment_code", ]
     ordering_fields = ["id", "update_time", "sum"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -153,8 +148,7 @@ class PartsStockInforView(ListModelMixin, viewsets.GenericViewSet) :
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     filter_class = PartsStockInforFilters
-    search_fields = ["warehouse_name", "warehouse_code", "partsType_name", "partsType_code", "parts_name",
-                     "parts_code",]
+    search_fields = ["parts_name","parts_code",]
     ordering_fields = ["id", "update_time", "sum"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -173,7 +167,7 @@ class MaterialStockInforView( ListModelMixin,viewsets.GenericViewSet):
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
     filter_class= MaterialStockInforFilters
-    search_fields = ["warehouse_name", "warehouse_code","materialType_name","materialType_code", "material_name", "material_code", "batch"]
+    search_fields = ["material_name", "material_code", "batch"]
     ordering_fields = ["id", "update_time", "sum"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -192,8 +186,7 @@ class SemifinishedStockInforView( ListModelMixin,viewsets.GenericViewSet):
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
     filter_class= SemifinishedStockInforFilters
-    search_fields = ["warehouse_name", "warehouse_code", "semifinishedType_name", "semifinishedType_code", "semifinished_name",
-                     "semifinished_code", "batch"]
+    search_fields = ["semifinished_name","semifinished_code", "batch"]
     ordering_fields = ["id", "update_time", "sum"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -212,8 +205,7 @@ class ProductStockInforView( ListModelMixin,viewsets.GenericViewSet):
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
     filter_class= ProductStockInforFilters
-    search_fields = ["warehouse_name", "warehouse_code", "productType_name", "productType_code", "product_name",
-                     "product_code", "batch"]
+    search_fields = ["product_name","product_code", "batch"]
     ordering_fields = ["id", "update_time", "sum"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -232,9 +224,7 @@ class EquipmentManageView(CreateModelMixin, ListModelMixin,
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     filter_class = EquipmentManageFilters
-    search_fields = ["warehouse_name", "warehouse_code", "position_name", "position_code", "equipmentType_name",
-                     "equipmentType_code",
-                     "equipment_name", "equipment_code", "batch", "handler", ]
+    search_fields = ["position_name", "position_code","equipment_name", "equipment_code", "batch", "handler", ]
     ordering_fields = ["id", "update_time", "sum"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -299,8 +289,7 @@ class PartsManageView(CreateModelMixin, ListModelMixin,
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     filter_class = PartsManageFilters
-    search_fields = ["warehouse_name", "warehouse_code", "position_name", "position_code", "partsType_name",
-                     "partsType_code","parts_name", "parts_code", "handler", ]
+    search_fields = ["position_name", "position_code", "parts_name", "parts_code", "handler", ]
     ordering_fields = ["id", "update_time", "sum"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -365,8 +354,7 @@ class MaterialManageView(CreateModelMixin, ListModelMixin,
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
     filter_class=MaterialManageFilters
-    search_fields=["warehouse_name","warehouse_code","position_name","position_code","materialType_name","materialType_code",
-                   "material_name","material_code","batch","handler",]
+    search_fields=["position_name","position_code","material_name","material_code","batch","handler",]
     ordering_fields=["id","update_time","sum"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -431,8 +419,7 @@ class SemifinishedManageView(CreateModelMixin, ListModelMixin,
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
     filter_class=SemifinishedManageFilters
-    search_fields = ["warehouse_name", "warehouse_code", "position_name", "position_code", "semifinishedType_name",
-                     "semifinishedType_code", "semifinished_name", "semifinished_code", "batch","handler",]
+    search_fields = ["position_name", "position_code", "semifinished_name", "semifinished_code", "batch","handler",]
     ordering_fields = ["id", "update_time", "sum"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
@@ -497,8 +484,7 @@ class ProductManageView(CreateModelMixin, ListModelMixin,
     pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
     filter_class=ProductManageFilters
-    search_fields = ["warehouse_name", "warehouse_code", "position_name", "position_code", "productType_name",
-                     "productType_code", "product_name", "product_code", "batch","handler"]
+    search_fields = ["position_name", "position_code","product_name", "product_code", "batch","handler"]
     ordering_fields = ["id", "update_time", "sum"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]

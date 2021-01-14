@@ -7,7 +7,7 @@ class ProcessAuditRecordFilters(FilterSet):
     """
     class Meta:
         model = ProcessAuditRecordModel
-        fields=["uri"]
+        fields = ["uri", "classes"]
 
 class UnitTypeDefinitionFilters(FilterSet):
     """

@@ -7,7 +7,7 @@ class EquipmentStockDetailFilters(FilterSet):
     """
     class Meta:
         model = EquipmentStockDetailModel
-        fields=["warehouse_code","equipmentType_code","position_id","state"]
+        fields=["warehouse_code","equipmentType_code","state"]
 
 class PartsStockDetailFilters(FilterSet):
     """
@@ -15,7 +15,7 @@ class PartsStockDetailFilters(FilterSet):
     """
     class Meta:
         model = PartsStockDetailModel
-        fields=["warehouse_code","partsType_code","position_id","state"]
+        fields=["warehouse_code","partsType_code","state"]
 
 class MaterialStockDetailFilters(FilterSet):
     """
@@ -23,7 +23,7 @@ class MaterialStockDetailFilters(FilterSet):
     """
     class Meta:
         model = MaterialStockDetailModel
-        fields=["warehouse_code","materialType_code","position_id","state"]
+        fields=["warehouse_code","materialType_code","state"]
 
 class SemifinishedStockDetailFilters(FilterSet):
     """
@@ -31,7 +31,7 @@ class SemifinishedStockDetailFilters(FilterSet):
     """
     class Meta:
         model = SemifinishedStockDetailModel
-        fields=["warehouse_code","semifinishedType_code","position_id","state"]
+        fields=["warehouse_code","semifinishedType_code","state"]
 
 class ProductStockDetailFilters(FilterSet):
     """
@@ -39,7 +39,7 @@ class ProductStockDetailFilters(FilterSet):
     """
     class Meta:
         model = ProductStockDetailModel
-        fields=["warehouse_code","productType_code","position_id","state"]
+        fields=["warehouse_code","productType_code","state"]
 
 class EquipmentStockInforFilters(FilterSet) :
     """
@@ -89,7 +89,7 @@ class EquipmentManageFilters(FilterSet):
     """
     class Meta:
         model = EquipmentManageModel
-        fields=["state","warehouse_code","position_code", "equipment_code", "type","auditor","create_user"]
+        fields=["state","warehouse_code","equipmentType_code", "type","auditor","create_user"]
 
 
 class PartsManageFilters(FilterSet):
@@ -98,7 +98,7 @@ class PartsManageFilters(FilterSet):
     """
     class Meta:
         model = PartsManageModel
-        fields=["state","warehouse_code","position_code", "parts_code", "type","auditor","create_user"]
+        fields=["state","warehouse_code","partsType_code", "type","auditor","create_user"]
 
 class MaterialManageFilters(FilterSet):
     """
@@ -106,7 +106,7 @@ class MaterialManageFilters(FilterSet):
     """
     class Meta:
         model = MaterialManageModel
-        fields=["state","warehouse_code","position_code", "material_code", "type","auditor","create_user"]
+        fields=["state","warehouse_code","materialType_code", "type","auditor","create_user"]
 
 class SemifinishedManageFilters(FilterSet):
     """
@@ -114,7 +114,7 @@ class SemifinishedManageFilters(FilterSet):
     """
     class Meta:
         model = SemifinishedManageModel
-        fields=["state","warehouse_code","position_code", "semifinished_code","type","auditor","create_user"]
+        fields=["state","warehouse_code","semifinishedType_code","type","auditor","create_user"]
 
 class ProductManageFilters(FilterSet):
     """
@@ -122,7 +122,7 @@ class ProductManageFilters(FilterSet):
     """
     class Meta:
         model = ProductManageModel
-        fields = ["state", "warehouse_code","position_code", "product_code", "type", "auditor","create_user"]
+        fields = ["state", "warehouse_code","productType_code", "type", "auditor","create_user"]
 
 class MaterialWaringRuleFilters(FilterSet):
     """

@@ -7,7 +7,7 @@ class EquipmentAuditRecordFilters(FilterSet):
     """
     class Meta:
         model = EquipmentAuditRecordModel
-        fields=["uri"]
+        fields=["uri","classes"]
 
 class EquipmentVendorDefinitionFilters(FilterSet):
     """

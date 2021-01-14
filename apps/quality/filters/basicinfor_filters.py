@@ -7,7 +7,7 @@ class QualityAuditRecordFilters(FilterSet):
     """
     class Meta:
         model = QualityAuditRecordModel
-        fields=["uri"]
+        fields = ["uri", "classes"]
 
 class DefectTypeDefinitionFilters(FilterSet):
     """
