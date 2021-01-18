@@ -268,7 +268,13 @@ class ProductDataDefinitionModel(models.Model):
     """
     产品过程数据定义
     """
+    STATUS = (
+        ("新建", "新建"),
+        ("完成", "完成"),
+        ("作废", "作废"),
+    )
     id = models.AutoField(primary_key=True, unique=True)
+    state = models.CharField(max_length=16, choices=STATUS, default="新建", name="state",verbose_name="状态", help_text="当前信息的状态")
     type = models.ForeignKey(ProductDataTypeDefinitionModel, on_delete=models.CASCADE,
                              name="type",related_name="productDataType_item", verbose_name="类型", help_text="当前产品过程数据的产品过程数据类型")
     taskType_code = models.CharField(max_length=32, null=True, blank=True, name="taskType_code", verbose_name="生产任务类型编码", help_text="当前信息关联生产任务类型信息编码")
@@ -281,6 +287,13 @@ class ProductDataDefinitionModel(models.Model):
     product_id = models.CharField(max_length=32,null=True, blank=True, name="product_id", verbose_name="产品ID", help_text="当前订单项对应的产品ID")
     product_name = models.CharField(max_length=32,null=True, blank=True, name="product_name", verbose_name="产品名称",help_text="当前订单项对应的产品名称")
     product_code = models.CharField(max_length=32,null=True, blank=True, name="product_code", verbose_name="产品编码",help_text="当前订单项对应的产品编码")
+    stationType_code = models.CharField(max_length=32, name="stationType_code", verbose_name="工位类型编码", help_text="当前工位类型编码")
+    stationType_name = models.CharField(max_length=32, name="stationType_name", verbose_name="工位类型名称",help_text="当前工位类型名称")
+    station_id = models.CharField(max_length=16, name="station_id", verbose_name="工位id", help_text="当前工位id")
+    station_code = models.CharField(max_length=32, name="station_code", verbose_name="工位编码", help_text="当前工位编码")
+    station_name = models.CharField(max_length=32, name="station_name", verbose_name="工位名称", help_text="当前工位名称")
+    handler = models.CharField(max_length=32,name="handler", verbose_name="操作者", help_text="对当前信息进行操作的是谁")
+    sum = models.IntegerField( name="sum", verbose_name="操作数量",help_text="当前操作的数量是")
     batch = models.CharField(max_length=32,null=True, blank=True, name="batch", verbose_name="批次号", help_text="当前产品的批次")
     sn = models.CharField(max_length=32,null=True, blank=True, name="sn", verbose_name="序列号", help_text="当前产品的序列号")
     personnel = models.TextField(null=True, blank=True, name="personnel", verbose_name="人员信息",help_text="当前产品过程数据关联的人员信息")
@@ -350,7 +363,13 @@ class SemifinishedDataDefinitionModel(models.Model):
     """
     半成品过程数据定义
     """
+    STATUS = (
+        ("新建", "新建"),
+        ("完成", "完成"),
+        ("作废", "作废"),
+    )
     id = models.AutoField(primary_key=True, unique=True)
+    state = models.CharField(max_length=16, choices=STATUS, default="新建", name="state",verbose_name="状态", help_text="当前信息的状态")
     type = models.ForeignKey(SemifinishedDataTypeDefinitionModel, on_delete=models.CASCADE, name="type",related_name="semifinishedDataType_item", verbose_name="类型", help_text="当前半成品过程数据的半成品过程数据类型")
     taskType_code = models.CharField(max_length=32, null=True, blank=True, name="taskType_code", verbose_name="生产任务类型编码", help_text="当前信息关联生产任务类型信息编码")
     taskType_name = models.CharField(max_length=32, null=True, blank=True, name="taskType_name", verbose_name="生产任务类型名称", help_text="当前信息关联生产任务类型信息名称")
@@ -362,6 +381,13 @@ class SemifinishedDataDefinitionModel(models.Model):
     semifinished_id = models.CharField(max_length=32, null=True, blank=True,name="semifinished_id", verbose_name="半成品ID", help_text="当前订单项对应的半成品ID")
     semifinished_name = models.CharField(max_length=32,null=True, blank=True, name="semifinished_name", verbose_name="半成品名称",help_text="当前订单项对应的半成品名称")
     semifinished_code = models.CharField(max_length=32, null=True, blank=True,name="semifinished_code", verbose_name="半成品编码",help_text="当前订单项对应的半成品编码")
+    stationType_code = models.CharField(max_length=32, name="stationType_code", verbose_name="工位类型编码", help_text="当前工位类型编码")
+    stationType_name = models.CharField(max_length=32, name="stationType_name", verbose_name="工位类型名称",help_text="当前工位类型名称")
+    station_id = models.CharField(max_length=16, name="station_id", verbose_name="工位id", help_text="当前工位id")
+    station_code = models.CharField(max_length=32, name="station_code", verbose_name="工位编码", help_text="当前工位编码")
+    station_name = models.CharField(max_length=32, name="station_name", verbose_name="工位名称", help_text="当前工位名称")
+    handler = models.CharField(max_length=32,name="handler", verbose_name="操作者", help_text="对当前信息进行操作的是谁")
+    sum = models.IntegerField( name="sum", verbose_name="操作数量",help_text="当前操作的数量是")
     batch = models.CharField(max_length=32,null=True, blank=True, name="batch", verbose_name="批次号", help_text="当前半成品的批次")
     sn = models.CharField(max_length=32,null=True, blank=True, name="sn", verbose_name="序列号", help_text="当前半成品的序列号")
     personnel = models.TextField(null=True, blank=True, name="personnel", verbose_name="人员信息",help_text="当前半成品过程数据关联的人员信息")
@@ -416,3 +442,81 @@ class SemifinishedDataDefinitionModel(models.Model):
         verbose_name_plural = verbose_name
         permissions = {("read_semifinisheddatadefinitionmodel", u"Can read 生产管理－半成品过程数据定义"),
                        ("admin_semifinisheddatadefinitionmodel", u"Can admin 生产管理－半成品过程数据定义")}
+
+class ProductStationReportModel(models.Model):
+    """
+    产品工序报工
+    """
+    id = models.AutoField(primary_key=True, unique=True)
+    taskType_code = models.CharField(max_length=32, name="taskType_code", verbose_name="任务类型编码", help_text="当前任务类型编码")
+    taskType_name = models.CharField(max_length=32, name="taskType_name", verbose_name="任务类型名称",help_text="当前任务类型名称")
+    task_id = models.CharField(max_length=16, name="task_id", verbose_name="任务id", help_text="当前任务id")
+    task_code = models.CharField(max_length=32, name="task_code", verbose_name="任务编码", help_text="当前任务编码")
+    task_name = models.CharField(max_length=32, name="task_name", verbose_name="任务名称",help_text="当前任务名称")
+    productType_code = models.CharField(max_length=32, name="productType_code", verbose_name="产品类型编码", help_text="当前物品的产品类型编码")
+    productType_name = models.CharField(max_length=32, name="productType_name", verbose_name="产品类型名称",help_text="当前物品的产品类型名称")
+    product_id = models.CharField(max_length=16, name="product_id", verbose_name="产品id", help_text="当前物品的产品id")
+    product_code = models.CharField(max_length=32, name="product_code", verbose_name="产品编码", help_text="当前物品的产品编码")
+    product_name = models.CharField(max_length=32, name="product_name", verbose_name="产品名称",help_text="当前物品的产品名称")
+    stationType_code = models.CharField(max_length=32, name="stationType_code", verbose_name="工位类型编码", help_text="当前工位类型编码")
+    stationType_name = models.CharField(max_length=32, name="stationType_name", verbose_name="工位类型名称",help_text="当前工位类型名称")
+    station_id = models.CharField(max_length=16, name="station_id", verbose_name="工位id", help_text="当前工位id")
+    station_code = models.CharField(max_length=32, name="station_code", verbose_name="工位编码", help_text="当前工位编码")
+    station_name = models.CharField(max_length=32, name="station_name", verbose_name="工位名称",help_text="当前工位名称")
+    batch = models.CharField(max_length=32,null=True, blank=True, name="batch", verbose_name="产品批次", help_text="当前产品的批次")
+    sum = models.IntegerField( name="sum", verbose_name="库存数量", help_text="当前产品的库存数量")
+    attribute1 = models.CharField(max_length=32, null=True, blank=True, name="attribute1", verbose_name="属性1", help_text="当前附加属性1")
+    attribute2 = models.CharField(max_length=32, null=True, blank=True, name="attribute2", verbose_name="属性2", help_text="当前附加属性2")
+    attribute3 = models.CharField(max_length=32, null=True, blank=True, name="attribute3", verbose_name="属性3", help_text="当前附加属性3")
+    attribute4 = models.CharField(max_length=32, null=True, blank=True, name="attribute4", verbose_name="属性4", help_text="当前附加属性4")
+    attribute5 = models.CharField(max_length=32, null=True, blank=True, name="attribute5", verbose_name="属性5", help_text="当前附加属性5")
+    add_time = models.DateField(auto_now_add=True, verbose_name="创建时间", help_text="创建当前报工时间")
+    update_time = models.DateTimeField(auto_now=True, verbose_name="更新时间", help_text="当前信息最后的更新时间")
+
+    def __str__(self):
+        return (self.task_code + "  >>  "+ self.task_name)
+
+    class Meta:
+        db_table = "ProductStationReportModel"
+        app_label = 'production'
+        verbose_name = "生产管理－产品工序报工"
+        verbose_name_plural = verbose_name
+
+class SemifinishedStationReportModel(models.Model):
+    """
+    半成品工序报工
+    """
+    id = models.AutoField(primary_key=True, unique=True)
+    taskType_code = models.CharField(max_length=32, name="taskType_code", verbose_name="任务类型编码", help_text="当前任务类型编码")
+    taskType_name = models.CharField(max_length=32, name="taskType_name", verbose_name="任务类型名称",help_text="当前任务类型名称")
+    task_id = models.CharField(max_length=16, name="task_id", verbose_name="任务id", help_text="当前任务id")
+    task_code = models.CharField(max_length=32, name="task_code", verbose_name="任务编码", help_text="当前任务编码")
+    task_name = models.CharField(max_length=32, name="task_name", verbose_name="任务名称",help_text="当前任务名称")
+    semifinishedType_code = models.CharField(max_length=32, name="semifinishedType_code", verbose_name="半成品类型编码", help_text="当前物品的半成品类型编码")
+    semifinishedType_name = models.CharField(max_length=32, name="semifinishedType_name", verbose_name="半成品类型名称",help_text="当前物品的半成品类型名称")
+    semifinished_id = models.CharField(max_length=16, name="semifinished_id", verbose_name="半成品id", help_text="当前物品的半成品id")
+    semifinished_code = models.CharField(max_length=32, name="semifinished_code", verbose_name="半成品编码", help_text="当前物品的半成品编码")
+    semifinished_name = models.CharField(max_length=32, name="semifinished_name", verbose_name="半成品名称",help_text="当前物品的半成品名称")
+    batch = models.CharField(max_length=32,null=True, blank=True, name="batch", verbose_name="半成品批次", help_text="当前半成品的批次")
+    stationType_code = models.CharField(max_length=32, name="stationType_code", verbose_name="工位类型编码", help_text="当前工位类型编码")
+    stationType_name = models.CharField(max_length=32, name="stationType_name", verbose_name="工位类型名称",help_text="当前工位类型名称")
+    station_id = models.CharField(max_length=16, name="station_id", verbose_name="工位id", help_text="当前工位id")
+    station_code = models.CharField(max_length=32, name="station_code", verbose_name="工位编码", help_text="当前工位编码")
+    station_name = models.CharField(max_length=32, name="station_name", verbose_name="工位名称",help_text="当前工位名称")
+    sum = models.IntegerField( name="sum", verbose_name="库存数量", help_text="当前半成品的库存数量")
+    attribute1 = models.CharField(max_length=32, null=True, blank=True, name="attribute1", verbose_name="属性1", help_text="当前附加属性1")
+    attribute2 = models.CharField(max_length=32, null=True, blank=True, name="attribute2", verbose_name="属性2", help_text="当前附加属性2")
+    attribute3 = models.CharField(max_length=32, null=True, blank=True, name="attribute3", verbose_name="属性3", help_text="当前附加属性3")
+    attribute4 = models.CharField(max_length=32, null=True, blank=True, name="attribute4", verbose_name="属性4", help_text="当前附加属性4")
+    attribute5 = models.CharField(max_length=32, null=True, blank=True, name="attribute5", verbose_name="属性5", help_text="当前附加属性5")
+    add_time = models.DateField(auto_now_add=True, verbose_name="创建时间", help_text="创建当前报工时间")
+    update_time = models.DateTimeField(auto_now=True, verbose_name="更新时间", help_text="当前信息最后的更新时间")
+
+    def __str__(self):
+        return (self.task_code + "  >>  "+ self.task_name)
+
+    class Meta:
+        db_table = "SemifinishedStationReportModel"
+        app_label = 'production'
+        verbose_name = "生产管理－半成品工序报工"
+        verbose_name_plural = verbose_name

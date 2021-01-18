@@ -570,10 +570,11 @@ class ProductDataSerialize_Create(serializers.ModelSerializer):
     """
     产品过程数据定义--create
     """
+    state = serializers.HiddenField(default="新建")
     create_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     class Meta:
         model = ProductDataDefinitionModel
-        fields = ("id","type","product_id","task_id","batch","sn","personnel","equipment","material","station","quality","dataTime",
+        fields = ("id","state","type","task_id","product_id","station_id","batch","sn","handler","sum","personnel","equipment","material","station","quality","dataTime",
                   "attribute1", "attribute2", "attribute3", "attribute4","attribute5","attribute6", "attribute7", "attribute8", "attribute9", "attribute10",
                   "attribute11", "attribute12", "attribute13", "attribute14", "attribute15","attribute16", "attribute17", "attribute18", "attribute19", "attribute20",
                   "image", "file","desc", "create_user")
@@ -582,18 +583,6 @@ class ProductDataSerialize_Create(serializers.ModelSerializer):
     def validate(self, attrs):
         if not attrs["create_user"].has_perm('production.add_productdatadefinitionmodel'):  # 如果当前用户没有创建权限
             raise serializers.ValidationError("当前用户不具备创建权限'")
-        if 'product_id' in attrs.keys():
-            if attrs['product_id'] is not '':
-                try:
-                    product = ProductInforDefinitionModel.objects.get(id=attrs["product_id"])  # 判断指定的产品是否存在
-                except Exception as e:
-                    raise serializers.ValidationError("指定的产品不存在")
-                if (product.state != "使用中"):  # 判断 状态是否合适
-                    raise serializers.ValidationError("指定的产品不在--'使用状态'")
-                attrs["productType_code"] = product.type.code  # 获取产品类型编码
-                attrs["productType_name"] = product.type.name  # 获取产品类型名称
-                attrs["product_code"] = product.code  # 获取产品编码
-                attrs["product_name"] = product.name  # 获取产品名称
         if 'task_id' in attrs.keys():
             if attrs['task_id'] is not '':
                 try:
@@ -606,6 +595,35 @@ class ProductDataSerialize_Create(serializers.ModelSerializer):
                 attrs["taskType_name"] = task.type.name  # 获取任务类型名称
                 attrs["task_code"] = task.code  # 获取任务编码
                 attrs["task_name"] = task.name  # 获取任务名称
+        if 'product_id' in attrs.keys():
+            if attrs['product_id'] is not '':
+                try:
+                    product = ProductInforDefinitionModel.objects.get(id=attrs["product_id"])  # 判断指定的产品是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的产品不存在")
+                if (product.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的产品不在--'使用状态'")
+                attrs["productType_code"] = product.type.code  # 获取产品类型编码
+                attrs["productType_name"] = product.type.name  # 获取产品类型名称
+                attrs["product_code"] = product.code  # 获取产品编码
+                attrs["product_name"] = product.name  # 获取产品名称
+        if 'station_id' in attrs.keys():
+            if attrs['station_id'] is not '':
+                if not 'product_id' in attrs.keys():
+                    raise serializers.ValidationError("未指定产品信息，不能指定工位信息")
+                else:
+                    if attrs['product_id'] is '':
+                      raise serializers.ValidationError("未指定产品信息，不能指定工位信息")
+                try:
+                    station = StationInforDefinitionModel.objects.get(id=attrs["station_id"])  # 判断指定的工位是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的工位不存在")
+                if (station.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的工位不在--'使用状态'")
+                attrs["stationType_code"] = station.type.code  # 获取工位类型编码
+                attrs["stationType_name"] = station.type.name  # 获取工位类型名称
+                attrs["station_code"] = station.code  # 获取工位编码
+                attrs["station_name"] = station.name  # 获取工位名称
         return attrs
 
 
@@ -618,7 +636,73 @@ class ProductDataSerialize_Create(serializers.ModelSerializer):
             raise serializers.ValidationError("指定的类型不在--'使用状态'")
         return value
 
+class ProductDataSerialize_Update(serializers.ModelSerializer):
+    """
+    产品过程数据定义--update
+    """
+    class Meta:
+        model = ProductDataDefinitionModel
+        fields = ("id","type","task_id","product_id","station_id","batch","sn","handler","sum","personnel","equipment","material","station","quality","dataTime",
+                  "attribute1", "attribute2", "attribute3", "attribute4","attribute5","attribute6", "attribute7", "attribute8", "attribute9", "attribute10",
+                  "attribute11", "attribute12", "attribute13", "attribute14", "attribute15","attribute16", "attribute17", "attribute18", "attribute19", "attribute20",
+                  "image", "file","desc",)
 
+    # 所有字段验证
+    def validate(self, attrs):
+        if self.instance.state != '新建':  # 如果不是新建状态 不能更改信息
+            raise serializers.ValidationError("当前信息已提交,禁止更改")
+        if 'task_id' in attrs.keys():
+            if attrs['task_id'] is not '':
+                try:
+                    task = ProductTaskCreateModel.objects.get(id=attrs["task_id"])  # 判断指定的任务是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的任务不存在")
+                if (task.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的生产任务不在--'使用状态'")
+                attrs["taskType_code"] = task.type.code  # 获取任务类型编码
+                attrs["taskType_name"] = task.type.name  # 获取任务类型名称
+                attrs["task_code"] = task.code  # 获取任务编码
+                attrs["task_name"] = task.name  # 获取任务名称
+        if 'product_id' in attrs.keys():
+            if attrs['product_id'] is not '':
+                try:
+                    product = ProductInforDefinitionModel.objects.get(id=attrs["product_id"])  # 判断指定的产品是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的产品不存在")
+                if (product.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的产品不在--'使用状态'")
+                attrs["productType_code"] = product.type.code  # 获取产品类型编码
+                attrs["productType_name"] = product.type.name  # 获取产品类型名称
+                attrs["product_code"] = product.code  # 获取产品编码
+                attrs["product_name"] = product.name  # 获取产品名称
+        if 'station_id' in attrs.keys():
+            if attrs['station_id'] is not '':
+                if not 'product_id' in attrs.keys():
+                    raise serializers.ValidationError("未指定产品信息，不能指定工位信息")
+                else:
+                    if attrs['product_id'] is '':
+                      raise serializers.ValidationError("未指定产品信息，不能指定工位信息")
+                try:
+                    station = StationInforDefinitionModel.objects.get(id=attrs["station_id"])  # 判断指定的工位是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的工位不存在")
+                if (station.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的工位不在--'使用状态'")
+                attrs["stationType_code"] = station.type.code  # 获取工位类型编码
+                attrs["stationType_name"] = station.type.name  # 获取工位类型名称
+                attrs["station_code"] = station.code  # 获取工位编码
+                attrs["station_name"] = station.name  # 获取工位名称
+        return attrs
+
+
+    # 类型字段验证
+    def validate_type(self, value):
+        list = ProductDataTypeDefinitionModel.objects.get(id=value.id)
+        if list is None:  # 判断 父类别是否存在
+            raise serializers.ValidationError("指定的类型不存在")
+        elif (list.state != "使用中"):  # 判断 父类别状态是否合适
+            raise serializers.ValidationError("指定的类型不在--'使用状态'")
+        return value
 class ProductDataSerialize_List(serializers.ModelSerializer):
     """
     产品过程数据定义--list
@@ -626,8 +710,9 @@ class ProductDataSerialize_List(serializers.ModelSerializer):
     type = ProductDataTypeDefinitionSerialize_List(required=False)
     class Meta:
         model = ProductDataDefinitionModel
-        fields = ("id","type","productType_code","productType_name","product_name","product_id","product_code",
-                  "taskType_code","taskType_name","task_name","task_id","task_code","batch","sn",
+        fields = ("id","state","type",
+                  "taskType_code","taskType_name","task_name","task_code","task_id","productType_code","productType_name","product_name","product_code","product_id",
+                   "stationType_name","stationType_code","station_name","station_code","station_id","batch","handler","sum","sn",
                   "personnel","equipment","material","station","quality","dataTime","desc", "create_user")
 
 class ProductDataSerialize_Retrieve(serializers.ModelSerializer):
@@ -640,16 +725,82 @@ class ProductDataSerialize_Retrieve(serializers.ModelSerializer):
     class Meta:
         model = ProductDataDefinitionModel
         fields = "__all__"
+
+class ProductDataSerialize_Partial(serializers.ModelSerializer):
+    """
+    产品过程数据定义--partial
+    """
+
+    class Meta:
+        model = ProductDataDefinitionModel
+        fields = ("id", "state", "alter")
+
+    # 所有字段验证
+    def validate(self, attrs):
+        try:
+            del attrs['alter']  # 删除alter字段
+        except Exception:
+            pass
+        if self.increase(attrs['state']) == "完成":  # 通过提交情况下
+            condtions1 = {'task_id__iexact': self.instance.task_id,
+                          'product_id__iexact': self.instance.product_id,
+                          'batch__iexact': self.instance.batch,
+                          'station_id__iexact': self.instance.station_id,
+                          }
+            try:
+                stationReport = ProductStationReportModel.objects.get(**condtions1)  # 获取指定的报工信息
+                stationReport.sum += self.instance.sum  # 更新报工数量
+                stationReport.save()
+            except Exception as e:
+                ProductStationReportModel.objects.create(  # 新建一条报工记录
+                    taskType_code=self.instance.taskType_code,
+                    taskType_name=self.instance.taskType_name,
+                    task_code=self.instance.task_code,
+                    task_name=self.instance.task_name,
+                    task_id=self.instance.task_id,
+                    productType_code=self.instance.productType_code,
+                    productType_name=self.instance.productType_name,
+                    product_code=self.instance.product_code,
+                    product_name=self.instance.product_name,
+                    product_id=self.instance.product_id,
+                    stationType_code=self.instance.stationType_code,
+                    stationType_name=self.instance.stationType_name,
+                    station_code=self.instance.station_code,
+                    station_name=self.instance.station_name,
+                    station_id=self.instance.station_id,
+                    batch=self.instance.batch,
+                    sum=self.instance.sum,
+                    attribute1=self.instance.attribute1,
+                    attribute2=self.instance.attribute2,
+                    attribute3=self.instance.attribute3,
+                    attribute4=self.instance.attribute4,
+                    attribute5=self.instance.attribute5,
+                )
+        return attrs
+
+    # 状态字段验证
+    def validate_state(self, value):
+        if (self.instance.state == "新建" and \
+                (value == "完成" or value == "作废")):
+            return value
+        if (self.instance.state == "完成" and \
+                (value == "作废")):
+            return value
+        raise serializers.ValidationError("不能从" + self.instance.state + "更新到" + value)
+        return value
+
 # endregion
 # region 半成品过程数据定义 序列化器
 class SemifinishedDataSerialize_Create(serializers.ModelSerializer):
     """
     半成品过程数据定义--create
     """
+    state = serializers.HiddenField(default="新建")
     create_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = SemifinishedDataDefinitionModel
-        fields = ("id","type","semifinished_id","task_id","batch","sn","personnel","equipment","material","station","quality","dataTime",
+        fields = ("id","state", "type","task_id","semifinished_id","station_id","batch","sn","handler","sum","personnel","equipment","material","station","quality","dataTime",
                   "attribute1", "attribute2", "attribute3", "attribute4","attribute5","attribute6", "attribute7", "attribute8", "attribute9", "attribute10",
                   "attribute11", "attribute12", "attribute13", "attribute14", "attribute15","attribute16", "attribute17", "attribute18", "attribute19", "attribute20",
                   "image", "file","desc", "create_user")
@@ -658,18 +809,6 @@ class SemifinishedDataSerialize_Create(serializers.ModelSerializer):
     def validate(self, attrs):
         if not attrs["create_user"].has_perm('production.add_semifinisheddatadefinitionmodel'):  # 如果当前用户没有创建权限
             raise serializers.ValidationError("当前用户不具备创建权限'")
-        if 'semifinished_id' in attrs.keys():
-            if attrs['semifinished_id'] is not '':
-                try:
-                    semifinished = SemifinishedInforDefinitionModel.objects.get(id=attrs["semifinished_id"])  # 判断指定的半成品是否存在
-                except Exception as e:
-                    raise serializers.ValidationError("指定的半成品不存在")
-                if (semifinished.state != "使用中"):  # 判断 状态是否合适
-                    raise serializers.ValidationError("指定的半成品不在--'使用状态'")
-                attrs["semifinishedType_code"] = semifinished.type.code  # 获取半成品类型编码
-                attrs["semifinishedType_name"] = semifinished.type.name  # 获取半成品类型名称
-                attrs["semifinished_code"] = semifinished.code  # 获取半成品编码
-                attrs["semifinished_name"] = semifinished.name  # 获取半成品名称
         if 'task_id' in attrs.keys():
             if attrs['task_id'] is not '':
                 try:
@@ -682,6 +821,35 @@ class SemifinishedDataSerialize_Create(serializers.ModelSerializer):
                 attrs["taskType_name"] = task.type.name  # 获取任务类型名称
                 attrs["task_code"] = task.code  # 获取任务编码
                 attrs["task_name"] = task.name  # 获取任务名称
+        if 'semifinished_id' in attrs.keys():
+            if attrs['semifinished_id'] is not '':
+                try:
+                    semifinished = SemifinishedInforDefinitionModel.objects.get(id=attrs["semifinished_id"])  # 判断指定的半成品是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的半成品不存在")
+                if (semifinished.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的半成品不在--'使用状态'")
+                attrs["semifinishedType_code"] = semifinished.type.code  # 获取半成品类型编码
+                attrs["semifinishedType_name"] = semifinished.type.name  # 获取半成品类型名称
+                attrs["semifinished_code"] = semifinished.code  # 获取半成品编码
+                attrs["semifinished_name"] = semifinished.name  # 获取半成品名称
+        if 'station_id' in attrs.keys():
+            if attrs['station_id'] is not '':
+                if not 'semifinished_id' in attrs.keys():
+                    raise serializers.ValidationError("未指定半成品信息，不能指定工位信息")
+                else:
+                    if attrs['semifinished_id'] is '':
+                      raise serializers.ValidationError("未指定半成品信息，不能指定工位信息")
+                try:
+                    station = StationInforDefinitionModel.objects.get(id=attrs["station_id"])  # 判断指定的工位是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的工位不存在")
+                if (station.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的工位不在--'使用状态'")
+                attrs["stationType_code"] = station.type.code  # 获取工位类型编码
+                attrs["stationType_name"] = station.type.name  # 获取工位类型名称
+                attrs["station_code"] = station.code  # 获取工位编码
+                attrs["station_name"] = station.name  # 获取工位名称
         return attrs
 
 
@@ -695,6 +863,74 @@ class SemifinishedDataSerialize_Create(serializers.ModelSerializer):
         return value
 
 
+class SemifinishedDataSerialize_Update(serializers.ModelSerializer):
+    """
+    半成品过程数据定义--update
+    """
+    class Meta:
+        model = SemifinishedDataDefinitionModel
+        fields = ("id","type","task_id","semifinished_id","station_id","batch","sn","handler","sum","personnel","equipment","material","station","quality","dataTime",
+                  "attribute1", "attribute2", "attribute3", "attribute4","attribute5","attribute6", "attribute7", "attribute8", "attribute9", "attribute10",
+                  "attribute11", "attribute12", "attribute13", "attribute14", "attribute15","attribute16", "attribute17", "attribute18", "attribute19", "attribute20",
+                  "image", "file","desc",)
+
+    # 所有字段验证
+    def validate(self, attrs):
+        if self.instance.state != '新建':  # 如果不是新建状态 不能更改信息
+            raise serializers.ValidationError("当前信息已提交,禁止更改")
+        if 'task_id' in attrs.keys():
+            if attrs['task_id'] is not '':
+                try:
+                    task = SemifinishedTaskCreateModel.objects.get(id=attrs["task_id"])  # 判断指定的任务是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的任务不存在")
+                if (task.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的生产任务不在--'使用状态'")
+                attrs["taskType_code"] = task.type.code  # 获取任务类型编码
+                attrs["taskType_name"] = task.type.name  # 获取任务类型名称
+                attrs["task_code"] = task.code  # 获取任务编码
+                attrs["task_name"] = task.name  # 获取任务名称
+        if 'semifinished_id' in attrs.keys():
+            if attrs['semifinished_id'] is not '':
+                try:
+                    semifinished = SemifinishedInforDefinitionModel.objects.get(id=attrs["semifinished_id"])  # 判断指定的半成品是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的半成品不存在")
+                if (semifinished.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的半成品不在--'使用状态'")
+                attrs["semifinishedType_code"] = semifinished.type.code  # 获取半成品类型编码
+                attrs["semifinishedType_name"] = semifinished.type.name  # 获取半成品类型名称
+                attrs["semifinished_code"] = semifinished.code  # 获取半成品编码
+                attrs["semifinished_name"] = semifinished.name  # 获取半成品名称
+        if 'station_id' in attrs.keys():
+            if attrs['station_id'] is not '':
+                if not 'semifinished_id' in attrs.keys():
+                    raise serializers.ValidationError("未指定半成品信息，不能指定工位信息")
+                else:
+                    if attrs['semifinished_id'] is '':
+                      raise serializers.ValidationError("未指定半成品信息，不能指定工位信息")
+                try:
+                    station = StationInforDefinitionModel.objects.get(id=attrs["station_id"])  # 判断指定的工位是否存在
+                except Exception as e:
+                    raise serializers.ValidationError("指定的工位不存在")
+                if (station.state != "使用中"):  # 判断 状态是否合适
+                    raise serializers.ValidationError("指定的工位不在--'使用状态'")
+                attrs["stationType_code"] = station.type.code  # 获取工位类型编码
+                attrs["stationType_name"] = station.type.name  # 获取工位类型名称
+                attrs["station_code"] = station.code  # 获取工位编码
+                attrs["station_name"] = station.name  # 获取工位名称
+        return attrs
+
+
+    # 类型字段验证
+    def validate_type(self, value):
+        list = SemifinishedDataTypeDefinitionModel.objects.get(id=value.id)
+        if list is None:  # 判断 父类别是否存在
+            raise serializers.ValidationError("指定的类型不存在")
+        elif (list.state != "使用中"):  # 判断 父类别状态是否合适
+            raise serializers.ValidationError("指定的类型不在--'使用状态'")
+        return value
+
 class SemifinishedDataSerialize_List(serializers.ModelSerializer):
     """
     半成品过程数据定义--list
@@ -702,10 +938,10 @@ class SemifinishedDataSerialize_List(serializers.ModelSerializer):
     type = SemifinishedDataTypeDefinitionSerialize_List(required=False)
     class Meta:
         model = SemifinishedDataDefinitionModel
-        fields = ("id","type","semifinishedType_code","semifinishedType_name","semifinished_name","semifinished_id","semifinished_code",
-                  "taskType_code","taskType_name","task_name","task_id","task_code","batch","sn",
+        fields = ("id","state","type",
+                  "taskType_code","taskType_name","task_name","task_code","task_id","semifinishedType_name","semifinishedType_code","semifinished_name","semifinished_code","semifinished_id",
+                  "stationType_name","stationType_code","station_name","station_code","station_id","batch","handler","sum","sn",
                   "personnel","equipment","material","station","quality","dataTime","desc", "create_user")
-
 class SemifinishedDataSerialize_Retrieve(serializers.ModelSerializer):
     """
     半成品过程数据定义--retrieve
@@ -716,5 +952,86 @@ class SemifinishedDataSerialize_Retrieve(serializers.ModelSerializer):
     class Meta:
         model = SemifinishedDataDefinitionModel
         fields = "__all__"
+
+class SemifinishedDataSerialize_Partial(serializers.ModelSerializer) :
+    """
+    半成品过程数据定义--partial
+    """
+
+    class Meta :
+        model = SemifinishedDataDefinitionModel
+        fields = ("id", "state", "alter")
+
+    # 所有字段验证
+    def validate(self, attrs) :
+        try :
+            del attrs['alter']  # 删除alter字段
+        except Exception :
+            pass
+        if self.increase(attrs['state']) == "完成" :  # 通过提交情况下
+            condtions1 = {'task_id__iexact' : self.instance.task_id,
+                          'semifinished_id__iexact' : self.instance.semifinished_id,
+                          'batch__iexact' : self.instance.batch,
+                          'station_id__iexact': self.instance.station_id,
+                          }
+            try :
+                stationReport = SemifinishedStationReportModel.objects.get(**condtions1)  # 获取指定的报工信息
+                stationReport.sum += self.instance.sum  # 更新报工数量
+                stationReport.save()
+            except Exception as e :
+                SemifinishedStationReportModel.objects.create(  # 新建一条报工记录
+                    taskType_code=self.instance.taskType_code,
+                    taskType_name=self.instance.taskType_name,
+                    task_code=self.instance.task_code,
+                    task_name=self.instance.task_name,
+                    task_id=self.instance.task_id,
+                    semifinishedType_code=self.instance.semifinishedType_code,
+                    semifinishedType_name=self.instance.semifinishedType_name,
+                    semifinished_code=self.instance.semifinished_code,
+                    semifinished_name=self.instance.semifinished_name,
+                    semifinished_id=self.instance.semifinished_id,
+                    stationType_code=self.instance.stationType_code,
+                    stationType_name=self.instance.stationType_name,
+                    station_code=self.instance.station_code,
+                    station_name=self.instance.station_name,
+                    station_id=self.instance.station_id,
+                    batch=self.instance.batch,
+                    sum=self.instance.sum,
+                    attribute1=self.instance.attribute1,
+                    attribute2=self.instance.attribute2,
+                    attribute3=self.instance.attribute3,
+                    attribute4=self.instance.attribute4,
+                    attribute5=self.instance.attribute5,
+                )
+        return attrs
+
+    # 状态字段验证
+    def validate_state(self, value) :
+        if (self.instance.state == "新建" and \
+                (value == "完成" or value == "作废")) :
+            return value
+        if (self.instance.state == "完成" and \
+                (value == "作废")) :
+            return value
+        raise serializers.ValidationError("不能从" + self.instance.state + "更新到" + value)
+        return value
+
 # endregion
 
+class ProductStationReportSerialize_List(serializers.ModelSerializer) :
+    """
+    产品工序报工--list
+    """
+
+    class Meta :
+        model = ProductStationReportModel
+        fields = "__all__"
+
+class SemifinishedStationReportSerialize_List(serializers.ModelSerializer) :
+    """
+    半成品工序报工--list
+    """
+
+    class Meta :
+        model = SemifinishedStationReportModel
+        fields = "__all__"

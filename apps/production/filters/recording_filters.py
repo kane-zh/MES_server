@@ -27,7 +27,7 @@ class SemifinishedDailyReportFilters(FilterSet):
         fields = ["state", "auditor", "create_user"]
 
 
-class ProductdDataDefinitionFilters(FilterSet):
+class ProductDataDefinitionFilters(FilterSet):
     """
     产品过程数据定义
     """
@@ -40,7 +40,30 @@ class SemifinishedDataDefinitionFilters(FilterSet):
     """
     半成品过程数据定义
     """
-
     class Meta:
         model = SemifinishedDataDefinitionModel
         fields = ["create_user", "type", "semifinishedType_code","semifinished_id","taskType_code","task_id"]
+
+class ProductStationReportFilters(FilterSet):
+    """
+    产品工序报工
+    """
+    class Meta:
+        model = ProductStationReportModel
+        fields = ["taskType_code", "task_id","productType_code","product_id","stationType_code","station_id"]
+
+class SemifinishedStationReportFilters(FilterSet):
+    """
+    半成品工序报工
+    """
+    class Meta:
+        model = SemifinishedStationReportModel
+        fields = ["taskType_code", "task_id", "semifinishedType_code", "semifinished_id", "stationType_code", "station_id"]
+
+
+
+
+
+
+
+

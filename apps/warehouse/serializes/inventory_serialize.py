@@ -467,8 +467,7 @@ class PartsManageSerialize_Create(serializers.ModelSerializer) :
         model = PartsManageModel
         fields = (
         "id", "name", "code", "state", "type", "position_id", "parts_id", "handler", "sum", "dataTime", "attribute1",
-        "attribute2",
-        "attribute3", "attribute4", "attribute5", "desc", "create_user", "auditor"
+        "attribute2","attribute3", "attribute4", "attribute5", "desc", "create_user", "auditor"
         )
 
     # 所有字段验证
@@ -814,8 +813,6 @@ class MaterialManageSerialize_Create(serializers.ModelSerializer) :
             position = PositionDefinitionModel.objects.get(id=attrs["position_id"])  # 判断指定的仓位是否存在
         except Exception as e :
             raise serializers.ValidationError("指定的仓位不存在")
-        if position.state != "闲置":
-            raise serializers.ValidationError("指定的仓位不在'闲置'状态")
         try :
             material = MaterialInforDefinitionModel.objects.get(id=attrs["material_id"])  # 判断指定的物料是否存在
         except Exception as e :

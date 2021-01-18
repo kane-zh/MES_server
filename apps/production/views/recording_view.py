@@ -235,17 +235,18 @@ class SemifinishedDailyReportView(CreateModelMixin, ListModelMixin,
             return SemifinishedDailyReportModel.objects.filter(Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by(
                 "-id")
 
+
 class ProductDataDefinitionView(CreateModelMixin, ListModelMixin,
-                             DestroyModelMixin,RetrieveModelMixin,
+                             RetrieveModelMixin, UpdateModelMixin,
                              viewsets.GenericViewSet):
     """
-    产品过程数据定义
+    产品过程数据
     """
     pagination_class = StandardResultsSetPagination
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
-    filter_class = ProductdDataDefinitionFilters
-    search_fields = ["batch","sn"]
-    ordering_fields = ["id","update_time","dataTime"]
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
+    filter_class = ProductDataDefinitionFilters
+    search_fields = ["batch", "sn", "handler"]
+    ordering_fields = ["id", "update_time", "dataTime"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
 
@@ -257,6 +258,10 @@ class ProductDataDefinitionView(CreateModelMixin, ListModelMixin,
             return ProductDataSerialize_List
         elif self.action == "retrieve":
             return ProductDataSerialize_Retrieve
+        elif self.action == "update":
+            return ProductDataSerialize_Update
+        elif self.action == "partial_update":
+            return ProductDataSerialize_Partial
         return ProductDataSerialize_List
 
     # 重载数据查询的方法，根据不同的操作查询不同的数据范围
@@ -265,39 +270,52 @@ class ProductDataDefinitionView(CreateModelMixin, ListModelMixin,
         stop = self.request.query_params.get('stop_time', None)
         if self.request.user.is_superuser:
             if start and stop:
-                return ProductDataDefinitionModel.objects.filter(dataTime__gte=start).filter(dataTime__lte=stop).order_by("-id")
+                return ProductDataDefinitionModel.objects.filter(dataTime__gte=start).filter(
+                    dataTime__lte=stop).order_by("-id")
             else:
                 return ProductDataDefinitionModel.objects.all().order_by("-id")  # 超级用户可以查看所有信息
         user = self.request.user.username
-        condtions1 = {'create_user__iexact': user  # 信息创建者可以看到 (自己创建的)的数据,,
+        condtions1 = {'create_user__iexact': user,
+                      'state__in': ("新建", "审核中", "完成")  # 信息创建者可以看到 (新建,审核,使用中)的数据,,
                       }
-        condtions3 = { 'id__gt': 0       # 其他用户
+        condtions2 = {'auditor__iexact': user,
+                      'state__in': ("审核中", "完成",)  # 信息审核者可以看到 (审核,使用中)的数据
+                      }
+        condtions3 = {'state__in': ("完成",)  # 其他用户 可以看到(使用中)的数据
                       }
 
         if self.action == "list":  # 如果是查看列表
             if not self.request.user.has_perm('production.view_productdatadefinitionmodel'):  # 如果当前用户没有查看权限
-                condtions3 = {}  #如果普通用户不具备查看列表权限权限,则不能查看列表信息
+                condtions3 = {}  # 如果普通用户不具备查看列表权限权限,则不能查看列表信息
         if self.action == "retrieve":  # 如果是查看列表
             if not self.request.user.has_perm('production.read_productdatadefinitionmodel'):  # 如果当前用户没有查看详情权限
-                condtions3 = {} #如果普通用户不具备查看详情权限,则不能查看详情信息
+                condtions3 = {}  # 如果普通用户不具备查看详情权限,则不能查看详情信息
+        if self.action == "update":  # 如果是更新列表
+            condtions2 = {}
+            condtions3 = {}  # 只有创建者可以更新
+        if self.action == "partial_update":  # 如果是部分更新列表
+            condtions3 = {}  # 只有创建者跟审核者可以部分更新
         if start and stop:
-            return ProductDataDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions3)).filter(
+            return ProductDataDefinitionModel.objects.filter(
+                Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).filter(
                 dataTime__gte=start).filter(dataTime__lte=stop).order_by("-id")
         else:
-            return ProductDataDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions3)).order_by(
+            return ProductDataDefinitionModel.objects.filter(
+                Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by(
                 "-id")
 
+
 class SemifinishedDataDefinitionView(CreateModelMixin, ListModelMixin,
-                             DestroyModelMixin,RetrieveModelMixin,
-                             viewsets.GenericViewSet):
+                                  RetrieveModelMixin, UpdateModelMixin,
+                                  viewsets.GenericViewSet):
     """
-    半成品过程数据定义
+    半成品过程数据
     """
     pagination_class = StandardResultsSetPagination
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     filter_class = SemifinishedDataDefinitionFilters
-    search_fields = ["batch","sn"]
-    ordering_fields = ["id","update_time","dataTime"]
+    search_fields = ["batch", "sn", "handler"]
+    ordering_fields = ["id", "update_time", "dataTime"]
     authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
 
@@ -309,6 +327,10 @@ class SemifinishedDataDefinitionView(CreateModelMixin, ListModelMixin,
             return SemifinishedDataSerialize_List
         elif self.action == "retrieve":
             return SemifinishedDataSerialize_Retrieve
+        elif self.action == "update":
+            return SemifinishedDataSerialize_Update
+        elif self.action == "partial_update":
+            return SemifinishedDataSerialize_Partial
         return SemifinishedDataSerialize_List
 
     # 重载数据查询的方法，根据不同的操作查询不同的数据范围
@@ -317,24 +339,77 @@ class SemifinishedDataDefinitionView(CreateModelMixin, ListModelMixin,
         stop = self.request.query_params.get('stop_time', None)
         if self.request.user.is_superuser:
             if start and stop:
-                return SemifinishedDataDefinitionModel.objects.filter(dataTime__gte=start).filter(dataTime__lte=stop).order_by("-id")
+                return SemifinishedDataDefinitionModel.objects.filter(dataTime__gte=start).filter(
+                    dataTime__lte=stop).order_by("-id")
             else:
                 return SemifinishedDataDefinitionModel.objects.all().order_by("-id")  # 超级用户可以查看所有信息
         user = self.request.user.username
-        condtions1 = {'create_user__iexact': user  # 信息创建者可以看到 (自己创建的)的数据,,
+        condtions1 = {'create_user__iexact': user,
+                      'state__in': ("新建", "审核中", "完成")  # 信息创建者可以看到 (新建,审核,使用中)的数据,,
                       }
-        condtions3 = { 'id__gt': 0       # 其他用户
+        condtions2 = {'auditor__iexact': user,
+                      'state__in': ("审核中", "完成",)  # 信息审核者可以看到 (审核,使用中)的数据
+                      }
+        condtions3 = {'state__in': ("完成",)  # 其他用户 可以看到(使用中)的数据
                       }
 
         if self.action == "list":  # 如果是查看列表
             if not self.request.user.has_perm('production.view_semifinisheddatadefinitionmodel'):  # 如果当前用户没有查看权限
-                condtions3 = {}  #如果普通用户不具备查看列表权限权限,则不能查看列表信息
+                condtions3 = {}  # 如果普通用户不具备查看列表权限权限,则不能查看列表信息
         if self.action == "retrieve":  # 如果是查看列表
             if not self.request.user.has_perm('production.read_semifinisheddatadefinitionmodel'):  # 如果当前用户没有查看详情权限
-                condtions3 = {} #如果普通用户不具备查看详情权限,则不能查看详情信息
+                condtions3 = {}  # 如果普通用户不具备查看详情权限,则不能查看详情信息
+        if self.action == "update":  # 如果是更新列表
+            condtions2 = {}
+            condtions3 = {}  # 只有创建者可以更新
+        if self.action == "partial_update":  # 如果是部分更新列表
+            condtions3 = {}  # 只有创建者跟审核者可以部分更新
         if start and stop:
-            return SemifinishedDataDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions3)).filter(
+            return SemifinishedDataDefinitionModel.objects.filter(
+                Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).filter(
                 dataTime__gte=start).filter(dataTime__lte=stop).order_by("-id")
         else:
-            return SemifinishedDataDefinitionModel.objects.filter(Q(**condtions1) | Q(**condtions3)).order_by(
-                "-id")
+            return SemifinishedDataDefinitionModel.objects.filter(
+                Q(**condtions1) | Q(**condtions2) | Q(**condtions3)).order_by("-id")
+class ProductStationReportView( ListModelMixin,viewsets.GenericViewSet):
+    """
+    产品工序报工
+    """
+    serializer_class = ProductStationReportSerialize_List
+    pagination_class = StandardResultsSetPagination
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
+    filter_class= ProductStationReportFilters
+    search_fields = ["product_name","product_code","batch",]
+    ordering_fields = ["id", "update_time", "sum"]
+    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    def get_queryset(self):
+        if (self.request.user.is_superuser):
+            return ProductStationReportModel.objects.all().order_by("-id")  # 超级用户可以查看所有信息
+        elif (self.request.user.has_perm('production.view_productstationreportmodel')):
+            return ProductStationReportModel.objects.filter().order_by("-id")  # 超级用户可以查看所有信息
+        else:
+            raise exceptions.PermissionDenied
+
+
+class SemifinishedStationReportView( ListModelMixin,viewsets.GenericViewSet):
+    """
+    半成品工序报工
+    """
+    serializer_class = SemifinishedStationReportSerialize_List
+    pagination_class = StandardResultsSetPagination
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter,filters.OrderingFilter)
+    filter_class= SemifinishedStationReportFilters
+    search_fields = ["semifinished_name","semifinished_code","batch",]
+    ordering_fields = ["id", "update_time", "sum"]
+    authentication_classes = [SessionAuthentication, JSONWebTokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    def get_queryset(self):
+        if (self.request.user.is_superuser):
+            return SemifinishedStationReportModel.objects.all().order_by("-id")  # 超级用户可以查看所有信息
+        elif (self.request.user.has_perm('production.view_semifinishedstationreportmodel')):
+            return SemifinishedStationReportModel.objects.filter().order_by("-id")  # 超级用户可以查看所有信息
+        else:
+            raise exceptions.PermissionDenied

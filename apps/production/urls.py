@@ -30,6 +30,8 @@ router.register('semifinishedDailyReportItem', SemifinishedDailyReportItemView, 
 router.register('semifinishedDailyReport', SemifinishedDailyReportView, basename="SemifinishedDailyReportView")
 router.register('productData', ProductDataDefinitionView, basename="ProductDataDefinitionView")
 router.register('semifinishedData', SemifinishedDataDefinitionView, basename="SemifinishedDataDefinitionView")
+router.register('productStationReport', ProductStationReportView, basename="ProductStationReportView")
+router.register('semifinishedStationReport', SemifinishedStationReportView, basename="SemifinishedStationReportView")
 router.register('board', ProductionBoardView, basename="ProductionBoardView")
 
 urlpatterns = [
