@@ -35,7 +35,6 @@ class ProductDataDefinitionFilters(FilterSet):
         model = ProductDataDefinitionModel
         fields = ["create_user", "type","productType_code","product_id","taskType_code","task_id"]
 
-
 class SemifinishedDataDefinitionFilters(FilterSet):
     """
     半成品过程数据定义

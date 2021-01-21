@@ -173,8 +173,8 @@ class WarehouseDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = WarehouseFileSerialize_List(many=True)
     alter = WarehouseAlterRecordSerialize_List(many=True)
     parent = WarehouseDefinitionSerialize_List(required=False)
-    warehouse_child=WarehouseDefinitionSerialize_List(many=True)
-    warehouse_item = PositionDefinitionSerialize_Warehouse(many=True)
+ #   warehouse_child=WarehouseDefinitionSerialize_List(many=True)
+ #   warehouse_item = PositionDefinitionSerialize_Warehouse(many=True)
 
     class Meta:
         model = WarehouseDefinitionModel

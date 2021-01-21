@@ -174,8 +174,8 @@ class DefectTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = QualityFileSerialize_List(many=True)                 # 类型文件信息
     alter = QualityAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = DefectTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    defectType_child = DefectTypeDefinitionSerialize_List(many=True)# 子类别信息
-    defectType_item = DefectInforDefinitionSerialize_Type(many=True)# 附属项信息
+#    defectType_child = DefectTypeDefinitionSerialize_List(many=True)# 子类别信息
+#    defectType_item = DefectInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = DefectTypeDefinitionModel
@@ -661,8 +661,8 @@ class InspectionStandardTypeDefinitionSerialize_Retrieve(serializers.ModelSerial
     file = QualityFileSerialize_List(many=True)                 # 类型文件信息
     alter = QualityAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = InspectionStandardTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    inspectionStandardType_child = InspectionStandardTypeDefinitionSerialize_List(many=True)# 子类别信息
-    inspectionStandardType_item = InspectionStandardInforDefinitionSerialize_Type(many=True)# 附属项信息
+ #   inspectionStandardType_child = InspectionStandardTypeDefinitionSerialize_List(many=True)# 子类别信息
+ #   inspectionStandardType_item = InspectionStandardInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = InspectionStandardTypeDefinitionModel
@@ -1013,8 +1013,8 @@ class InspectionReportTypeDefinitionSerialize_Retrieve(serializers.ModelSerializ
     file = QualityFileSerialize_List(many=True)                 # 类型文件信息
     alter = QualityAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = InspectionReportTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    inspectionReportType_child = InspectionReportTypeDefinitionSerialize_List(many=True)# 子类别信息
-    inspectionReportType_item = InspectionReportInforDefinitionSerialize_Type(many=True)# 附属项信息
+ #   inspectionReportType_child = InspectionReportTypeDefinitionSerialize_List(many=True)# 子类别信息
+ #   inspectionReportType_item = InspectionReportInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = InspectionReportTypeDefinitionModel

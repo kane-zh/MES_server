@@ -178,8 +178,8 @@ class WorkshopInforDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     image=ProductionImageSerialize_List(many=True)
     alter = ProductionAlterRecordSerialize_List(many=True)  # 审核记录信息
     parent = WorkshopInforDefinitionSerialize_List(required=False)  # 父类别信息
-    workshopInfor_child = WorkshopInforDefinitionSerialize_List(many=True)  # 子类别信息
-    workshopInfor_item = TeamInforDefinitionSerialize_Type(many=True)  # 附属项信息
+#    workshopInfor_child = WorkshopInforDefinitionSerialize_List(many=True)  # 子类别信息
+#    workshopInfor_item = TeamInforDefinitionSerialize_Type(many=True)  # 附属项信息
 
     class Meta:
         model = WorkshopInforDefinitionModel
@@ -551,8 +551,8 @@ class SkillTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = ProductionFileSerialize_List(many=True)                 # 类型文件信息
     alter = ProductionAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = SkillTypeDefinitionSerialize_List(required=False)      # 父类别信息
-    skillType_child = SkillTypeDefinitionSerialize_List(many=True)  # 子类别信息
-    skillType_item = SkillInforDefinitionSerialize_Type(many=True)  # 附属项信息
+#    skillType_child = SkillTypeDefinitionSerialize_List(many=True)  # 子类别信息
+#    skillType_item = SkillInforDefinitionSerialize_Type(many=True)  # 附属项信息
 
     class Meta:
         model = SkillTypeDefinitionModel
@@ -1127,8 +1127,8 @@ class AssessmentTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = ProductionFileSerialize_List(many=True)                 # 类型文件信息
     alter = ProductionAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = AssessmentTypeDefinitionSerialize_List(required=False)      # 父类别信息
-    assessmentType_child = AssessmentTypeDefinitionSerialize_List(many=True)  # 子类别信息
-    assessmentType_item = AssessmentInforDefinitionSerialize_Type(many=True)  # 附属项信息
+ #   assessmentType_child = AssessmentTypeDefinitionSerialize_List(many=True)  # 子类别信息
+ #   assessmentType_item = AssessmentInforDefinitionSerialize_Type(many=True)  # 附属项信息
 
     class Meta:
         model = AssessmentTypeDefinitionModel
@@ -1344,8 +1344,8 @@ class ProductDataTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = ProductionFileSerialize_List(many=True)                 # 类型文件信息
     alter = ProductionAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = ProductDataTypeDefinitionSerialize_List(required=False)      # 父类别信息
-    productDataType_child = ProductDataTypeDefinitionSerialize_List(many=True)  # 子类别信息
-    productDataType_item = ProductDataDefinitionSerialize_Type(many=True)  # 附属项信息
+ #   productDataType_child = ProductDataTypeDefinitionSerialize_List(many=True)  # 子类别信息
+ #   productDataType_item = ProductDataDefinitionSerialize_Type(many=True)  # 附属项信息
 
     class Meta:
         model = ProductDataTypeDefinitionModel
@@ -1561,8 +1561,8 @@ class SemifinishedDataTypeDefinitionSerialize_Retrieve(serializers.ModelSerializ
     file = ProductionFileSerialize_List(many=True)                 # 类型文件信息
     alter = ProductionAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = SemifinishedDataTypeDefinitionSerialize_List(required=False)      # 父类别信息
-    semifinishedDataType_child = SemifinishedDataTypeDefinitionSerialize_List(many=True)  # 子类别信息
-    semifinishedDataType_item = SemifinishedDataDefinitionSerialize_Type(many=True)  # 附属项信息
+ #   semifinishedDataType_child = SemifinishedDataTypeDefinitionSerialize_List(many=True)  # 子类别信息
+ #   semifinishedDataType_item = SemifinishedDataDefinitionSerialize_Type(many=True)  # 附属项信息
 
     class Meta:
         model = SemifinishedDataTypeDefinitionModel

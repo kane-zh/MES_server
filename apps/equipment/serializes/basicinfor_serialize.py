@@ -301,8 +301,8 @@ class PartsTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = EquipmentFileSerialize_List(many=True)                 # 类型文件信息
     alter = EquipmentAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = PartsTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    partsType_child = PartsTypeDefinitionSerialize_List(many=True)# 子类别信息
-    partsType_item = PartsInforDefinitionSerialize_Type(many=True)# 附属项信息
+ #   partsType_child = PartsTypeDefinitionSerialize_List(many=True)# 子类别信息
+  #  partsType_item = PartsInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = PartsTypeDefinitionModel
@@ -665,8 +665,8 @@ class EquipmentTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = EquipmentFileSerialize_List(many=True)                 # 类型文件信息
     alter = EquipmentAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = EquipmentTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    equipmentType_child = EquipmentTypeDefinitionSerialize_List(many=True)# 子类别信息
-    equipmentType_item = EquipmentInforDefinitionSerialize_Type(many=True)# 附属项信息
+#    equipmentType_child = EquipmentTypeDefinitionSerialize_List(many=True)# 子类别信息
+#    equipmentType_item = EquipmentInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = EquipmentTypeDefinitionModel
@@ -1029,8 +1029,8 @@ class MaintainRecordTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer
     file = EquipmentFileSerialize_List(many=True)                 # 类型文件信息
     alter = EquipmentAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = MaintainRecordTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    maintainRecordType_child = MaintainRecordTypeDefinitionSerialize_List(many=True)# 子类别信息
-    maintainRecordType_item = MaintainRecordInforDefinitionSerialize_Type(many=True)# 附属项信息
+ #   maintainRecordType_child = MaintainRecordTypeDefinitionSerialize_List(many=True)# 子类别信息
+#    maintainRecordType_item = MaintainRecordInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = MaintainRecordTypeDefinitionModel

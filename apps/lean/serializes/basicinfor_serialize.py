@@ -172,8 +172,8 @@ class EventTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = LeanFileSerialize_List(many=True)                 # 类型文件信息
     alter = LeanAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = EventTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    eventType_child = EventTypeDefinitionSerialize_List(many=True)# 子类别信息
-    eventType_item = EventInforDefinitionSerialize_Type(many=True)# 附属项信息
+#    eventType_child = EventTypeDefinitionSerialize_List(many=True)# 子类别信息
+#    eventType_item = EventInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = EventTypeDefinitionModel

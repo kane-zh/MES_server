@@ -173,8 +173,8 @@ class UnitTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = ProcessFileSerialize_List(many=True)                 # 类型文件信息
     alter = ProcessAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = UnitTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    unitType_child = UnitTypeDefinitionSerialize_List(many=True)# 子类别信息
-    unitType_item = UnitInforDefinitionSerialize_Type(many=True)# 附属项信息
+#    unitType_child = UnitTypeDefinitionSerialize_List(many=True)# 子类别信息
+#    unitType_item = UnitInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = UnitTypeDefinitionModel
@@ -527,8 +527,8 @@ class MaterialTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = ProcessFileSerialize_List(many=True)                 # 类型文件信息
     alter = ProcessAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = MaterialTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    materialType_child = MaterialTypeDefinitionSerialize_List(many=True)# 子类别信息
-    materialType_item = MaterialInforDefinitionSerialize_Type(many=True)# 附属项信息
+ #   materialType_child = MaterialTypeDefinitionSerialize_List(many=True)# 子类别信息
+ #   materialType_item = MaterialInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = MaterialTypeDefinitionModel
@@ -908,8 +908,8 @@ class SemifinishedTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = ProcessFileSerialize_List(many=True)                 # 类型文件信息
     alter = ProcessAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = SemifinishedTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    semifinishedType_child = SemifinishedTypeDefinitionSerialize_List(many=True)# 子类别信息
-    semifinishedType_item = SemifinishedInforDefinitionSerialize_Type(many=True)# 附属项信息
+#    semifinishedType_child = SemifinishedTypeDefinitionSerialize_List(many=True)# 子类别信息
+#    semifinishedType_item = SemifinishedInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = SemifinishedTypeDefinitionModel
@@ -1351,8 +1351,8 @@ class ProductTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = ProcessFileSerialize_List(many=True)                 # 类型文件信息
     alter = ProcessAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = ProductTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    productType_child = ProductTypeDefinitionSerialize_List(many=True)# 子类别信息
-    productType_item = ProductInforDefinitionSerialize_Type(many=True)# 附属项信息
+ #   productType_child = ProductTypeDefinitionSerialize_List(many=True)# 子类别信息
+ #   productType_item = ProductInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = ProductTypeDefinitionModel
@@ -1787,8 +1787,8 @@ class StationTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = ProcessFileSerialize_List(many=True)                 # 类型文件信息
     alter = ProcessAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = StationTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    stationType_child = StationTypeDefinitionSerialize_List(many=True)# 子类别信息
-    stationType_item = StationInforDefinitionSerialize_Type(many=True)# 附属项信息
+ #   stationType_child = StationTypeDefinitionSerialize_List(many=True)# 子类别信息
+ #   stationType_item = StationInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = StationTypeDefinitionModel
@@ -2187,8 +2187,8 @@ class ProductRouteTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = ProcessFileSerialize_List(many=True)                 # 类型文件信息
     alter = ProcessAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = ProductRouteTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    productRouteType_child = ProductRouteTypeDefinitionSerialize_List(many=True)# 子类别信息
-    productRouteType_item = ProductRouteInforDefinitionSerialize_Type(many=True)# 附属项信息
+ #   productRouteType_child = ProductRouteTypeDefinitionSerialize_List(many=True)# 子类别信息
+ #   productRouteType_item = ProductRouteInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = ProductRouteTypeDefinitionModel

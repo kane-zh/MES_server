@@ -733,15 +733,11 @@ class ProductDataSerialize_Partial(serializers.ModelSerializer):
 
     class Meta:
         model = ProductDataDefinitionModel
-        fields = ("id", "state", "alter")
+        fields = ("id", "state",)
 
     # 所有字段验证
     def validate(self, attrs):
-        try:
-            del attrs['alter']  # 删除alter字段
-        except Exception:
-            pass
-        if self.increase(attrs['state']) == "完成":  # 通过提交情况下
+        if attrs['state'] == "完成":  # 通过提交情况下
             condtions1 = {'task_id__iexact': self.instance.task_id,
                           'product_id__iexact': self.instance.product_id,
                           'batch__iexact': self.instance.batch,
@@ -960,15 +956,11 @@ class SemifinishedDataSerialize_Partial(serializers.ModelSerializer) :
 
     class Meta :
         model = SemifinishedDataDefinitionModel
-        fields = ("id", "state", "alter")
+        fields = ("id", "state")
 
     # 所有字段验证
     def validate(self, attrs) :
-        try :
-            del attrs['alter']  # 删除alter字段
-        except Exception :
-            pass
-        if self.increase(attrs['state']) == "完成" :  # 通过提交情况下
+        if attrs['state']  == "完成" :  # 通过提交情况下
             condtions1 = {'task_id__iexact' : self.instance.task_id,
                           'semifinished_id__iexact' : self.instance.semifinished_id,
                           'batch__iexact' : self.instance.batch,

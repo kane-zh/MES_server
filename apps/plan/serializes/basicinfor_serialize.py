@@ -178,8 +178,8 @@ class VendorTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = PlanFileSerialize_List(many=True)                 # 类型文件信息
     alter = PlanAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = VendorTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    vendorType_child = VendorTypeDefinitionSerialize_List(many=True)# 子类别信息
-    vendorType_item = VendorInforDefinitionSerialize_Type(many=True)# 附属项信息
+ #   vendorType_child = VendorTypeDefinitionSerialize_List(many=True)# 子类别信息
+ #   vendorType_item = VendorInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = VendorTypeDefinitionModel
@@ -539,8 +539,8 @@ class ClientTypeDefinitionSerialize_Retrieve(serializers.ModelSerializer):
     file = PlanFileSerialize_List(many=True)                 # 类型文件信息
     alter = PlanAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = ClientTypeDefinitionSerialize_List(required=False)   # 父类别信息
-    clientType_child = ClientTypeDefinitionSerialize_List(many=True)# 子类别信息
-    clientType_item = ClientInforDefinitionSerialize_Type(many=True)# 附属项信息
+ #   clientType_child = ClientTypeDefinitionSerialize_List(many=True)# 子类别信息
+ #   clientType_item = ClientInforDefinitionSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = ClientTypeDefinitionModel
@@ -1162,8 +1162,8 @@ class ProductTaskTypeSerialize_Retrieve(serializers.ModelSerializer):
     file = PlanFileSerialize_List(many=True)                 # 类型文件信息
     alter = PlanAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = ProductTaskTypeSerialize_List(required=False)   # 父类别信息
-    productTaskType_child = ProductTaskTypeSerialize_List(many=True)# 子类别信息
-    productTaskType_item = ProductTaskCreateSerialize_Type(many=True)# 附属项信息
+#    productTaskType_child = ProductTaskTypeSerialize_List(many=True)# 子类别信息
+#    productTaskType_item = ProductTaskCreateSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = ProductTaskTypeModel
@@ -1367,6 +1367,7 @@ class ProductTaskItemCreateSerialize_Retrieve(serializers.ModelSerializer):
     """
     salesOrderItem =SalesOrderItemCreateSerialize_ProductTaskItem()
     productTaskItem_parent=ProductTaskCreateSerialize_ProductTaskItem(many=True)
+    file = PlanFileSerialize_List(many=True)                 # 类型文件信息
     class Meta:
         model = ProductTaskItemCreateModel
         fields = "__all__"
@@ -1764,8 +1765,8 @@ class SemifinishedTaskTypeSerialize_Retrieve(serializers.ModelSerializer):
     file = PlanFileSerialize_List(many=True)                 # 类型文件信息
     alter = PlanAlterRecordSerialize_List(many=True)         # 审核记录信息
     parent = SemifinishedTaskTypeSerialize_List(required=False)   # 父类别信息
-    semifinishedTaskType_child = SemifinishedTaskTypeSerialize_List(many=True)# 子类别信息
-    semifinishedTaskType_item = SemifinishedTaskCreateSerialize_Type(many=True)# 附属项信息
+#    semifinishedTaskType_child = SemifinishedTaskTypeSerialize_List(many=True)# 子类别信息
+#    semifinishedTaskType_item = SemifinishedTaskCreateSerialize_Type(many=True)# 附属项信息
 
     class Meta:
         model = SemifinishedTaskTypeModel
